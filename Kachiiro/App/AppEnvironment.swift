@@ -9,11 +9,18 @@ final class AppEnvironment {
     let seed: SeedData
     let repository: ProgressRepository
     let settings: SettingsStore
+    let speech: SpeechPlaying
+    let audioPlayer: AudioPlaying
 
-    init(seed: SeedData, repository: ProgressRepository, settings: SettingsStore) {
+    init(
+        seed: SeedData, repository: ProgressRepository, settings: SettingsStore,
+        speech: SpeechPlaying, audioPlayer: AudioPlaying
+    ) {
         self.seed = seed
         self.repository = repository
         self.settings = settings
+        self.speech = speech
+        self.audioPlayer = audioPlayer
     }
 
     @MainActor
@@ -25,7 +32,10 @@ final class AppEnvironment {
             let seed = try SeedData.load(from: Data(contentsOf: url))
             let container = try SwiftDataProgressRepository.makeContainer()
             let repository = SwiftDataProgressRepository(container: container)
-            let env = AppEnvironment(seed: seed, repository: repository, settings: UserDefaultsSettingsStore())
+            let env = AppEnvironment(
+                seed: seed, repository: repository, settings: UserDefaultsSettingsStore(),
+                speech: SpeechService(), audioPlayer: AudioPlayerService()
+            )
             #if DEBUG
             env.applyDebugLaunchArguments()
             #endif
@@ -40,7 +50,9 @@ final class AppEnvironment {
         AppEnvironment(
             seed: SeedData(words: [], patterns: [], kanji: []),
             repository: InMemoryProgressRepository(),
-            settings: InMemorySettingsStore()
+            settings: InMemorySettingsStore(),
+            speech: SpeechService(),
+            audioPlayer: AudioPlayerService()
         )
     }
 
@@ -48,15 +60,20 @@ final class AppEnvironment {
 
     @MainActor
     func makeReviewViewModel() -> ReviewViewModel {
-        ReviewViewModel(repository: repository, seed: seed, settings: settings)
+        ReviewViewModel(repository: repository, seed: seed, settings: settings, speech: speech)
     }
 
     @MainActor
     func makePracticeViewModel() -> PracticeViewModel {
         PracticeViewModel(
-            seed: seed, settings: settings, repository: repository,
+            seed: seed, settings: settings, repository: repository, speech: speech,
             inputModeOverride: LaunchRoute.inputModeFromProcess()
         )
+    }
+
+    @MainActor
+    func makeAudioLibraryViewModel() -> AudioLibraryViewModel {
+        AudioLibraryViewModel(fileNames: BundleAudioIndex.fileNames(), player: audioPlayer)
     }
 
     #if DEBUG

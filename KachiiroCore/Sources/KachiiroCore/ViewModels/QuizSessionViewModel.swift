@@ -56,6 +56,9 @@ public final class QuizSessionViewModel {
     public var canType: Bool { currentQuestion?.supportedModes.contains(.typing) ?? false }
     public var canChoose: Bool { currentQuestion?.supportedModes.contains(.choice) ?? false }
     public var hasSpeech: Bool { speech != nil && currentQuestion?.speech != nil }
+    /// The question has audio but the device has no Japanese voice installed.
+    public var speechUnavailable: Bool { hasSpeech && speech?.hasVoice == false }
+    public static let missingVoiceMessage = "Install a Japanese voice in Settings > Accessibility > Spoken Content"
     public var isCurrentBookmarked: Bool { currentQuestion.map { bookmarkedKeys.contains($0.id) } ?? false }
     public var total: Int { questions.count }
     public var score: Int { answers.filter(\.correct).count }

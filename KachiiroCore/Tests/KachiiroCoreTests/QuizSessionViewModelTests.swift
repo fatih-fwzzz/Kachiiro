@@ -4,6 +4,7 @@ import Testing
 
 @MainActor
 final class SpySpeech: SpeechPlaying {
+    var hasVoice = true
     var spoken: [(String, Bool)] = []
     func speak(_ text: String, slow: Bool) { spoken.append((text, slow)) }
     func stop() {}
@@ -107,6 +108,14 @@ final class SpySpeech: SpeechPlaying {
         vm.playPrompt(slow: true)
         #expect(speech.spoken.count == 1)
         #expect(speech.spoken.first?.0 == "音" && speech.spoken.first?.1 == true)
+    }
+
+    @Test func missingVoiceIsReported() {
+        let speech = SpySpeech()
+        speech.hasVoice = false
+        let (vm, _) = makeVM(speech: speech)
+        #expect(vm.speechUnavailable)
+        #expect(QuizSessionViewModel.missingVoiceMessage.contains("Spoken Content"))
     }
 
     @Test func bookmarkToggles() {

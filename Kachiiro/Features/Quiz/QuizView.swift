@@ -117,6 +117,10 @@ struct QuizView: View {
                     .accessibilityLabel("Play slowly")
                 }
             }
+            if model.speechUnavailable {
+                Label(QuizSessionViewModel.missingVoiceMessage, systemImage: "speaker.slash")
+                    .font(.footnote).foregroundStyle(.orange)
+            }
             Spacer(minLength: 0)
             Text(q.promptBody)
                 .font(AppTheme.Fonts.ui(.largeTitle, weight: .bold))
