@@ -18,6 +18,8 @@ public enum QuestionFactoryRegistry {
         VocabQuestionFactory(),
         KanjiQuestionFactory(),
         PitchQuestionFactory(),
+        PatternQuestionFactory(),
+        RegisterShiftQuestionFactory(),
     ]
 
     public static func factory(for drill: DrillKind) -> (any QuestionFactory)? {
