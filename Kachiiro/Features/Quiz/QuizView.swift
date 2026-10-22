@@ -5,7 +5,9 @@ struct QuizView: View {
     @State private var model: QuizSessionViewModel
     @State private var typed = ""
     @State private var selectedChoice: String?
+    @State private var showScratchpad = QuizView.scratchpadOpenAtLaunch
     @FocusState private var typingFocused: Bool
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     init(model: QuizSessionViewModel) {
         _model = State(initialValue: model)
@@ -28,27 +30,47 @@ struct QuizView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
+    private var isRegular: Bool { sizeClass == .regular }
+
+    /// Reference content shown beside the quiz on iPad, by drill.
+    private var referenceContent: ConjugationReferenceView.Content? {
+        switch model.questions.first?.drill {
+        case .verbForms: .verbChart
+        case .inflectionMatrix, .registerShift: .matrix
+        default: nil
+        }
+    }
+
     private func session(_ q: QuizQuestion) -> some View {
-        GeometryReader { geo in
-            VStack(spacing: 12) {
-                modePicker
-                stimulus(q)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: geo.size.height * 0.34)
-                ScrollView {
-                    VStack(spacing: 10) {
-                        answerArea(q)
-                        if let result = model.result { feedback(result, q) }
+        Group {
+            if isRegular {
+                HStack(alignment: .top, spacing: 16) {
+                    if let reference = referenceContent {
+                        ConjugationReferenceView(content: reference)
+                            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                            .overlay { RoundedRectangle(cornerRadius: 20, style: .continuous).strokeBorder(AppTheme.hairlineBorder) }
+                            .frame(maxWidth: .infinity)
                     }
-                    .padding(.bottom, 8)
+                    VStack(spacing: 12) {
+                        quizColumn(q)
+                        if showScratchpad { ScratchpadPanel().id(model.index) }
+                    }
+                    .frame(maxWidth: referenceContent == nil ? 760 : .infinity)
                 }
-                .scrollDismissesKeyboard(.never)
-                bottomBar
+                .padding(16)
+            } else {
+                quizColumn(q)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
         }
         .toolbar {
+            if isRegular {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { withAnimation { showScratchpad.toggle() } } label: {
+                        Image(systemName: showScratchpad ? "pencil.and.scribble" : "pencil.tip.crop.circle")
+                    }
+                    .accessibilityLabel(showScratchpad ? "Hide scratchpad" : "Show scratchpad")
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     model.toggleBookmark()
@@ -71,6 +93,35 @@ struct QuizView: View {
             #endif
         }
     }
+
+    private func quizColumn(_ q: QuizQuestion) -> some View {
+        GeometryReader { geo in
+            VStack(spacing: 12) {
+                modePicker
+                stimulus(q)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: geo.size.height * (showScratchpad ? 0.42 : 0.34))
+                ScrollView {
+                    VStack(spacing: 10) {
+                        answerArea(q)
+                        if let result = model.result { feedback(result, q) }
+                    }
+                    .padding(.bottom, 8)
+                }
+                .scrollDismissesKeyboard(.never)
+                bottomBar
+            }
+            .padding(.horizontal, isRegular ? 0 : 16)
+            .padding(.top, isRegular ? 0 : 8)
+        }
+    }
+
+    #if DEBUG
+    /// `-ui-scratchpad` opens the scratchpad panel at launch (screenshot smoke tests only).
+    static var scratchpadOpenAtLaunch: Bool { ProcessInfo.processInfo.arguments.contains("-ui-scratchpad") }
+    #else
+    static var scratchpadOpenAtLaunch: Bool { false }
+    #endif
 
     #if DEBUG
     /// `-ui-autoanswer <text>` answers the first question at launch (screenshot smoke tests only).
@@ -111,7 +162,7 @@ struct QuizView: View {
     @ViewBuilder
     private func answerArea(_ q: QuizQuestion) -> some View {
         if model.activeMode == .choice {
-            ForEach(q.choices, id: \.self) { choice in
+            ForEach(Array(q.choices.enumerated()), id: \.element) { index, choice in
                 Button {
                     selectedChoice = choice
                     model.submitChoice(choice)
@@ -124,6 +175,7 @@ struct QuizView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(model.result != nil)
+                .keyboardShortcut(KeyEquivalent(Character(String(index + 1))), modifiers: [])
             }
         } else {
             HStack(spacing: 10) {
@@ -139,6 +191,7 @@ struct QuizView: View {
                         if !typingFocused, model.activeMode == .typing, model.result == nil { typingFocused = true }
                     }
                 Button("Submit", action: submitTyped)
+                    .keyboardShortcut(.return, modifiers: [])
                     .buttonStyle(.borderedProminent)
                     .disabled(model.result != nil || typed.trimmingCharacters(in: .whitespaces).isEmpty)
             }
@@ -184,6 +237,7 @@ struct QuizView: View {
             Text(model.index + 1 == model.total ? "Finish" : "Next")
                 .frame(maxWidth: .infinity)
         }
+        .keyboardShortcut(.return, modifiers: [])
         .buttonStyle(.borderedProminent)
         .controlSize(.large)
         .disabled(model.result == nil)

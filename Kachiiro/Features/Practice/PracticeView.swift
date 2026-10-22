@@ -37,7 +37,11 @@ struct PracticeView: View {
                         .foregroundStyle(AppTheme.primaryInk)
                     }
                     if section.pillar == .katsuyou {
-                        NavigationLink("Conjugation reference") { ConjugationReferenceView() }
+                        NavigationLink("Conjugation reference") {
+                            ConjugationReferenceView()
+                                .navigationTitle("Reference")
+                                .navigationBarTitleDisplayMode(.inline)
+                        }
                     }
                     if section.pillar == .choukai {
                         NavigationLink("Audio library") {
