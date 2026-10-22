@@ -50,3 +50,16 @@ Blank/NaN pos maps to `Other`. The script asserts the counts above.
 - `RootView`: `TabView` (`.tabViewStyle(.sidebarAdaptable)`) with Dashboard, Practice, Mock Exam, Review, each in a `NavigationStack`. iPhone shows a tab bar; iPad shows a top tab bar with a sidebar toggle.
 - `AppEnvironment` is the composition root (`@Observable`), created in `KachiiroApp` and injected with `.environment`.
 - `LaunchRoute` parses `-ui-route <dashboard|practice|mock|review|drill.<DrillKind>|audio|cando|settings>` and `-ui-mode <choice|typing>` from the process arguments so every screen can be reached for screenshot smoke tests.
+
+## Quiz core
+
+- `QuizQuestion` is the only thing views render. `choices` holds exactly 4 distinct strings (including `correctChoice`) when `.choice` is supported, else is empty. `acceptedAnswers` always contains `correctChoice`.
+- `QuestionFactory` (one per `DrillKind`) creates questions and rebuilds one from an `ItemKey`; `QuestionFactoryRegistry` dispatches on the key prefix.
+- `DistractorPicker.pick` walks priority tiers, shuffling inside a tier with the injected RNG (`SeededRandomNumberGenerator` for tests).
+- `TypingValidator`: NFKC, trim, drop trailing `。.!?`, strip spaces, katakana→hiragana (keeps `ー`), lowercase.
+- `QuizSessionViewModel` records each question exactly once through `ProgressRepository.record`; `activeMode` falls back to the mode the question supports. `QuizView` (app target) renders it: segmented mode picker, stimulus card (~42% of height), answer area (4 option cards or a pinned text field), feedback banner, summary with "Retry wrong".
+- `ReviewState` / `SRSScheduler` (Leitner boxes 0…5, intervals 0/1/2/4/8/16 days) and `InMemoryProgressRepository` live in Core.
+
+## ItemKey formats
+
+`verb:{wordId}:{form}`, `infl:{wordId}:{cellRaw}`, `vocab:{wordId}:{m2w|w2m}`, `kanji:{rowId}:{r|w}`, `pitch:{wordId}`, `pattern:{patternId}`, `register:{wordId}:{tense}-{polarity}:{p2n|n2p}`, `dict:{wordId}`, `sent:{patternId}`.
