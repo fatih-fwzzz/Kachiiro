@@ -35,7 +35,7 @@ struct RootView: View {
                 }
             }
             Tab("Mock Exam", systemImage: "timer", value: AppTab.mock) {
-                NavigationStack { MockExamView() }
+                NavigationStack { MockExamView(viewModel: environment.makeMockExamViewModel()) }
             }
             Tab("Review", systemImage: "arrow.triangle.2.circlepath", value: AppTab.review) {
                 NavigationStack { ReviewView(viewModel: environment.makeReviewViewModel()) }

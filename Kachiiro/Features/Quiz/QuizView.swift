@@ -102,41 +102,10 @@ struct QuizView: View {
     }
 
     private func stimulus(_ q: QuizQuestion) -> some View {
-        VStack(spacing: 10) {
-            HStack {
-                AppleBadge(text: q.promptTitle, icon: nil, style: .tintedBlue)
-                Spacer()
-                if model.hasSpeech {
-                    Button { model.playPrompt(slow: false) } label: {
-                        Image(systemName: "speaker.wave.2.fill")
-                    }
-                    .accessibilityLabel("Play")
-                    Button { model.playPrompt(slow: true) } label: {
-                        Image(systemName: "tortoise.fill")
-                    }
-                    .accessibilityLabel("Play slowly")
-                }
-            }
-            if model.speechUnavailable {
-                Label(QuizSessionViewModel.missingVoiceMessage, systemImage: "speaker.slash")
-                    .font(.footnote).foregroundStyle(.orange)
-            }
-            Spacer(minLength: 0)
-            Text(q.promptBody)
-                .font(AppTheme.Fonts.ui(.largeTitle, weight: .bold))
-                .multilineTextAlignment(.center)
-                .minimumScaleFactor(0.5)
-            if let reading = q.promptReading, !reading.isEmpty {
-                // The pitch drill hides the accent until the answer is shown in the feedback banner.
-                if q.pitch != nil, q.drill != .pitch {
-                    PitchAccentView(pitch: q.pitch, reading: reading)
-                } else {
-                    Text(reading).font(AppTheme.Fonts.ui(.title3)).foregroundStyle(AppTheme.secondaryInk)
-                }
-            }
-            Spacer(minLength: 0)
-        }
-        .quizCard()
+        QuestionCard(
+            question: q, hasSpeech: model.hasSpeech, speechUnavailable: model.speechUnavailable,
+            onPlay: { model.playPrompt(slow: $0) }
+        )
     }
 
     @ViewBuilder
