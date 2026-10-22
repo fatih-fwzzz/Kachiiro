@@ -37,4 +37,5 @@ Simulator taps cannot be scripted, so screens are reached with launch arguments:
 
 ## Debug launch arguments (DEBUG builds)
 `-ui-debug-wrong <ItemKey>` / `-ui-debug-right <ItemKey>` record one answer at launch, for persistence smoke tests: launch once with the flag, relaunch without it, `-ui-route review` must list the key. Taps cannot be scripted in the simulator.
+`-ui-autoanswer <text>` submits `<text>` (typed or as the chosen option) for the first question of a quiz so the feedback banner can be screenshotted.
 - SwiftData: keep the `ModelContainer` alive for as long as its `ModelContext` is used.

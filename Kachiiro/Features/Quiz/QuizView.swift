@@ -64,8 +64,29 @@ struct QuizView: View {
             focusIfTyping()
         }
         .onChange(of: model.activeMode) { focusIfTyping() }
-        .onAppear { focusIfTyping() }
+        .onAppear {
+            focusIfTyping()
+            #if DEBUG
+            applyDebugAutoAnswer()
+            #endif
+        }
     }
+
+    #if DEBUG
+    /// `-ui-autoanswer <text>` answers the first question at launch (screenshot smoke tests only).
+    private func applyDebugAutoAnswer() {
+        let args = ProcessInfo.processInfo.arguments
+        guard model.index == 0, model.result == nil, let i = args.firstIndex(of: "-ui-autoanswer"),
+              args.indices.contains(i + 1) else { return }
+        if model.activeMode == .typing {
+            typed = args[i + 1]
+            model.submitText(args[i + 1])
+        } else {
+            selectedChoice = args[i + 1]
+            model.submitChoice(args[i + 1])
+        }
+    }
+    #endif
 
     private func focusIfTyping() {
         typingFocused = model.activeMode == .typing && model.result == nil
@@ -102,7 +123,8 @@ struct QuizView: View {
                 .multilineTextAlignment(.center)
                 .minimumScaleFactor(0.5)
             if let reading = q.promptReading, !reading.isEmpty {
-                if q.pitch != nil {
+                // The pitch drill hides the accent until the answer is shown in the feedback banner.
+                if q.pitch != nil, q.drill != .pitch {
                     PitchAccentView(pitch: q.pitch, reading: reading)
                 } else {
                     Text(reading).font(AppTheme.Fonts.ui(.title3)).foregroundStyle(AppTheme.secondaryInk)
@@ -163,7 +185,7 @@ struct QuizView: View {
     }
 
     private func feedback(_ result: QuizSessionViewModel.AnswerResult, _ q: QuizQuestion) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 10) {
             switch result {
             case .correct:
                 Label("Correct", systemImage: "checkmark.circle.fill").foregroundStyle(.green)
