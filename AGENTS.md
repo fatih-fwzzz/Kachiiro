@@ -27,3 +27,7 @@ One branch per feature: `git checkout main && git checkout -b feature/<name>`; k
 - `gemini-2.5-flash` retires 2026-10-20; docs currently list `gemini-3.8-flash`.
 - REST structured output: `generationConfig.responseFormat.text{mimeType,schema}`.
 - No on-device provider (iPhone 15 / A16 lacks Apple Intelligence). Gemini is the only provider. API key goes in Settings → Keychain.
+
+## LaunchRoute smoke technique
+Simulator taps cannot be scripted, so screens are reached with launch arguments: `-ui-route <route>` (dashboard, practice, mock, review, `drill.<DrillKind raw>`, audio, cando, settings) and `-ui-mode <choice|typing>`. Launch with RUN, wait ~3 s, screenshot, then read the PNG. New screens register their route in `LaunchRoute` and `RootView`.
+- Core files that touch Core members in the app need `import KachiiroCore` (`SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY` is on).
