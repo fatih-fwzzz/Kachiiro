@@ -31,3 +31,6 @@ One branch per feature: `git checkout main && git checkout -b feature/<name>`; k
 ## LaunchRoute smoke technique
 Simulator taps cannot be scripted, so screens are reached with launch arguments: `-ui-route <route>` (dashboard, practice, mock, review, `drill.<DrillKind raw>`, audio, cando, settings) and `-ui-mode <choice|typing>`. Launch with RUN, wait ~3 s, screenshot, then read the PNG. New screens register their route in `LaunchRoute` and `RootView`.
 - Core files that touch Core members in the app need `import KachiiroCore` (`SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY` is on).
+
+## ItemKey formats
+`verb:{wordId}:{VerbForm}`, `infl:{wordId}:{cellRaw}`, `vocab:{wordId}:{m2w|w2m}`, `kanji:{rowId}:{r|w}`, `pitch:{wordId}`, `pattern:{patternId}`, `register:{wordId}:{tense}-{polarity}:{p2n|n2p}`, `dict:{wordId}`, `sent:{patternId}`. Keys are persisted: never change a format without a migration.
