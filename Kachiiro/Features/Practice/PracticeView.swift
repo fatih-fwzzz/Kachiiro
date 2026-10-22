@@ -6,6 +6,8 @@ struct PracticeView: View {
     @State private var session: QuizSessionViewModel?
     @State private var isQuizActive = false
     @State private var routeConsumed = false
+    @State private var showAudio = false
+    @Environment(AppEnvironment.self) private var environment
     private let launchRoute: LaunchRoute?
 
     init(viewModel: PracticeViewModel, launchRoute: LaunchRoute? = nil) {
@@ -36,6 +38,11 @@ struct PracticeView: View {
                     if section.pillar == .katsuyou {
                         NavigationLink("Conjugation reference") { ConjugationReferenceView() }
                     }
+                    if section.pillar == .choukai {
+                        NavigationLink("Audio library") {
+                            AudioLibraryView(viewModel: environment.makeAudioLibraryViewModel())
+                        }
+                    }
                 }
             }
         }
@@ -43,10 +50,17 @@ struct PracticeView: View {
         .navigationDestination(isPresented: $isQuizActive) {
             if let session { QuizView(model: session) }
         }
+        .navigationDestination(isPresented: $showAudio) {
+            AudioLibraryView(viewModel: environment.makeAudioLibraryViewModel())
+        }
         .task {
             guard !routeConsumed else { return }
             routeConsumed = true
-            if case .drill(let drill) = launchRoute { start(drill) }
+            switch launchRoute {
+            case .drill(let drill): start(drill)
+            case .audio: showAudio = true
+            default: break
+            }
         }
     }
 
