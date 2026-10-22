@@ -14,13 +14,18 @@ SwiftUI study app for iPhone and iPad. Goal: pass a six-pillar Japanese vocation
 
 Plus: study scope (level + lesson range), Leitner SRS weak/due queue, 20-minute mock exam, dashboard with exam countdown and daily goal, iPad workspace (reference column, scratchpad, keyboard shortcuts).
 
+## Status
+
+All offline pillars, the SRS queue, mock exam, dashboard/settings and the iPad workspace are implemented (see `ARCHITECTURE.md`). Dokkai, Kaiwa roleplay, Choukai comprehension and N3–N1 are not started; they need Gemini and are covered by plan 2.
+
 ## Setup
 
 1. Clone and open `Kachiiro.xcodeproj` (Xcode 26+, deployment target iOS 18.0).
 2. Audio (optional, not committed): `cp ~/Downloads/Z_audio_all/*.mp3 Kachiiro/Audio/` — see `Kachiiro/Audio/AUDIO_README.md`.
 3. Seed data (optional, `Kachiiro/Resources/irodori_seed.json` is committed): `python3 scripts/build_seed.py --src ~/Downloads --out Kachiiro/Resources/irodori_seed.json`.
-4. Build: `xcodebuild -project Kachiiro.xcodeproj -scheme Kachiiro -destination 'platform=iOS Simulator,name=iPhone 16' -derivedDataPath build build`
+4. Build: `xcodebuild -project Kachiiro.xcodeproj -scheme Kachiiro -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.5' -derivedDataPath build build`
 5. Test: `cd KachiiroCore && swift test`
+6. Smoke screens without tapping: launch with `-ui-route <dashboard|practice|mock|review|drill.<kind>|audio|cando|settings>` (see `AGENTS.md`).
 
 ## Data and licensing
 
