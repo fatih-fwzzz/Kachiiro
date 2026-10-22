@@ -4,10 +4,13 @@ import KachiiroCore
 
 struct AudioLibraryView: View {
     @State private var viewModel: AudioLibraryViewModel
+    private let lesson: Int?
     private let ticker = Timer.publish(every: 0.25, on: .main, in: .common).autoconnect()
 
-    init(viewModel: AudioLibraryViewModel) {
+    /// - Parameter lesson: shows only this lesson when set.
+    init(viewModel: AudioLibraryViewModel, lesson: Int? = nil) {
         _viewModel = State(initialValue: viewModel)
+        self.lesson = lesson
     }
 
     var body: some View {
@@ -22,9 +25,9 @@ struct AudioLibraryView: View {
                     if let error = viewModel.errorMessage {
                         Label(error, systemImage: "exclamationmark.triangle").foregroundStyle(.red)
                     }
-                    ForEach(viewModel.lessons) { lesson in
-                        Section("Lesson \(lesson.lesson)") {
-                            ForEach(lesson.tracks) { track in
+                    ForEach(viewModel.lessons.filter { lesson == nil || $0.lesson == lesson }) { entry in
+                        Section("Lesson \(entry.lesson)") {
+                            ForEach(entry.tracks) { track in
                                 trackRow(track)
                             }
                         }
@@ -33,7 +36,7 @@ struct AudioLibraryView: View {
                 .safeAreaInset(edge: .bottom) { if viewModel.currentTrack != nil { playerBar } }
             }
         }
-        .navigationTitle("Audio library")
+        .navigationTitle(lesson.map { "Lesson \($0) audio" } ?? "Audio library")
         .onReceive(ticker) { _ in viewModel.refresh() }
         .onAppear {
             #if DEBUG

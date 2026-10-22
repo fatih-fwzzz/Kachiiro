@@ -1,0 +1,1325 @@
+[
+ {
+  "id": 1,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 1,
+  "lessonTitle": "I work in a restaurant.",
+  "topic": "My Current Self",
+  "text": "Can exchange greetings with a person you are meeting for the first time in a long time."
+ },
+ {
+  "id": 2,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 1,
+  "lessonTitle": "I work in a restaurant.",
+  "topic": "My Current Self",
+  "text": "Can talk in simple terms about how you have been recently when asked by a close person."
+ },
+ {
+  "id": 3,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 1,
+  "lessonTitle": "I work in a restaurant.",
+  "topic": "My Current Self",
+  "text": "Can talk in simple terms about your work in Japan."
+ },
+ {
+  "id": 4,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 2,
+  "lessonTitle": "I like playing video games.",
+  "topic": "My Current Self",
+  "text": "Can talk in simple terms about your hobbies and favorite things to do."
+ },
+ {
+  "id": 5,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 2,
+  "lessonTitle": "I like playing video games.",
+  "topic": "My Current Self",
+  "text": "Can ask and answer questions about how you spend your days off."
+ },
+ {
+  "id": 6,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 2,
+  "lessonTitle": "I like playing video games.",
+  "topic": "My Current Self",
+  "text": "Can read staff descriptions posted in a store, facility, etc. and understand their families, hobbies, etc."
+ },
+ {
+  "id": 7,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 2,
+  "lessonTitle": "I like playing video games.",
+  "topic": "My Current Self",
+  "text": "Can write in simple terms about your hobbies, your days off, etc. for staff descriptions posted at work."
+ },
+ {
+  "id": 8,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 3,
+  "lessonTitle": "It gets very cold in winter.",
+  "topic": "Seasons and Weather",
+  "text": "Can watch a short video about the four seasons in Japan and understand seasonal characteristics."
+ },
+ {
+  "id": 9,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 3,
+  "lessonTitle": "It gets very cold in winter.",
+  "topic": "Seasons and Weather",
+  "text": "Can talk in simple terms about the seasonal characteristics of your own country."
+ },
+ {
+  "id": 10,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 3,
+  "lessonTitle": "It gets very cold in winter.",
+  "topic": "Seasons and Weather",
+  "text": "Can talk in simple terms about your favorite season and the reason."
+ },
+ {
+  "id": 11,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 4,
+  "lessonTitle": "It rained heavily yesterday.",
+  "topic": "Seasons and Weather",
+  "text": "Can exchange greetings while talking about the weather."
+ },
+ {
+  "id": 12,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 4,
+  "lessonTitle": "It rained heavily yesterday.",
+  "topic": "Seasons and Weather",
+  "text": "Can listen to the weather forecast and mostly understand it."
+ },
+ {
+  "id": 13,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 4,
+  "lessonTitle": "It rained heavily yesterday.",
+  "topic": "Seasons and Weather",
+  "text": "Can read and understand simple posts about the weather on social media."
+ },
+ {
+  "id": 14,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 5,
+  "lessonTitle": "It is very lively and convenient.",
+  "topic": "My Town",
+  "text": "Can talk in simple terms about your impressions of your town."
+ },
+ {
+  "id": 15,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 5,
+  "lessonTitle": "It is very lively and convenient.",
+  "topic": "My Town",
+  "text": "Can ask questions about recommended places around town and understand the answers."
+ },
+ {
+  "id": 16,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 5,
+  "lessonTitle": "It is very lively and convenient.",
+  "topic": "My Town",
+  "text": "Can look at a town map and get information about famous spots, stores, etc."
+ },
+ {
+  "id": 17,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 6,
+  "lessonTitle": "Please tell me how to get to the post office.",
+  "topic": "My Town",
+  "text": "Can ask and understand directions."
+ },
+ {
+  "id": 18,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 6,
+  "lessonTitle": "Please tell me how to get to the post office.",
+  "topic": "My Town",
+  "text": "Can ask and understand directions on the phone."
+ },
+ {
+  "id": 19,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 6,
+  "lessonTitle": "Please tell me how to get to the post office.",
+  "topic": "My Town",
+  "text": "Can give directions to the destination by car when, for example, someone gives you a ride."
+ },
+ {
+  "id": 20,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 7,
+  "lessonTitle": "I will be a bit late because I got lost.",
+  "topic": "Going Out Together",
+  "text": "Can ask and understand the time and place to meet."
+ },
+ {
+  "id": 21,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 7,
+  "lessonTitle": "I will be a bit late because I got lost.",
+  "topic": "Going Out Together",
+  "text": "Can talk and decide the time and place to meet."
+ },
+ {
+  "id": 22,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 7,
+  "lessonTitle": "I will be a bit late because I got lost.",
+  "topic": "Going Out Together",
+  "text": "Can read and understand a message saying that the person you are meeting will be late."
+ },
+ {
+  "id": 23,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 7,
+  "lessonTitle": "I will be a bit late because I got lost.",
+  "topic": "Going Out Together",
+  "text": "Can write a message saying that you will be late for the arranged time."
+ },
+ {
+  "id": 24,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 8,
+  "lessonTitle": "Have you ever played baseball?",
+  "topic": "Going Out Together",
+  "text": "Can ask someone out to eat, go shopping, or go to an event while asking about their experience and interest."
+ },
+ {
+  "id": 25,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 8,
+  "lessonTitle": "Have you ever played baseball?",
+  "topic": "Going Out Together",
+  "text": "Can discuss what to do next and where to go while you are out with someone."
+ },
+ {
+  "id": 26,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 8,
+  "lessonTitle": "Have you ever played baseball?",
+  "topic": "Going Out Together",
+  "text": "Can give your impressions about the event to the person you went with."
+ },
+ {
+  "id": 27,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 9,
+  "lessonTitle": "Will you tell me how to read this?",
+  "topic": "Studying Japanese",
+  "text": "Can talk in simple terms about your experience learning Japanese."
+ },
+ {
+  "id": 28,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 9,
+  "lessonTitle": "Will you tell me how to read this?",
+  "topic": "Studying Japanese",
+  "text": "Can give your impressions and comments about learning Japanese."
+ },
+ {
+  "id": 29,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 9,
+  "lessonTitle": "Will you tell me how to read this?",
+  "topic": "Studying Japanese",
+  "text": "Can ask someone for help when, for example, you have a problem with Japanese."
+ },
+ {
+  "id": 30,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 9,
+  "lessonTitle": "Will you tell me how to read this?",
+  "topic": "Studying Japanese",
+  "text": "Can read an online forum about learning Japanese and understand the recommended study methods."
+ },
+ {
+  "id": 31,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 10,
+  "lessonTitle": "I would like to take a Japanese-language class.",
+  "topic": "Studying Japanese",
+  "text": "Can find and understand information such as the place, date, and time of lessons offered at a local community center, etc."
+ },
+ {
+  "id": 32,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 10,
+  "lessonTitle": "I would like to take a Japanese-language class.",
+  "topic": "Studying Japanese",
+  "text": "Can ask questions about the lesson you are interested in at a local government office and understand the answers."
+ },
+ {
+  "id": 33,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 10,
+  "lessonTitle": "I would like to take a Japanese-language class.",
+  "topic": "Studying Japanese",
+  "text": "Can ask friends or answer questions about Japanese-language classes in the community."
+ },
+ {
+  "id": 34,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 10,
+  "lessonTitle": "I would like to take a Japanese-language class.",
+  "topic": "Studying Japanese",
+  "text": "Can answer questions about your experience or your goals in learning Japanese, in order to participate in Japanese-language classes."
+ },
+ {
+  "id": 35,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 11,
+  "lessonTitle": "I will bring meat and vegetables.",
+  "topic": "Delicious Dishes",
+  "text": "Can discuss who will bring which item when, for example, having a barbecue."
+ },
+ {
+  "id": 36,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 11,
+  "lessonTitle": "I will bring meat and vegetables.",
+  "topic": "Delicious Dishes",
+  "text": "Can discuss what to buy when, for example, having a house party."
+ },
+ {
+  "id": 37,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 11,
+  "lessonTitle": "I will bring meat and vegetables.",
+  "topic": "Delicious Dishes",
+  "text": "Can ask store staff about the ingredients and expiration dates of food and understand the answers."
+ },
+ {
+  "id": 38,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 11,
+  "lessonTitle": "I will bring meat and vegetables.",
+  "topic": "Delicious Dishes",
+  "text": "Can read food labels to check if the food contains something you cannot eat."
+ },
+ {
+  "id": 39,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 12,
+  "lessonTitle": "Your bento looks delicious.",
+  "topic": "Delicious Dishes",
+  "text": "Can give your impressions about the appearance of food."
+ },
+ {
+  "id": 40,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 12,
+  "lessonTitle": "Your bento looks delicious.",
+  "topic": "Delicious Dishes",
+  "text": "Can comment about the recommended food after eating it."
+ },
+ {
+  "id": 41,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 12,
+  "lessonTitle": "Your bento looks delicious.",
+  "topic": "Delicious Dishes",
+  "text": "Can ask or answer questions about the taste, ingredients, etc. of dishes."
+ },
+ {
+  "id": 42,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 12,
+  "lessonTitle": "Your bento looks delicious.",
+  "topic": "Delicious Dishes",
+  "text": "Can read and understand cooking instructions for making instant food."
+ },
+ {
+  "id": 43,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 13,
+  "lessonTitle": "It will probably end in about ten minutes.",
+  "topic": "Communication at Work",
+  "text": "Can tell your supervisor what is going on when you have a problem at work."
+ },
+ {
+  "id": 44,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 13,
+  "lessonTitle": "It will probably end in about ten minutes.",
+  "topic": "Communication at Work",
+  "text": "Can briefly answer when asked about the status of work."
+ },
+ {
+  "id": 45,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 13,
+  "lessonTitle": "It will probably end in about ten minutes.",
+  "topic": "Communication at Work",
+  "text": "Can ask about and understand, for example, how to use a machine at work."
+ },
+ {
+  "id": 46,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 13,
+  "lessonTitle": "It will probably end in about ten minutes.",
+  "topic": "Communication at Work",
+  "text": "Can listen to and understand explanations and instructions on tasks at work."
+ },
+ {
+  "id": 47,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 13,
+  "lessonTitle": "It will probably end in about ten minutes.",
+  "topic": "Communication at Work",
+  "text": "Can read and understand a simple email for work."
+ },
+ {
+  "id": 48,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 14,
+  "lessonTitle": "May I take a day off?",
+  "topic": "Communication at Work",
+  "text": "Can call your workplace to say that you will be late or take the day off."
+ },
+ {
+  "id": 49,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 14,
+  "lessonTitle": "May I take a day off?",
+  "topic": "Communication at Work",
+  "text": "Can ask for permission from a co-worker when leaving the area for a moment."
+ },
+ {
+  "id": 50,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 14,
+  "lessonTitle": "May I take a day off?",
+  "topic": "Communication at Work",
+  "text": "Can ask for permission in advance when you want to take a day off from work."
+ },
+ {
+  "id": 51,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 14,
+  "lessonTitle": "May I take a day off?",
+  "topic": "Communication at Work",
+  "text": "Can ask and understand how to fill out a form, such as a vacation request."
+ },
+ {
+  "id": 52,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 15,
+  "lessonTitle": "I have a fever, and my throat is sore.",
+  "topic": "Healthy Life",
+  "text": "Can explain in simple terms your symptoms at the hospital."
+ },
+ {
+  "id": 53,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 15,
+  "lessonTitle": "I have a fever, and my throat is sore.",
+  "topic": "Healthy Life",
+  "text": "Can listen to and understand the doctor at the hospital."
+ },
+ {
+  "id": 54,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 15,
+  "lessonTitle": "I have a fever, and my throat is sore.",
+  "topic": "Healthy Life",
+  "text": "Can fill out the necessary information on a questionnaire form at the hospital reception desk."
+ },
+ {
+  "id": 55,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 15,
+  "lessonTitle": "I have a fever, and my throat is sore.",
+  "topic": "Healthy Life",
+  "text": "Can listen to instructions about medicine and understand directions for use and precautions."
+ },
+ {
+  "id": 56,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 15,
+  "lessonTitle": "I have a fever, and my throat is sore.",
+  "topic": "Healthy Life",
+  "text": "Can read instructions about medicine and understand directions for use and dosage."
+ },
+ {
+  "id": 57,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 16,
+  "lessonTitle": "I try not to eat too much.",
+  "topic": "Healthy Life",
+  "text": "Can give advice when someone is feeling unwell, or listen to and understand the advice."
+ },
+ {
+  "id": 58,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 16,
+  "lessonTitle": "I try not to eat too much.",
+  "topic": "Healthy Life",
+  "text": "Can talk about what you are mindful of to maintain your health."
+ },
+ {
+  "id": 59,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 16,
+  "lessonTitle": "I try not to eat too much.",
+  "topic": "Healthy Life",
+  "text": "Can look at news about an epidemic illness and more or less understand the contents, such as its name, symptoms, and prevention methods."
+ },
+ {
+  "id": 60,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 16,
+  "lessonTitle": "I try not to eat too much.",
+  "topic": "Healthy Life",
+  "text": "Can look at a poster about an illness at a hospital and understand the symptoms, prevention methods, etc."
+ },
+ {
+  "id": 61,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 17,
+  "lessonTitle": "This is a personal amulet my older brother gave me.",
+  "topic": "Personal Relationships",
+  "text": "Can exchange basic greetings when you visit someone's house."
+ },
+ {
+  "id": 62,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 17,
+  "lessonTitle": "This is a personal amulet my older brother gave me.",
+  "topic": "Personal Relationships",
+  "text": "Can give a simple explanation about a gift you give."
+ },
+ {
+  "id": 63,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 17,
+  "lessonTitle": "This is a personal amulet my older brother gave me.",
+  "topic": "Personal Relationships",
+  "text": "Can talk about your belongings, for example, where you bought it or who gave it to you."
+ },
+ {
+  "id": 64,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 17,
+  "lessonTitle": "This is a personal amulet my older brother gave me.",
+  "topic": "Personal Relationships",
+  "text": "Can write a simple email to thank someone who, for example, invited you to their house."
+ },
+ {
+  "id": 65,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 18,
+  "lessonTitle": "How about giving something as a gift?",
+  "topic": "Personal Relationships",
+  "text": "Can say congratulations for a birthday, wedding, etc."
+ },
+ {
+  "id": 66,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 18,
+  "lessonTitle": "How about giving something as a gift?",
+  "topic": "Personal Relationships",
+  "text": "Can discuss what to give when selecting a gift for someone."
+ },
+ {
+  "id": 67,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 18,
+  "lessonTitle": "How about giving something as a gift?",
+  "topic": "Personal Relationships",
+  "text": "Can thank someone and offer comments when someone gives you a gift."
+ },
+ {
+  "id": 68,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 18,
+  "lessonTitle": "How about giving something as a gift?",
+  "topic": "Personal Relationships",
+  "text": "Can read and understand a post on social media that your friend wrote on their birthday."
+ },
+ {
+  "id": 69,
+  "book": "初級1",
+  "level": "A2-1",
+  "lesson": 18,
+  "lessonTitle": "How about giving something as a gift?",
+  "topic": "Personal Relationships",
+  "text": "Can write a message of congratulations or goodbye on a card."
+ },
+ {
+  "id": 1,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 1,
+  "lessonTitle": "I just came to Japan last week.",
+  "topic": "People around Me",
+  "text": "Can understand the name and role, etc. of staff members at your new job when they're introduced to you."
+ },
+ {
+  "id": 2,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 1,
+  "lessonTitle": "I just came to Japan last week.",
+  "topic": "People around Me",
+  "text": "Can give a somewhat detailed self-introduction when you give first greetings at work and other places."
+ },
+ {
+  "id": 3,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 1,
+  "lessonTitle": "I just came to Japan last week.",
+  "topic": "People around Me",
+  "text": "Can talk in simple terms about your hometown."
+ },
+ {
+  "id": 4,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 1,
+  "lessonTitle": "I just came to Japan last week.",
+  "topic": "People around Me",
+  "text": "Can write a simple self-introduction on social media."
+ },
+ {
+  "id": 5,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 2,
+  "lessonTitle": "He looks a serious person.",
+  "topic": "People around Me",
+  "text": "Can describe a person's characteristics or identify a person by listening to their characteristics when you are looking for someone."
+ },
+ {
+  "id": 6,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 2,
+  "lessonTitle": "He looks a serious person.",
+  "topic": "People around Me",
+  "text": "Can talk about the traits and appearance of a person who is not present."
+ },
+ {
+  "id": 7,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 2,
+  "lessonTitle": "He looks a serious person.",
+  "topic": "People around Me",
+  "text": "Can talk in simple terms about a famous person you like, why you like them and why you first liked them."
+ },
+ {
+  "id": 8,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 2,
+  "lessonTitle": "He looks a serious person.",
+  "topic": "People around Me",
+  "text": "Can read a simple interview article and understand the contents."
+ },
+ {
+  "id": 9,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 3,
+  "lessonTitle": "I cannot eat it because of an allergy.",
+  "topic": "At a Restaurant",
+  "text": "Can read a menu and understand the names of dishes, prices, and services."
+ },
+ {
+  "id": 10,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 3,
+  "lessonTitle": "I cannot eat it because of an allergy.",
+  "topic": "At a Restaurant",
+  "text": "Can tell someone you are dining with the restaurant staff what you cannot eat and the reasons."
+ },
+ {
+  "id": 11,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 3,
+  "lessonTitle": "I cannot eat it because of an allergy.",
+  "topic": "At a Restaurant",
+  "text": "Can tell the restaurant staff your requests for seating, orders, etc."
+ },
+ {
+  "id": 12,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 3,
+  "lessonTitle": "I cannot eat it because of an allergy.",
+  "topic": "At a Restaurant",
+  "text": "Can make a restaurant reservation by phone."
+ },
+ {
+  "id": 13,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 3,
+  "lessonTitle": "I cannot eat it because of an allergy.",
+  "topic": "At a Restaurant",
+  "text": "Can look at a restaurant coupon and find the necessary information."
+ },
+ {
+  "id": 14,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 4,
+  "lessonTitle": "Please eat it without soy sauce.",
+  "topic": "At a Restaurant",
+  "text": "Can listen to information about a recommended restaurant and understand its features."
+ },
+ {
+  "id": 15,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 4,
+  "lessonTitle": "Please eat it without soy sauce.",
+  "topic": "At a Restaurant",
+  "text": "Can listen to and understand the instructions on how to eat a dish."
+ },
+ {
+  "id": 16,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 4,
+  "lessonTitle": "Please eat it without soy sauce.",
+  "topic": "At a Restaurant",
+  "text": "Can ask or answer questions about how to eat a dish."
+ },
+ {
+  "id": 17,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 4,
+  "lessonTitle": "Please eat it without soy sauce.",
+  "topic": "At a Restaurant",
+  "text": "Can give a simple explanation about a dish from your country, such as the characteristics, ingredients, and how to eat it."
+ },
+ {
+  "id": 18,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 4,
+  "lessonTitle": "Please eat it without soy sauce.",
+  "topic": "At a Restaurant",
+  "text": "Can read online reviews about restaurants and find information, such as taste and price."
+ },
+ {
+  "id": 19,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 5,
+  "lessonTitle": "You should make a reservation early.",
+  "topic": "Let's Go on a Trip",
+  "text": "Can listen to brief information of tourist destinations in Japan and understand what these places are like and what you can do there."
+ },
+ {
+  "id": 20,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 5,
+  "lessonTitle": "You should make a reservation early.",
+  "topic": "Let's Go on a Trip",
+  "text": "Can discuss travel plans with a friend."
+ },
+ {
+  "id": 21,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 5,
+  "lessonTitle": "You should make a reservation early.",
+  "topic": "Let's Go on a Trip",
+  "text": "Can ask someone for advice or give them your advice on travel planning."
+ },
+ {
+  "id": 22,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 5,
+  "lessonTitle": "You should make a reservation early.",
+  "topic": "Let's Go on a Trip",
+  "text": "Can read reviews on a travel site and more or less understand the contents."
+ },
+ {
+  "id": 23,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 6,
+  "lessonTitle": "I am glad that I went to a lot of different places.",
+  "topic": "Let's Go on a Trip",
+  "text": "Can look at a train ticket, signs on a train, the bulletin board at a station, etc. to find the necessary information."
+ },
+ {
+  "id": 24,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 6,
+  "lessonTitle": "I am glad that I went to a lot of different places.",
+  "topic": "Let's Go on a Trip",
+  "text": "Can talk in simple terms about your travel plans to a person you met during your trip."
+ },
+ {
+  "id": 25,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 6,
+  "lessonTitle": "I am glad that I went to a lot of different places.",
+  "topic": "Let's Go on a Trip",
+  "text": "Can listen to the announcements at a station or on the train and get the necessary information or ask questions to someone nearby when you are not sure."
+ },
+ {
+  "id": 26,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 6,
+  "lessonTitle": "I am glad that I went to a lot of different places.",
+  "topic": "Let's Go on a Trip",
+  "text": "Can talk in simple terms about how your trip was."
+ },
+ {
+  "id": 27,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 6,
+  "lessonTitle": "I am glad that I went to a lot of different places.",
+  "topic": "Let's Go on a Trip",
+  "text": "Can write a simple post on social media about your experience and impressions of a trip."
+ },
+ {
+  "id": 28,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 7,
+  "lessonTitle": "If it rains, it will be held at the hall.",
+  "topic": "Local Events",
+  "text": "Can get the main information from notices on a community bulletin board or in your mailbox, etc."
+ },
+ {
+  "id": 29,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 7,
+  "lessonTitle": "If it rains, it will be held at the hall.",
+  "topic": "Local Events",
+  "text": "Can ask questions about community events and notices and understand the answers."
+ },
+ {
+  "id": 30,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 7,
+  "lessonTitle": "If it rains, it will be held at the hall.",
+  "topic": "Local Events",
+  "text": "Can listen to an event announcement on a community radio broadcast and understand the main information."
+ },
+ {
+  "id": 31,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 7,
+  "lessonTitle": "If it rains, it will be held at the hall.",
+  "topic": "Local Events",
+  "text": "Can ask questions about the content and understand the answers when you are invited to a community event."
+ },
+ {
+  "id": 32,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 8,
+  "lessonTitle": "Do you know where the food stands are?",
+  "topic": "Local Events",
+  "text": "Can look at an event program and find the main information, such as the starting time and the performances."
+ },
+ {
+  "id": 33,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 8,
+  "lessonTitle": "Do you know where the food stands are?",
+  "topic": "Local Events",
+  "text": "Can ask staff members or others about the time and place of events and understand the answers."
+ },
+ {
+  "id": 34,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 8,
+  "lessonTitle": "Do you know where the food stands are?",
+  "topic": "Local Events",
+  "text": "Can ask the person in charge about the requirements for participating in the event you are interested in and how to apply."
+ },
+ {
+  "id": 35,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 8,
+  "lessonTitle": "Do you know where the food stands are?",
+  "topic": "Local Events",
+  "text": "Can listen to and more or less understand precautions and other announcements at event venue."
+ },
+ {
+  "id": 36,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 8,
+  "lessonTitle": "Do you know where the food stands are?",
+  "topic": "Local Events",
+  "text": "Can read and understand simple posts on social media written by a friend who participated in the event."
+ },
+ {
+  "id": 37,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 8,
+  "lessonTitle": "Do you know where the food stands are?",
+  "topic": "Local Events",
+  "text": "Can write simple posts on social media about the event you participated in."
+ },
+ {
+  "id": 38,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 9,
+  "lessonTitle": "What do people do on Coming-of-Age Day?",
+  "topic": "Annual Events and Manners",
+  "text": "Can listen to and understand what to do and what to eat, etc. for annual events in Japan."
+ },
+ {
+  "id": 39,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 9,
+  "lessonTitle": "What do people do on Coming-of-Age Day?",
+  "topic": "Annual Events and Manners",
+  "text": "Can talk in simple terms about what you did during vacation, such as the New Year holidays, and how it was, etc."
+ },
+ {
+  "id": 40,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 9,
+  "lessonTitle": "What do people do on Coming-of-Age Day?",
+  "topic": "Annual Events and Manners",
+  "text": "Can talk in simple terms about festivals and events in your country."
+ },
+ {
+  "id": 41,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 9,
+  "lessonTitle": "What do people do on Coming-of-Age Day?",
+  "topic": "Annual Events and Manners",
+  "text": "Can read and more or less understand an article about a local event you participated in."
+ },
+ {
+  "id": 42,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 9,
+  "lessonTitle": "What do people do on Coming-of-Age Day?",
+  "topic": "Annual Events and Manners",
+  "text": "Can write and send New Year's greetings."
+ },
+ {
+  "id": 43,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 10,
+  "lessonTitle": "What kind of clothes should I wear?",
+  "topic": "Annual Events and Manners",
+  "text": "Can ask about manners and customs for weddings and funerals in Japan and understand the answers."
+ },
+ {
+  "id": 44,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 10,
+  "lessonTitle": "What kind of clothes should I wear?",
+  "topic": "Annual Events and Manners",
+  "text": "Can ask and comment about the difference in manners and customs between Japan and your country."
+ },
+ {
+  "id": 45,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 10,
+  "lessonTitle": "What kind of clothes should I wear?",
+  "topic": "Annual Events and Manners",
+  "text": "Can talk in simple terms about an event relating to intercultural experiences."
+ },
+ {
+  "id": 46,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 10,
+  "lessonTitle": "What kind of clothes should I wear?",
+  "topic": "Annual Events and Manners",
+  "text": "Can read and more or less understand online posts about differences in manners and customs."
+ },
+ {
+  "id": 47,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 11,
+  "lessonTitle": "I forgot to bring my point card.",
+  "topic": "Shopping Wisely",
+  "text": "Can tell a shop assistant your request about color, size, etc. at a clothing store and buy what you want."
+ },
+ {
+  "id": 48,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 11,
+  "lessonTitle": "I forgot to bring my point card.",
+  "topic": "Shopping Wisely",
+  "text": "Can tell people nearby about a problem while shopping."
+ },
+ {
+  "id": 49,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 11,
+  "lessonTitle": "I forgot to bring my point card.",
+  "topic": "Shopping Wisely",
+  "text": "Can describe a lost item and the place you lost it."
+ },
+ {
+  "id": 50,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 11,
+  "lessonTitle": "I forgot to bring my point card.",
+  "topic": "Shopping Wisely",
+  "text": "Can listen to and more or less understand in-store announcements at, for example, a shopping mall."
+ },
+ {
+  "id": 51,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 12,
+  "lessonTitle": "This vacuum cleaner is light and easy to move around.",
+  "topic": "Shopping Wisely",
+  "text": "Can ask someone which model to buy and where, when you want something."
+ },
+ {
+  "id": 52,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 12,
+  "lessonTitle": "This vacuum cleaner is light and easy to move around.",
+  "topic": "Shopping Wisely",
+  "text": "Can use a flea market application or website to buy electric appliances and other items."
+ },
+ {
+  "id": 53,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 12,
+  "lessonTitle": "This vacuum cleaner is light and easy to move around.",
+  "topic": "Shopping Wisely",
+  "text": "Can look at a product comparison chart and the price tags of electric appliances at an electronics retail store to get the necessary information."
+ },
+ {
+  "id": 54,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 12,
+  "lessonTitle": "This vacuum cleaner is light and easy to move around.",
+  "topic": "Shopping Wisely",
+  "text": "Can ask store staff about a product or ask for a discount when you are buying electric appliances."
+ },
+ {
+  "id": 55,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 13,
+  "lessonTitle": "They display a lot of materials.",
+  "topic": "Various Services",
+  "text": "Can listen to and understand what there is and what can be done when you are shown around facilities."
+ },
+ {
+  "id": 56,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 13,
+  "lessonTitle": "They display a lot of materials.",
+  "topic": "Various Services",
+  "text": "Can listen to and understand instructions, such as how to use the gym and other public facilities."
+ },
+ {
+  "id": 57,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 13,
+  "lessonTitle": "They display a lot of materials.",
+  "topic": "Various Services",
+  "text": "Can ask questions about how to use the library, etc., and understand the answers."
+ },
+ {
+  "id": 58,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 13,
+  "lessonTitle": "They display a lot of materials.",
+  "topic": "Various Services",
+  "text": "Can read and understand library information written in simple Japanese for non-Japanese residents."
+ },
+ {
+  "id": 59,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 13,
+  "lessonTitle": "They display a lot of materials.",
+  "topic": "Various Services",
+  "text": "Can look at and understand signs, such as “no photography allowed,” posted in facilities."
+ },
+ {
+  "id": 60,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 14,
+  "lessonTitle": "Will you cut my bangs a little shorter?",
+  "topic": "Various Services",
+  "text": "Can listen to the instructions and understand how to use delivery, dry cleaning, and other services."
+ },
+ {
+  "id": 61,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 14,
+  "lessonTitle": "Will you cut my bangs a little shorter?",
+  "topic": "Various Services",
+  "text": "Can read a delivery notice for mail or an express package and understand how to request redelivery."
+ },
+ {
+  "id": 62,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 14,
+  "lessonTitle": "Will you cut my bangs a little shorter?",
+  "topic": "Various Services",
+  "text": "Can explain your wishes about a hairstyle at a beauty salon or a barbershop."
+ },
+ {
+  "id": 63,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 14,
+  "lessonTitle": "Will you cut my bangs a little shorter?",
+  "topic": "Various Services",
+  "text": "Can listen to and understand what kind of services are available to non-Japanese residents at the International Exchange Association, etc."
+ },
+ {
+  "id": 64,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 15,
+  "lessonTitle": "The lights in the meeting room were left on.",
+  "topic": "Nature and Environment",
+  "text": "Can look at a notice about eco-friendly activities posted at work, etc. and understand what to be mindful of."
+ },
+ {
+  "id": 65,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 15,
+  "lessonTitle": "The lights in the meeting room were left on.",
+  "topic": "Nature and Environment",
+  "text": "Can talk about things you are mindful of for the environment or listen to and understand what others say."
+ },
+ {
+  "id": 66,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 15,
+  "lessonTitle": "The lights in the meeting room were left on.",
+  "topic": "Nature and Environment",
+  "text": "Can read and understand instructions on how to throw away of garbage, such as when to throw away of a certain kind of garbage."
+ },
+ {
+  "id": 67,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 15,
+  "lessonTitle": "The lights in the meeting room were left on.",
+  "topic": "Nature and Environment",
+  "text": "Can ask and understand how to throw away of a certain kind of garbage."
+ },
+ {
+  "id": 68,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 16,
+  "lessonTitle": "Do not panic in case of an earthquake.",
+  "topic": "Nature and Environment",
+  "text": "Can listen to news and announcements about a disaster and understand what happened and what to do."
+ },
+ {
+  "id": 69,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 16,
+  "lessonTitle": "Do not panic in case of an earthquake.",
+  "topic": "Nature and Environment",
+  "text": "Can listen to the explanation and instructions for emergency drills and understand what to do and what to keep in mind."
+ },
+ {
+  "id": 70,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 16,
+  "lessonTitle": "Do not panic in case of an earthquake.",
+  "topic": "Nature and Environment",
+  "text": "Can listen to and more or less understand the explanation on what to do in case of earthquakes at emergency drills, etc."
+ },
+ {
+  "id": 71,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 16,
+  "lessonTitle": "Do not panic in case of an earthquake.",
+  "topic": "Nature and Environment",
+  "text": "Can ask people around you for the necessary information in case of a disaster."
+ },
+ {
+  "id": 72,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 16,
+  "lessonTitle": "Do not panic in case of an earthquake.",
+  "topic": "Nature and Environment",
+  "text": "Can read and understand brochures for disaster prevention written in simple Japanese for non-Japanese residents."
+ },
+ {
+  "id": 73,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 17,
+  "lessonTitle": "I can speak Japanese better than before.",
+  "topic": "My Life",
+  "text": "Can talk in simple terms about what you’ve experienced and how life has changed after coming to Japan."
+ },
+ {
+  "id": 74,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 17,
+  "lessonTitle": "I can speak Japanese better than before.",
+  "topic": "My Life",
+  "text": "Can talk in simple terms about how your work is going lately to your co-workers."
+ },
+ {
+  "id": 75,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 17,
+  "lessonTitle": "I can speak Japanese better than before.",
+  "topic": "My Life",
+  "text": "Can write a simple message about how you are doing lately and send it to your Japanese-language teacher, etc."
+ },
+ {
+  "id": 76,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 18,
+  "lessonTitle": "I am thinking about starting my own company in the future.",
+  "topic": "My Life",
+  "text": "Can talk in simple terms about your dreams and hopes."
+ },
+ {
+  "id": 77,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 18,
+  "lessonTitle": "I am thinking about starting my own company in the future.",
+  "topic": "My Life",
+  "text": "Can listen to and more or less understand the experience and advice of a person who has lived in Japan for many years."
+ },
+ {
+  "id": 78,
+  "book": "初級2",
+  "level": "A2-2",
+  "lesson": 18,
+  "lessonTitle": "I am thinking about starting my own company in the future.",
+  "topic": "My Life",
+  "text": "Can express thanks at a farewell party, etc. referring to some brief episodes."
+ }
+]
