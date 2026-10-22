@@ -77,6 +77,11 @@ final class AppEnvironment {
     }
 
     @MainActor
+    func makeMockExamViewModel() -> MockExamViewModel {
+        MockExamViewModel(seed: seed, settings: settings, repository: repository, speech: speech)
+    }
+
+    @MainActor
     func makeCanDoViewModel() -> CanDoViewModel {
         let canDos: [CanDo]
         if let url = Bundle.main.url(forResource: "cando", withExtension: "json"),
