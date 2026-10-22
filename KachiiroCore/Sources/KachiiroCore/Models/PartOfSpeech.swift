@@ -27,6 +27,19 @@ public enum PartOfSpeech: Sendable, Equatable, Hashable, Codable {
         }
     }
 
+    public var label: String {
+        switch self {
+        case .verb1: "verb (group 1)"
+        case .verb2: "verb (group 2)"
+        case .verb3: "verb (group 3)"
+        case .iAdj: "い-adjective"
+        case .naAdj: "な-adjective"
+        case .noun: "noun"
+        case .expression: "expression"
+        case .other: "word"
+        }
+    }
+
     public var isVerb: Bool { self == .verb1 || self == .verb2 || self == .verb3 }
 
     public init(from decoder: Decoder) throws {

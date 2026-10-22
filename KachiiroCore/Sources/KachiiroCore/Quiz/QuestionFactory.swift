@@ -15,6 +15,9 @@ public enum QuestionFactoryRegistry {
     public static let all: [any QuestionFactory] = [
         VerbFormQuestionFactory(),
         InflectionQuestionFactory(),
+        VocabQuestionFactory(),
+        KanjiQuestionFactory(),
+        PitchQuestionFactory(),
     ]
 
     public static func factory(for drill: DrillKind) -> (any QuestionFactory)? {
