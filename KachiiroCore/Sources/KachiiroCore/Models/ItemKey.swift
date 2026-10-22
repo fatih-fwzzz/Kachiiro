@@ -55,3 +55,15 @@ public struct ItemKey: Hashable, Codable, Sendable {
     /// First numeric part (word id, row id or pattern id).
     public var id: Int? { parts.first.flatMap(Int.init) }
 }
+
+public extension ItemKey {
+    /// Process-independent seed (FNV-1a) so a key always rebuilds the same question.
+    var stableSeed: UInt64 {
+        var hash: UInt64 = 0xcbf2_9ce4_8422_2325
+        for byte in raw.utf8 {
+            hash ^= UInt64(byte)
+            hash &*= 0x0000_0100_0000_01b3
+        }
+        return hash
+    }
+}

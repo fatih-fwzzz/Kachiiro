@@ -16,4 +16,20 @@ public enum VerbForm: String, Sendable, Codable, CaseIterable {
         case .causativePassive: "使役受身 / causative-passive"
         }
     }
+
+    public var shortLabel: String {
+        switch self {
+        case .nai: "ない"
+        case .masu: "ます"
+        case .dictionary: "辞書"
+        case .ba: "ば"
+        case .volitional: "う"
+        case .te: "て"
+        case .ta: "た"
+        case .potential: "可能"
+        case .passive: "受身"
+        case .causative: "使役"
+        case .causativePassive: "使役受身"
+        }
+    }
 }

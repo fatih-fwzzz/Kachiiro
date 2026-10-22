@@ -17,8 +17,10 @@ enum AppTab: Hashable {
 struct RootView: View {
     @Environment(AppEnvironment.self) private var environment
     @State private var selection: AppTab
+    private let route: LaunchRoute?
 
     init(route: LaunchRoute? = LaunchRoute.fromProcess()) {
+        self.route = route
         _selection = State(initialValue: AppTab(route: route))
     }
 
@@ -28,7 +30,9 @@ struct RootView: View {
                 NavigationStack { DashboardView() }
             }
             Tab("Practice", systemImage: "square.grid.2x2", value: AppTab.practice) {
-                NavigationStack { PracticeView() }
+                NavigationStack {
+                    PracticeView(viewModel: environment.makePracticeViewModel(), launchRoute: route)
+                }
             }
             Tab("Mock Exam", systemImage: "timer", value: AppTab.mock) {
                 NavigationStack { MockExamView() }

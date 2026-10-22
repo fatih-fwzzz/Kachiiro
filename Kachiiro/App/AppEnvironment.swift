@@ -51,6 +51,14 @@ final class AppEnvironment {
         ReviewViewModel(repository: repository, seed: seed, settings: settings)
     }
 
+    @MainActor
+    func makePracticeViewModel() -> PracticeViewModel {
+        PracticeViewModel(
+            seed: seed, settings: settings, repository: repository,
+            inputModeOverride: LaunchRoute.inputModeFromProcess()
+        )
+    }
+
     #if DEBUG
     /// `-ui-debug-wrong <ItemKey>` / `-ui-debug-right <ItemKey>` record one answer at launch (persistence smoke tests).
     @MainActor

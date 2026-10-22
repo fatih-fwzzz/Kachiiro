@@ -39,6 +39,11 @@ public struct InflectionCell: Sendable, Hashable {
         return "\(pol) · \(t) · \(pl)"
     }
 
+    /// Compact three-line column header for tables.
+    public var shortLabel: String {
+        "\(politeness == .polite ? "Polite" : "Plain")\n\(tense == .nonPast ? "Non-past" : "Past")\n\(polarity == .affirmative ? "+" : "−")"
+    }
+
     /// The same tense/polarity in the other register.
     public var registerSwapped: InflectionCell {
         InflectionCell(politeness: politeness == .polite ? .plain : .polite, tense: tense, polarity: polarity)
