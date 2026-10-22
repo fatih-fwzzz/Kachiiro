@@ -63,3 +63,7 @@ Blank/NaN pos maps to `Other`. The script asserts the counts above.
 ## ItemKey formats
 
 `verb:{wordId}:{form}`, `infl:{wordId}:{cellRaw}`, `vocab:{wordId}:{m2w|w2m}`, `kanji:{rowId}:{r|w}`, `pitch:{wordId}`, `pattern:{patternId}`, `register:{wordId}:{tense}-{polarity}:{p2n|n2p}`, `dict:{wordId}`, `sent:{patternId}`.
+
+## Persistence
+
+SwiftData in the app target only: `ReviewRecord` (unique `key`, SRS fields), `AttemptRecord` (one row per answer), `CanDoRecord`. `SwiftDataProgressRepository` implements `ProgressRepository` using `SRSScheduler`; it **retains the `ModelContainer`** (a `ModelContext` does not, and a released container crashes the first fetch). `UserDefaultsSettingsStore` implements `SettingsStore` (scope as JSON, input mode, exam date, daily goal). `AppEnvironment.live()` builds both; `AppEnvironment.preview()` uses the in-memory implementations. `ReviewViewModel` lists due (dueDate ≤ now) and weak (`box ≤ 1 && wrongCount > 0`, or bookmarked) keys and rebuilds questions through `QuestionFactoryRegistry`.

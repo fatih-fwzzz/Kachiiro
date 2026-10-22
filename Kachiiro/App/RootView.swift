@@ -15,6 +15,7 @@ enum AppTab: Hashable {
 }
 
 struct RootView: View {
+    @Environment(AppEnvironment.self) private var environment
     @State private var selection: AppTab
 
     init(route: LaunchRoute? = LaunchRoute.fromProcess()) {
@@ -33,7 +34,7 @@ struct RootView: View {
                 NavigationStack { MockExamView() }
             }
             Tab("Review", systemImage: "arrow.triangle.2.circlepath", value: AppTab.review) {
-                NavigationStack { ReviewView() }
+                NavigationStack { ReviewView(viewModel: environment.makeReviewViewModel()) }
             }
         }
         .tabViewStyle(.sidebarAdaptable)
@@ -42,5 +43,5 @@ struct RootView: View {
 
 #Preview {
     RootView()
-        .environment(AppEnvironment(seed: SeedData(words: [], patterns: [], kanji: [])))
+        .environment(AppEnvironment.preview())
 }
