@@ -38,3 +38,7 @@ Contracts, persistence, ETL, testing and "adding a drill" sections are extended 
 3. Verbs and adjectives keep only the part before `／` (A1 verbs are `dictionary／masu`); every other pos keeps the first part and the rest goes to `alternates`.
 
 Blank/NaN pos maps to `Other`. The script asserts the counts above.
+
+## Katsuyou engine
+
+`KatsuyouEngine.conjugate(_:form:as:)` runs one algorithm on the headword and on the reading and merges the results into a `Conjugation` (`display` = written form, `accepted` = every valid string). `as:` overrides the group so drills can build wrong-group distractors. Dataset exceptions: `いく` compounds use `って/った`; `ある` compounds have `ない` as negative and no potential/passive/causative forms; `しぬ` has no causative-passive; `来る` keeps `来` plus okurigana. `InflectionEngine.inflect(_:cell:)` builds the 8-cell plain/polite matrix (`いい` → `よ…`, `かわいい` stays regular). Tests transcribe `Conjugation of Verbs.pdf` and `Plain form and Polite form.pdf`.
