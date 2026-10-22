@@ -34,7 +34,7 @@ struct QuizView: View {
                 modePicker
                 stimulus(q)
                     .frame(maxWidth: .infinity)
-                    .frame(height: geo.size.height * 0.42)
+                    .frame(height: geo.size.height * 0.34)
                 ScrollView {
                     VStack(spacing: 10) {
                         answerArea(q)
@@ -124,8 +124,8 @@ struct QuizView: View {
                     Text(choice)
                         .font(AppTheme.Fonts.ui(.title3, weight: .medium))
                         .foregroundStyle(AppTheme.primaryInk)
-                        .frame(maxWidth: .infinity, minHeight: 28)
-                        .quizCard(tint: choiceTint(choice, q))
+                        .frame(maxWidth: .infinity, minHeight: 24)
+                        .quizCard(tint: choiceTint(choice, q), padding: 12)
                 }
                 .buttonStyle(.plain)
                 .disabled(model.result != nil)

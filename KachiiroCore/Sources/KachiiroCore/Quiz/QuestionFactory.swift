@@ -12,7 +12,10 @@ public extension QuestionFactory {
 }
 
 public enum QuestionFactoryRegistry {
-    public static let all: [any QuestionFactory] = []
+    public static let all: [any QuestionFactory] = [
+        VerbFormQuestionFactory(),
+        InflectionQuestionFactory(),
+    ]
 
     public static func factory(for drill: DrillKind) -> (any QuestionFactory)? {
         all.first { $0.drill == drill }

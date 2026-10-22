@@ -5,7 +5,7 @@ import KachiiroCore
 /// Routes: dashboard, practice, mock, review, drill.<DrillKind>, audio, cando, settings.
 enum LaunchRoute: Equatable {
     case dashboard, practice, mock, review, audio, cando, settings
-    case drill(String)
+    case drill(DrillKind)
 
     init?(argument: String) {
         switch argument {
@@ -17,8 +17,9 @@ enum LaunchRoute: Equatable {
         case "cando": self = .cando
         case "settings": self = .settings
         default:
-            guard argument.hasPrefix("drill."), argument.count > "drill.".count else { return nil }
-            self = .drill(String(argument.dropFirst("drill.".count)))
+            guard argument.hasPrefix("drill."),
+                  let drill = DrillKind(rawValue: String(argument.dropFirst("drill.".count))) else { return nil }
+            self = .drill(drill)
         }
     }
 

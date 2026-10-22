@@ -67,3 +67,15 @@ Blank/NaN pos maps to `Other`. The script asserts the counts above.
 ## Persistence
 
 SwiftData in the app target only: `ReviewRecord` (unique `key`, SRS fields), `AttemptRecord` (one row per answer), `CanDoRecord`. `SwiftDataProgressRepository` implements `ProgressRepository` using `SRSScheduler`; it **retains the `ModelContainer`** (a `ModelContext` does not, and a released container crashes the first fetch). `UserDefaultsSettingsStore` implements `SettingsStore` (scope as JSON, input mode, exam date, daily goal). `AppEnvironment.live()` builds both; `AppEnvironment.preview()` uses the in-memory implementations. `ReviewViewModel` lists due (dueDate ≤ now) and weak (`box ≤ 1 && wrongCount > 0`, or bookmarked) keys and rebuilds questions through `QuestionFactoryRegistry`.
+
+## Drills
+
+A drill = one `QuestionFactory` + one `DrillKind` + a key prefix. Registered factories appear in `PracticeViewModel.sections` automatically (grouped by `DrillKind.pillar`) and in `QuestionFactoryRegistry.question(for:seed:)` (used by Review).
+
+Adding a drill:
+1. Add a case to `DrillKind` (raw value = `-ui-route drill.<raw>`), its `pillar` and `title`; add the key builder to `ItemKey` and its prefix to `ItemKey.drill`.
+2. Implement `makeQuestions(count:scope:seed:rng:)` and `question(for:seed:)`; the latter rebuilds with `FactorySupport.stableRNG(key)` so a key always yields the same question. Distractors come from `DistractorPicker` tiers (most plausible first).
+3. Append the factory to `QuestionFactoryRegistry.all`.
+4. Tests: use `FactoryTestSupport.expectWellFormed` / `expectRoundTrip` (4 distinct choices containing the answer, accepted ⊇ answer, key round trip, scope respected).
+
+Katsuyou drills: `VerbFormQuestionFactory` (`verb:{id}:{form}`; `dictionary` is the reverse question showing the masu form; distractors: other forms of the lexeme → wrong-group conjugations → same form of other verbs) and `InflectionQuestionFactory` (`infl:{id}:{cell}`; pool excludes entries with `～`, digits, Latin or punctuation; distractors: other cells → plain↔polite swaps on same-kind lexemes → same cell on same-kind lexemes). `ConjugationReference` builds the reference tables from the engines.
