@@ -13,8 +13,11 @@ public final class InMemoryProgressRepository: ProgressRepository {
     public private(set) var attempts: [Attempt] = []
     private var states: [ItemKey: ReviewState] = [:]
     private var canDo: Set<Int> = []
+    private let calendar: Calendar
 
-    public init() {}
+    public init(calendar: Calendar = .current) {
+        self.calendar = calendar
+    }
 
     public func record(_ key: ItemKey, pillar: Pillar, correct: Bool, mode: InputMode, at date: Date) {
         attempts.append(Attempt(key: key, pillar: pillar, correct: correct, mode: mode, date: date))
@@ -51,7 +54,7 @@ public final class InMemoryProgressRepository: ProgressRepository {
     public func answeredCount(since: Date) -> Int { attempts.filter { $0.date >= since }.count }
 
     public func studyDays() -> Set<DateComponents> {
-        Set(attempts.map { Calendar.current.dateComponents([.year, .month, .day], from: $0.date) })
+        Set(attempts.map { calendar.dateComponents([.year, .month, .day], from: $0.date) })
     }
 
     public func canDoDone() -> Set<Int> { canDo }

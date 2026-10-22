@@ -77,6 +77,16 @@ final class AppEnvironment {
     }
 
     @MainActor
+    func makeDashboardViewModel() -> DashboardViewModel {
+        DashboardViewModel(settings: settings, repository: repository)
+    }
+
+    @MainActor
+    func makeSettingsViewModel() -> SettingsViewModel {
+        SettingsViewModel(store: settings, repository: repository)
+    }
+
+    @MainActor
     func makeMockExamViewModel() -> MockExamViewModel {
         MockExamViewModel(seed: seed, settings: settings, repository: repository, speech: speech)
     }
