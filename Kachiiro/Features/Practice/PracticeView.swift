@@ -7,6 +7,7 @@ struct PracticeView: View {
     @State private var isQuizActive = false
     @State private var routeConsumed = false
     @State private var showAudio = false
+    @State private var showCanDo = false
     @Environment(AppEnvironment.self) private var environment
     private let launchRoute: LaunchRoute?
 
@@ -45,10 +46,17 @@ struct PracticeView: View {
                     }
                 }
             }
+            Section(Pillar.kaiwa.title) {
+                NavigationLink("Can-do checklist") { CanDoListView(viewModel: environment.makeCanDoViewModel()) }
+                NavigationLink("Audio library") { AudioLibraryView(viewModel: environment.makeAudioLibraryViewModel()) }
+            }
         }
         .navigationTitle("Practice")
         .navigationDestination(isPresented: $isQuizActive) {
             if let session { QuizView(model: session) }
+        }
+        .navigationDestination(isPresented: $showCanDo) {
+            CanDoListView(viewModel: environment.makeCanDoViewModel())
         }
         .navigationDestination(isPresented: $showAudio) {
             AudioLibraryView(viewModel: environment.makeAudioLibraryViewModel())
@@ -59,6 +67,7 @@ struct PracticeView: View {
             switch launchRoute {
             case .drill(let drill): start(drill)
             case .audio: showAudio = true
+            case .cando: showCanDo = true
             default: break
             }
         }

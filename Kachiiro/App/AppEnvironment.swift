@@ -76,6 +76,18 @@ final class AppEnvironment {
         AudioLibraryViewModel(fileNames: BundleAudioIndex.fileNames(), player: audioPlayer)
     }
 
+    @MainActor
+    func makeCanDoViewModel() -> CanDoViewModel {
+        let canDos: [CanDo]
+        if let url = Bundle.main.url(forResource: "cando", withExtension: "json"),
+           let data = try? Data(contentsOf: url), let decoded = try? CanDo.load(from: data) {
+            canDos = decoded
+        } else {
+            canDos = []
+        }
+        return CanDoViewModel(canDos: canDos, repository: repository, audioFileNames: BundleAudioIndex.fileNames())
+    }
+
     #if DEBUG
     /// `-ui-debug-wrong <ItemKey>` / `-ui-debug-right <ItemKey>` record one answer at launch (persistence smoke tests).
     @MainActor

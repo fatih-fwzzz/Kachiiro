@@ -91,3 +91,7 @@ Bunpou drills: `PatternQuestionFactory` (`pattern:{id}`; choice-only; the exampl
 - `AudioCatalog.parse` turns `Z_[LL-TT]_<kiku|hanasu|katachi|kotoba|kaiwa><suffix>.mp3` into `AudioTrack`s (lesson, sequence, kind, label). Labels repeat inside a lesson (several `Listen 1`), so rows show the track number. Only 初級2 has audio.
 - `AudioLibraryViewModel` drives an `AudioPlaying` (`AudioPlayerService`, `AVAudioPlayer` with `enableRate`; rates 0.75/1/1.25). The synchronized Xcode group flattens `Kachiiro/Audio/*.mp3` into the bundle root (verified in the built `.app`), so `BundleAudioIndex` looks up files without a subdirectory.
 - Playback proof: `AudioPlayerService.load` logs `load ok <fileName>` (subsystem `com.muhammadfawwaz.Kachiiro`); DEBUG launch argument `-ui-autoplay <fileName>` starts a track on the Audio library screen.
+
+## Kaiwa (offline): Can-do checklist
+
+`Kachiiro/Resources/cando.json` holds 147 Can-do statements (初級1: 1…69, 初級2: 1…78) transcribed from the rendered pages of the course tables of contents (their PDF text layer is garbled). `CanDo.storageId` keeps ids unique across books (初級2 → `1000 + id`). `CanDoViewModel` groups by book and lesson, toggles through `ProgressRepository.setCanDo`, reports progress and returns lesson tracks (初級2 only) for the "Listen" link, which opens `AudioLibraryView` filtered to that lesson. Roleplay needs an LLM and is part of plan 2.
