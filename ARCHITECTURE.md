@@ -28,3 +28,13 @@ scripts/build_seed.py             xlsx → irodori_seed.json
 The package is linked into the app as a local Swift package (`XCLocalSwiftPackageReference` in `project.pbxproj`). Package language mode is Swift 5 to match the app target.
 
 Contracts, persistence, ETL, testing and "adding a drill" sections are extended by the branches that introduce them.
+
+## Seed data (ETL)
+
+`scripts/build_seed.py` reads `wordlist_all.xlsx`, `sentence_patterns_list.xlsx`, `kanji_list.xlsx` and writes `Kachiiro/Resources/irodori_seed.json` (3797 words, 259 patterns with an example sentence, 659 kanji rows). Word `id` is the sheet's `「ことばリスト」順` column (not a row index). Cleaning order for headword/reading/pitch:
+
+1. `（する）` on `N/V［3］` rows becomes `する`.
+2. Parenthesised notes are extracted (nesting-aware) into `contextNote` and removed with their leading spaces; `（な）` is dropped.
+3. Verbs and adjectives keep only the part before `／` (A1 verbs are `dictionary／masu`); every other pos keeps the first part and the rest goes to `alternates`.
+
+Blank/NaN pos maps to `Other`. The script asserts the counts above.
