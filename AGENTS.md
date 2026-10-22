@@ -34,3 +34,7 @@ Simulator taps cannot be scripted, so screens are reached with launch arguments:
 
 ## ItemKey formats
 `verb:{wordId}:{VerbForm}`, `infl:{wordId}:{cellRaw}`, `vocab:{wordId}:{m2w|w2m}`, `kanji:{rowId}:{r|w}`, `pitch:{wordId}`, `pattern:{patternId}`, `register:{wordId}:{tense}-{polarity}:{p2n|n2p}`, `dict:{wordId}`, `sent:{patternId}`. Keys are persisted: never change a format without a migration.
+
+## Debug launch arguments (DEBUG builds)
+`-ui-debug-wrong <ItemKey>` / `-ui-debug-right <ItemKey>` record one answer at launch, for persistence smoke tests: launch once with the flag, relaunch without it, `-ui-route review` must list the key. Taps cannot be scripted in the simulator.
+- SwiftData: keep the `ModelContainer` alive for as long as its `ModelContext` is used.
