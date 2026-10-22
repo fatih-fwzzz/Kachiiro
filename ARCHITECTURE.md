@@ -42,3 +42,11 @@ Blank/NaN pos maps to `Other`. The script asserts the counts above.
 ## Katsuyou engine
 
 `KatsuyouEngine.conjugate(_:form:as:)` runs one algorithm on the headword and on the reading and merges the results into a `Conjugation` (`display` = written form, `accepted` = every valid string). `as:` overrides the group so drills can build wrong-group distractors. Dataset exceptions: `いく` compounds use `って/った`; `ある` compounds have `ない` as negative and no potential/passive/causative forms; `しぬ` has no causative-passive; `来る` keeps `来` plus okurigana. `InflectionEngine.inflect(_:cell:)` builds the 8-cell plain/polite matrix (`いい` → `よ…`, `かわいい` stays regular). Tests transcribe `Conjugation of Verbs.pdf` and `Plain form and Polite form.pdf`.
+
+## Design system and shell
+
+- `DesignSystem/AppTheme.swift`: adaptive system surfaces, monochrome Apple-blue ramp, system fonts only (`.rounded` UI, `.serif` for exam text; Hiragino is the automatic CJK fallback).
+- `PitchAccentView` draws a 1.5 pt blue line over the high morae with a tick at the drop. `PitchPattern.parse(pitch:reading:)` (Core) returns `nil` when the mora counts of pitch and reading differ. Phonetic shape: flat = low first mora then high; atamadaka = only the first mora high; nakadaka/odaka = high from mora 2 up to the drop.
+- `RootView`: `TabView` (`.tabViewStyle(.sidebarAdaptable)`) with Dashboard, Practice, Mock Exam, Review, each in a `NavigationStack`. iPhone shows a tab bar; iPad shows a top tab bar with a sidebar toggle.
+- `AppEnvironment` is the composition root (`@Observable`), created in `KachiiroApp` and injected with `.environment`.
+- `LaunchRoute` parses `-ui-route <dashboard|practice|mock|review|drill.<DrillKind>|audio|cando|settings>` and `-ui-mode <choice|typing>` from the process arguments so every screen can be reached for screenshot smoke tests.
