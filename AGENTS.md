@@ -46,3 +46,6 @@ Simulator taps cannot be scripted, so screens are reached with launch arguments:
 
 ## Kaiwa content and AI
 Keigo content (`keigo.json`, `roleplay.json`) is hand-authored in `KachiiroCore/Sources/KachiiroCore/Resources` and loaded through `Bundle.module`; `KeigoTests`/`RoleplayTests` validate it. `KaiwaAIResolver` falls back to offline rules (with a notice) when the selected engine is unavailable. FoundationModels is weak-linked (`OTHER_LDFLAGS`) so iOS 18 devices launch.
+
+## Gemini Live roleplay
+With Engine = Gemini and Content = AI-generated, roleplay uses `GeminiLiveClient` (`gemini-3.1-flash-live-preview`, WebSocket): the partner speaks as streamed PCM (24 kHz, played by `LiveAudioPlayer`) and the bubble shows the output transcript. Learner lines are reviewed on `generateContent` (`reviewRoleplayLine`; `GeminiClient.models` tries `gemini-3.1-flash-lite` first). Live cannot return structured output, so a failed review leaves the line unreviewed. The simulator has no audio output device (`AVAudioEngine` start fails with -10851, as does `AVAudioPlayer`); check audible playback on a device.

@@ -1,8 +1,8 @@
 import Foundation
 
 public struct GeminiClient: LanguageModelClient {
-    /// Tried in order; the lighter model answers when the first is overloaded (503/429) or times out.
-    public static let models = ["gemini-3.8-flash", "gemini-3.1-flash-lite"]
+    /// Tried in order: the fast lite model first, the larger model when lite is overloaded (503/429) or times out.
+    public static let models = ["gemini-3.1-flash-lite", "gemini-3.8-flash"]
 
     private let apiKey: String
     private let session: URLSession

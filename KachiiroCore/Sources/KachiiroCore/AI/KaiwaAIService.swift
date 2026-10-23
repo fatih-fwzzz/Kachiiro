@@ -49,6 +49,16 @@ enum KaiwaPrompts {
     static func partnerTurn(scenario: RoleplayScenario, history: String) -> String {
         "Scenario: \(scenario.setting) You play: \(scenario.partnerRole). The learner plays: \(scenario.userRole), named リン. Goal: \(scenario.goal). Reply only as \(scenario.partnerRole), in one or two short sentences, in the register this scenario requires. In `feedback`, judge the learner's latest line (if there is none yet, set acceptable true and leave corrected and explanation empty). Set `finished` true when the goal is reached or after the learner's eighth line.\nConversation so far:\n\(history)"
     }
+
+    static let liveOpening = "Begin the conversation now with your opening line."
+
+    static func livePartner(_ s: RoleplayScenario) -> String {
+        "You play \(s.partnerRole) in this scenario: \(s.setting) The learner plays \(s.userRole), named リン. Goal: \(s.goal). Speak only Japanese, as \(s.partnerRole), in one or two short sentences, in the register this scenario requires. Never correct the learner; stay in role."
+    }
+
+    static func reviewLine(scenario: RoleplayScenario, history: String) -> String {
+        "Scenario: \(scenario.setting) The learner plays \(scenario.userRole), named リン, talking to \(scenario.partnerRole). Judge only リン's last line: is it natural Japanese with the correct keigo for this situation? `corrected` is the best version of that line.\nConversation so far:\n\(history)"
+    }
 }
 
 public struct KaiwaAIService: AnswerJudging, Sendable {
@@ -206,11 +216,22 @@ public struct KaiwaAIService: AnswerJudging, Sendable {
         return lines
     }
 
+    private static func transcript(_ history: [RoleplayViewModel.Line]) -> String {
+        history.map { ($0.speaker == .partner ? "相手: " : "リン: ") + $0.text }.joined(separator: "\n")
+    }
+
     public func partnerTurn(scenario: RoleplayScenario, history: [RoleplayViewModel.Line]) async throws -> PartnerTurn {
-        let transcript = history.map { ($0.speaker == .partner ? "相手: " : "リン: ") + $0.text }.joined(separator: "\n")
-        return try await decode(
-            PartnerTurn.self, prompt: KaiwaPrompts.partnerTurn(scenario: scenario, history: transcript),
+        try await decode(
+            PartnerTurn.self, prompt: KaiwaPrompts.partnerTurn(scenario: scenario, history: Self.transcript(history)),
             schema: Self.partnerTurnSchema
+        )
+    }
+
+    /// Judges only the learner's last line, for sessions where a Live voice model plays the partner.
+    public func reviewRoleplayLine(scenario: RoleplayScenario, history: [RoleplayViewModel.Line]) async throws -> KeigoJudgement {
+        try await decode(
+            KeigoJudgement.self, prompt: KaiwaPrompts.reviewLine(scenario: scenario, history: Self.transcript(history)),
+            schema: Self.judgementSchema
         )
     }
 }

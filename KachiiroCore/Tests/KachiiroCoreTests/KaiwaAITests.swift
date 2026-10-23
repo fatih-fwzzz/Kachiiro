@@ -72,7 +72,7 @@ private let acceptJudgement = KeigoJudgement(acceptable: true, corrected: "bette
     @Test func requestTargetsGeminiWithKeyHeaderAndJSONFormat() throws {
         let client = GeminiClient(apiKey: "KEY")
         let request = client.makeRequest(system: "sys", prompt: "go", schema: KaiwaAIService.judgementSchema)
-        #expect(request.url?.absoluteString == "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent")
+        #expect(request.url?.absoluteString == "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent")
         #expect(request.httpMethod == "POST")
         #expect(request.value(forHTTPHeaderField: "x-goog-api-key") == "KEY")
         #expect(request.value(forHTTPHeaderField: "Content-Type") == "application/json")
