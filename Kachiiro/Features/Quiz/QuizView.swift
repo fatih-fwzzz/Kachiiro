@@ -117,7 +117,11 @@ struct QuizView: View {
                 ScrollView {
                     VStack(spacing: 10) {
                         answerArea(q)
-                        if let result = model.result { feedback(result, q) }
+                        if model.isJudging {
+                            ProgressView("Checking your keigo…").padding(.vertical, 8)
+                        } else if let result = model.result {
+                            feedback(result, q)
+                        }
                     }
                     .padding(.bottom, 8)
                 }
@@ -254,6 +258,17 @@ struct QuizView: View {
                 Label("Correct", systemImage: "checkmark.circle.fill").foregroundStyle(.green)
             case .wrong(let answer):
                 Label("Answer: \(answer)", systemImage: "xmark.circle.fill").foregroundStyle(.red)
+            }
+            if let judgement = model.judgement {
+                if !judgement.explanation.isEmpty {
+                    Text(judgement.explanation).font(.callout).foregroundStyle(AppTheme.secondaryInk)
+                }
+                if !judgement.corrected.isEmpty {
+                    Text("Better: \(judgement.corrected)").font(.callout)
+                }
+            }
+            if let judgeError = model.judgeError {
+                Text(judgeError).font(.callout).foregroundStyle(AppTheme.secondaryInk)
             }
             if !q.explanation.isEmpty {
                 Text(q.explanation).font(.callout).foregroundStyle(AppTheme.secondaryInk)

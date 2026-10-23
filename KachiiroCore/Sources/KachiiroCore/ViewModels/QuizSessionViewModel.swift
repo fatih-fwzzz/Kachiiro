@@ -22,9 +22,15 @@ public final class QuizSessionViewModel {
     public private(set) var answers: [Answer] = []
     public private(set) var isFinished = false
     public private(set) var bookmarkedKeys: Set<ItemKey> = []
+    /// `true` while an AI judge is checking a typed answer.
+    public private(set) var isJudging = false
+    public private(set) var judgement: KeigoJudgement?
+    public private(set) var judgeError: String?
+    @ObservationIgnored public private(set) var pendingJudgement: Task<Void, Never>?
 
     private let repository: ProgressRepository
     private let speech: SpeechPlaying?
+    private let judge: AnswerJudging?
     private let now: () -> Date
 
     public init(
@@ -32,12 +38,14 @@ public final class QuizSessionViewModel {
         initialMode: InputMode,
         repository: ProgressRepository,
         speech: SpeechPlaying? = nil,
+        judge: AnswerJudging? = nil,
         now: @escaping () -> Date = { Date() }
     ) {
         self.questions = questions
         self.mode = initialMode
         self.repository = repository
         self.speech = speech
+        self.judge = judge
         self.now = now
         self.isFinished = questions.isEmpty
         bookmarkedKeys = Set(questions.map(\.id).filter { repository.reviewState($0)?.isBookmarked == true })
@@ -75,20 +83,45 @@ public final class QuizSessionViewModel {
     }
 
     public func submitChoice(_ choice: String) {
-        guard let q = currentQuestion, result == nil, q.supportedModes.contains(.choice) else { return }
+        guard let q = currentQuestion, result == nil, !isJudging, q.supportedModes.contains(.choice) else { return }
         finishAnswer(q, correct: choice == q.correctChoice, mode: .choice)
     }
 
     public func submitText(_ text: String) {
-        guard let q = currentQuestion, result == nil, q.supportedModes.contains(.typing),
+        guard let q = currentQuestion, result == nil, !isJudging, q.supportedModes.contains(.typing),
               !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        let correct = TypingValidator.isCorrect(text, accepted: q.acceptedAnswers, keyPhrases: q.keyPhrases)
-        finishAnswer(q, correct: correct, mode: .typing)
+        if TypingValidator.isCorrect(text, accepted: q.acceptedAnswers, keyPhrases: q.keyPhrases) {
+            finishAnswer(q, correct: true, mode: .typing)
+            return
+        }
+        guard let judge, q.judgingContext != nil else {
+            finishAnswer(q, correct: false, mode: .typing)
+            return
+        }
+        isJudging = true
+        judgeError = nil
+        pendingJudgement = Task { [weak self] in
+            do {
+                let verdict = try await judge.judge(answer: text, question: q)
+                self?.finishJudging(q, verdict: verdict, error: nil)
+            } catch {
+                self?.finishJudging(q, verdict: nil, error: error)
+            }
+        }
+    }
+
+    private func finishJudging(_ q: QuizQuestion, verdict: KeigoJudgement?, error: Error?) {
+        isJudging = false
+        judgement = verdict
+        if let error { judgeError = "AI check failed: \(error.localizedDescription)" }
+        finishAnswer(q, correct: verdict?.acceptable ?? false, mode: .typing)
     }
 
     public func next() {
-        guard result != nil, !isFinished else { return }
+        guard result != nil, !isFinished, !isJudging else { return }
         result = nil
+        judgement = nil
+        judgeError = nil
         if index + 1 >= questions.count {
             isFinished = true
         } else {
@@ -112,12 +145,14 @@ public final class QuizSessionViewModel {
     public func makeRetrySession() -> QuizSessionViewModel? {
         let wrong = wrongQuestions
         guard !wrong.isEmpty else { return nil }
-        return QuizSessionViewModel(questions: wrong, initialMode: mode, repository: repository, speech: speech, now: now)
+        return QuizSessionViewModel(questions: wrong, initialMode: mode, repository: repository, speech: speech, judge: judge, now: now)
     }
 
     private func finishAnswer(_ q: QuizQuestion, correct: Bool, mode used: InputMode) {
         result = correct ? .correct : .wrong(correctAnswer: q.correctChoice)
         answers.append(Answer(key: q.id, correct: correct))
-        repository.record(q.id, pillar: q.pillar, correct: correct, mode: used, at: now())
+        if !q.id.isGenerated {
+            repository.record(q.id, pillar: q.pillar, correct: correct, mode: used, at: now())
+        }
     }
 }

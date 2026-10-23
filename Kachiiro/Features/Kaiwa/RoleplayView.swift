@@ -41,7 +41,7 @@ struct RoleplayView: View {
         .task {
             guard !started else { return }
             started = true
-            model.start()
+            await model.start()
             #if DEBUG
             let args = ProcessInfo.processInfo.arguments
             if let i = args.firstIndex(of: "-ui-autoanswer"), args.indices.contains(i + 1) {
@@ -58,6 +58,14 @@ struct RoleplayView: View {
             Text("You: \(model.scenario.userRole) · Partner: \(model.scenario.partnerRole)")
                 .font(.footnote).foregroundStyle(AppTheme.secondaryInk)
             Label(model.scenario.goal, systemImage: "target").font(.footnote.weight(.semibold))
+            if model.isFreeMode {
+                Label("AI conversation · \(environment.aiResolver.engineLabel)", systemImage: "sparkles")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(AppTheme.accent)
+            }
+            if let notice = environment.aiResolver.notice {
+                Text(notice).font(.caption).foregroundStyle(AppTheme.secondaryInk)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .quizCard(tint: AppTheme.accentSoftFill)
@@ -108,6 +116,18 @@ struct RoleplayView: View {
             }
             .font(.caption)
             .multilineTextAlignment(.trailing)
+        case .reviewed(let acceptable, let corrected, let explanation):
+            VStack(alignment: .trailing, spacing: 2) {
+                if acceptable {
+                    Label("Natural", systemImage: "checkmark.circle.fill").foregroundStyle(.green)
+                } else {
+                    Label("Needs work", systemImage: "xmark.circle.fill").foregroundStyle(.red)
+                }
+                if !corrected.isEmpty { Text("Better: \(corrected)") }
+                if !explanation.isEmpty { Text(explanation).foregroundStyle(AppTheme.secondaryInk) }
+            }
+            .font(.caption)
+            .multilineTextAlignment(.trailing)
         }
     }
 
@@ -118,7 +138,7 @@ struct RoleplayView: View {
             Button("Try again") {
                 typed = ""
                 showModelAnswer = false
-                model.start()
+                Task { await model.start() }
             }
             .buttonStyle(.borderedProminent)
         }
@@ -137,6 +157,19 @@ struct RoleplayView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         .font(.footnote)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            if model.isWaiting {
+                ProgressView().frame(maxWidth: .infinity, alignment: .leading)
+            }
+            if let error = model.errorMessage {
+                HStack {
+                    Text(error).font(.caption).foregroundStyle(AppTheme.secondaryInk)
+                    if model.canRetry {
+                        Button("Retry") { Task { await model.retryLast() } }
+                            .font(.caption.weight(.semibold))
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

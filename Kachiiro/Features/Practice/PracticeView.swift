@@ -29,6 +29,11 @@ struct PracticeView: View {
             }
             ForEach(viewModel.sections) { section in
                 Section(section.pillar.title) {
+                    if section.pillar == .kaiwa, let notice = viewModel.kaiwaNotice {
+                        Label(notice, systemImage: "info.circle")
+                            .font(.footnote)
+                            .foregroundStyle(AppTheme.secondaryInk)
+                    }
                     ForEach(section.drills, id: \.self) { drill in
                         Button { start(drill) } label: {
                             HStack {
@@ -58,6 +63,13 @@ struct PracticeView: View {
                         NavigationLink("Audio library") { AudioLibraryView(viewModel: environment.makeAudioLibraryViewModel()) }
                     }
                 }
+            }
+        }
+        .overlay {
+            if viewModel.isGenerating {
+                ProgressView("Generating with \(viewModel.kaiwaEngineLabel)…")
+                    .padding(20)
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
         }
         .navigationTitle("Practice")
@@ -101,6 +113,13 @@ struct PracticeView: View {
     }
 
     private func start(_ drill: DrillKind) {
+        if viewModel.usesGeneratedContent(for: drill) {
+            Task {
+                session = await viewModel.makeGeneratedSession(for: drill)
+                isQuizActive = session != nil
+            }
+            return
+        }
         session = viewModel.makeSession(for: drill)
         isQuizActive = session != nil
     }

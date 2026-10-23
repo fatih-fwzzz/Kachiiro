@@ -283,6 +283,10 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					FoundationModels,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.muhammadfawwaz.Kachiiro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -323,6 +327,10 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					FoundationModels,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.muhammadfawwaz.Kachiiro;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;

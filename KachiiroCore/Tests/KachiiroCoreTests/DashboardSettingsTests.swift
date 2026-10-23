@@ -100,7 +100,7 @@ import Testing
 
     @Test func scopeChangesAreReflectedAndPersisted() {
         let store = InMemorySettingsStore()
-        let vm = SettingsViewModel(store: store, repository: InMemoryProgressRepository())
+        let vm = makeSettingsViewModel(store: store, repository: InMemoryProgressRepository())
         #expect(vm.scope == .all)
         vm.setLevel(.a1, selected: false)
         #expect(vm.scope.levels == [.a21, .a22] && store.scope.levels == [.a21, .a22])
@@ -124,7 +124,7 @@ import Testing
 
     @Test func goalModeAndExamDateWriteThrough() {
         let store = InMemorySettingsStore()
-        let vm = SettingsViewModel(store: store, repository: InMemoryProgressRepository())
+        let vm = makeSettingsViewModel(store: store, repository: InMemoryProgressRepository())
         vm.setDailyGoal(500)
         #expect(store.dailyGoal == 200)
         vm.setDailyGoal(1)
@@ -141,7 +141,7 @@ import Testing
     @Test func resetProgressClearsRepository() {
         let repo = InMemoryProgressRepository()
         repo.record(ItemKey("vocab:1:m2w"), pillar: .goi, correct: false, mode: .choice, at: Date())
-        SettingsViewModel(store: InMemorySettingsStore(), repository: repo).resetProgress()
+        makeSettingsViewModel(store: InMemorySettingsStore(), repository: repo).resetProgress()
         #expect(repo.attempts.isEmpty && repo.weakKeys(limit: 5).isEmpty)
     }
 }

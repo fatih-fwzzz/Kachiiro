@@ -12,10 +12,12 @@ final class AppEnvironment {
     let speech: SpeechPlaying
     let audioPlayer: AudioPlaying
     let voiceInput: VoiceInputModel
+    let keys: APIKeyStore
+    let aiResolver: KaiwaAIResolver
 
     init(
         seed: SeedData, repository: ProgressRepository, settings: SettingsStore,
-        speech: SpeechPlaying, audioPlayer: AudioPlaying, voiceInput: VoiceInputModel
+        speech: SpeechPlaying, audioPlayer: AudioPlaying, voiceInput: VoiceInputModel, keys: APIKeyStore
     ) {
         self.seed = seed
         self.repository = repository
@@ -23,6 +25,12 @@ final class AppEnvironment {
         self.speech = speech
         self.audioPlayer = audioPlayer
         self.voiceInput = voiceInput
+        self.keys = keys
+        aiResolver = KaiwaAIResolver(
+            settings: settings, keys: keys,
+            appleAvailability: { AppleIntelligence.availability() },
+            makeAppleClient: { AppleIntelligence.makeClient() }
+        )
     }
 
     @MainActor
@@ -37,7 +45,7 @@ final class AppEnvironment {
             let env = AppEnvironment(
                 seed: seed, repository: repository, settings: UserDefaultsSettingsStore(),
                 speech: SpeechService(), audioPlayer: AudioPlayerService(),
-                voiceInput: VoiceInputModel(recognizer: SpeechRecognitionService())
+                voiceInput: VoiceInputModel(recognizer: SpeechRecognitionService()), keys: KeychainAPIKeyStore()
             )
             #if DEBUG
             env.applyDebugLaunchArguments()
@@ -56,7 +64,7 @@ final class AppEnvironment {
             settings: InMemorySettingsStore(),
             speech: SpeechService(),
             audioPlayer: AudioPlayerService(),
-            voiceInput: VoiceInputModel(recognizer: SpeechRecognitionService())
+            voiceInput: VoiceInputModel(recognizer: SpeechRecognitionService()), keys: InMemoryAPIKeyStore()
         )
     }
 
@@ -71,7 +79,7 @@ final class AppEnvironment {
     func makePracticeViewModel() -> PracticeViewModel {
         PracticeViewModel(
             seed: seed, settings: settings, repository: repository, speech: speech,
-            inputModeOverride: LaunchRoute.inputModeFromProcess()
+            inputModeOverride: LaunchRoute.inputModeFromProcess(), aiResolver: aiResolver
         )
     }
 
@@ -87,7 +95,7 @@ final class AppEnvironment {
 
     @MainActor
     func makeSettingsViewModel() -> SettingsViewModel {
-        SettingsViewModel(store: settings, repository: repository)
+        SettingsViewModel(store: settings, repository: repository, keys: keys, aiResolver: aiResolver)
     }
 
     @MainActor
@@ -97,12 +105,21 @@ final class AppEnvironment {
 
     @MainActor
     func makeRoleplayViewModel(_ scenario: RoleplayScenario) -> RoleplayViewModel {
-        RoleplayViewModel(scenario: scenario, mode: .scripted, speech: speech)
+        let mode: RoleplayViewModel.Mode
+        if aiResolver.usesGeneratedContent, let service = aiResolver.service() {
+            mode = .free(service)
+        } else {
+            mode = .scripted(judge: aiResolver.service())
+        }
+        return RoleplayViewModel(scenario: scenario, mode: mode, speech: speech)
     }
 
     @MainActor
     func makeShadowingViewModel() -> ShadowingViewModel {
-        ShadowingViewModel(lines: ShadowingLine.bundledLines(seed: seed), speech: speech)
+        ShadowingViewModel(
+            lines: ShadowingLine.bundledLines(seed: seed), speech: speech,
+            generator: aiResolver.usesGeneratedContent ? aiResolver.service() : nil
+        )
     }
 
     @MainActor
@@ -127,6 +144,18 @@ final class AppEnvironment {
             let key = ItemKey(args[i + 1])
             repository.record(key, pillar: key.drill?.pillar ?? .goi, correct: correct, mode: .choice, at: .now)
         }
+        if let engine = Self.value(after: "-ui-kaiwa-engine", in: args).flatMap(KaiwaEngine.init(rawValue:)) {
+            settings.kaiwaEngine = engine
+        }
+        if let content = Self.value(after: "-ui-kaiwa-content", in: args).flatMap(KaiwaContentSource.init(rawValue:)) {
+            settings.kaiwaContent = content
+        }
+        if let key = Self.value(after: "-ui-gemini-key", in: args) { keys.setGeminiKey(key) }
+    }
+
+    private static func value(after flag: String, in args: [String]) -> String? {
+        guard let i = args.firstIndex(of: flag), args.indices.contains(i + 1) else { return nil }
+        return args[i + 1]
     }
     #endif
 }
