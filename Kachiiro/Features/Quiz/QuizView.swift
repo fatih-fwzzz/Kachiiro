@@ -7,7 +7,9 @@ struct QuizView: View {
     @State private var selectedChoice: String?
     @State private var showScratchpad = QuizView.scratchpadOpenAtLaunch
     @FocusState private var typingFocused: Bool
+    @State private var voiceEngaged = false
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(AppEnvironment.self) private var environment
 
     init(model: QuizSessionViewModel) {
         _model = State(initialValue: model)
@@ -83,15 +85,26 @@ struct QuizView: View {
         .onChange(of: model.index) {
             typed = ""
             selectedChoice = nil
+            voice.cancel()
             focusIfTyping()
         }
         .onChange(of: model.activeMode) { focusIfTyping() }
+        .onChange(of: voice.transcript) {
+            if voice.state == .listening { typed = voice.transcript }
+        }
+        .onChange(of: voice.state) {
+            guard voice.state != .listening else { return }
+            voiceEngaged = false
+            focusIfTyping()
+        }
         .onAppear {
             focusIfTyping()
             #if DEBUG
             applyDebugAutoAnswer()
+            applyDebugListen(q)
             #endif
         }
+        .onDisappear { voice.cancel() }
     }
 
     private func quizColumn(_ q: QuizQuestion) -> some View {
@@ -137,10 +150,20 @@ struct QuizView: View {
             model.submitChoice(args[i + 1])
         }
     }
+
+    /// `-ui-listen` starts the microphone at launch to prove the permission prompts (screenshot smoke tests only).
+    private func applyDebugListen(_ q: QuizQuestion) {
+        guard ProcessInfo.processInfo.arguments.contains("-ui-listen"), q.isSpeakable,
+              model.activeMode == .typing else { return }
+        voiceEngaged = true
+        Task { await voice.start() }
+    }
     #endif
 
+    private var voice: VoiceInputModel { environment.voiceInput }
+
     private func focusIfTyping() {
-        typingFocused = model.activeMode == .typing && model.result == nil
+        typingFocused = model.activeMode == .typing && model.result == nil && !voiceEngaged
     }
 
     private var modePicker: some View {
@@ -178,22 +201,36 @@ struct QuizView: View {
                 .keyboardShortcut(KeyEquivalent(Character(String(index + 1))), modifiers: [])
             }
         } else {
-            HStack(spacing: 10) {
-                TextField("Type your answer", text: $typed)
-                    .focused($typingFocused)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-                    .submitLabel(.done)
-                    .font(AppTheme.Fonts.ui(.title3))
-                    .disabled(model.result != nil)
-                    .onSubmit(submitTyped)
-                    .onChange(of: typingFocused) {
-                        if !typingFocused, model.activeMode == .typing, model.result == nil { typingFocused = true }
+            VStack(spacing: 6) {
+                HStack(spacing: 10) {
+                    if q.isSpeakable {
+                        MicButton(voice: voice, onStart: {
+                            voiceEngaged = true
+                            typingFocused = false
+                        }, onStop: { text in
+                            typed = text
+                            if !text.trimmingCharacters(in: .whitespaces).isEmpty { model.submitText(text) }
+                        })
+                        .disabled(model.result != nil)
                     }
-                Button("Submit", action: submitTyped)
-                    .keyboardShortcut(.return, modifiers: [])
-                    .buttonStyle(.borderedProminent)
-                    .disabled(model.result != nil || typed.trimmingCharacters(in: .whitespaces).isEmpty)
+                    TextField(q.isSpeakable ? "Speak or type your answer" : "Type your answer", text: $typed)
+                        .focused($typingFocused)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .submitLabel(.done)
+                        .font(AppTheme.Fonts.ui(.title3))
+                        .disabled(model.result != nil)
+                        .onSubmit(submitTyped)
+                        .onChange(of: typingFocused) {
+                            if !typingFocused, model.activeMode == .typing, model.result == nil,
+                               !voiceEngaged, voice.state != .listening { typingFocused = true }
+                        }
+                    Button("Submit", action: submitTyped)
+                        .keyboardShortcut(.return, modifiers: [])
+                        .buttonStyle(.borderedProminent)
+                        .disabled(model.result != nil || typed.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+                if q.isSpeakable { VoiceStatusCaption(voice: voice) }
             }
             .quizCard(tint: AppTheme.elevatedField)
         }
@@ -232,6 +269,7 @@ struct QuizView: View {
 
     private var bottomBar: some View {
         Button {
+            voice.cancel()
             model.next()
         } label: {
             Text(model.index + 1 == model.total ? "Finish" : "Next")
