@@ -101,6 +101,11 @@ final class AppEnvironment {
     }
 
     @MainActor
+    func makeShadowingViewModel() -> ShadowingViewModel {
+        ShadowingViewModel(lines: ShadowingLine.bundledLines(seed: seed), speech: speech)
+    }
+
+    @MainActor
     func makeCanDoViewModel() -> CanDoViewModel {
         let canDos: [CanDo]
         if let url = Bundle.main.url(forResource: "cando", withExtension: "json"),
