@@ -12,7 +12,20 @@ final class KeychainAPIKeyStore: APIKeyStore {
         [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: account]
     }
 
+    /// A key saved in Settings wins; otherwise `GeminiAPIKey` from the git-ignored `Secrets.plist`.
     func geminiKey() -> String? {
+        keychainKey() ?? Self.plistKey()
+    }
+
+    private static func plistKey() -> String? {
+        guard let url = Bundle.main.url(forResource: "Secrets", withExtension: "plist"),
+              let dict = NSDictionary(contentsOf: url),
+              let key = (dict["GeminiAPIKey"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !key.isEmpty else { return nil }
+        return key
+    }
+
+    private func keychainKey() -> String? {
         var query = identity
         query[kSecReturnData as String] = true
         query[kSecMatchLimit as String] = kSecMatchLimitOne
