@@ -30,4 +30,14 @@ final class UserDefaultsSettingsStore: SettingsStore {
         get { defaults.object(forKey: "dailyGoal") as? Int ?? 30 }
         set { defaults.set(newValue, forKey: "dailyGoal") }
     }
+
+    var kaiwaEngine: KaiwaEngine {
+        get { defaults.string(forKey: "kaiwaEngine").flatMap(KaiwaEngine.init(rawValue:)) ?? .rules }
+        set { defaults.set(newValue.rawValue, forKey: "kaiwaEngine") }
+    }
+
+    var kaiwaContent: KaiwaContentSource {
+        get { defaults.string(forKey: "kaiwaContent").flatMap(KaiwaContentSource.init(rawValue:)) ?? .bundled }
+        set { defaults.set(newValue.rawValue, forKey: "kaiwaContent") }
+    }
 }

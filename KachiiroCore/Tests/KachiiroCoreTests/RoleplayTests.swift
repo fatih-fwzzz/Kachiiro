@@ -31,10 +31,10 @@ private func fixture() -> RoleplayScenario {
 
 @MainActor
 @Suite struct RoleplayViewModelTests {
-    @Test func startSpeaksOpeningLine() {
+    @Test func startSpeaksOpeningLine() async {
         let speech = SpeechSpy()
         let vm = RoleplayViewModel(scenario: fixture(), speech: speech)
-        vm.start()
+        await vm.start()
         #expect(vm.lines.map(\.text) == ["hello"])
         #expect(speech.spoken == ["hello"])
         #expect(vm.currentHint == "greet")
@@ -43,7 +43,7 @@ private func fixture() -> RoleplayScenario {
 
     @Test func passingReplyContinuesAtItsNextTurn() async {
         let vm = RoleplayViewModel(scenario: fixture())
-        vm.start()
+        await vm.start()
         await vm.submit("はい、申します。")
         #expect(vm.lines[1].verdict == .passed(note: "n1"))
         #expect(vm.lines.last?.text == "turn b")
@@ -52,14 +52,14 @@ private func fixture() -> RoleplayScenario {
 
     @Test func secondReplySelectsItsBranch() async {
         let vm = RoleplayViewModel(scenario: fixture())
-        vm.start()
+        await vm.start()
         await vm.submit("参ります")
         #expect(vm.lines.last?.text == "turn c")
     }
 
     @Test func missContinuesOnFirstReplyWithModelAnswer() async {
         let vm = RoleplayViewModel(scenario: fixture())
-        vm.start()
+        await vm.start()
         await vm.submit("田中さんいる？")
         #expect(vm.lines[1].verdict == .failed(modelAnswer: "申します", note: "n1"))
         #expect(vm.lines.last?.text == "turn b")
@@ -68,7 +68,7 @@ private func fixture() -> RoleplayScenario {
 
     @Test func finishingAppendsClosingAndStopsAcceptingInput() async {
         let vm = RoleplayViewModel(scenario: fixture())
-        vm.start()
+        await vm.start()
         await vm.submit("申します")
         await vm.submit("はい")
         #expect(vm.isFinished)
@@ -77,13 +77,13 @@ private func fixture() -> RoleplayScenario {
         let count = vm.lines.count
         await vm.submit("もう一度")
         #expect(vm.lines.count == count)
-        vm.start()
+        await vm.start()
         #expect(vm.lines.count == 1 && !vm.isFinished)
     }
 
     @Test func emptyInputIsIgnored() async {
         let vm = RoleplayViewModel(scenario: fixture())
-        vm.start()
+        await vm.start()
         await vm.submit("  　")
         #expect(vm.lines.count == 1)
     }

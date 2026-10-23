@@ -12,17 +12,59 @@ public final class SettingsViewModel {
     public private(set) var inputMode: InputMode
     public private(set) var examDate: Date?
     public private(set) var dailyGoal: Int
+    public private(set) var kaiwaEngine: KaiwaEngine
+    public private(set) var kaiwaContent: KaiwaContentSource
+    public private(set) var hasGeminiKey: Bool
 
     private let store: SettingsStore
     private let repository: ProgressRepository
+    private let keys: APIKeyStore
+    private let aiResolver: KaiwaAIResolver
 
-    public init(store: SettingsStore, repository: ProgressRepository) {
+    public init(store: SettingsStore, repository: ProgressRepository, keys: APIKeyStore, aiResolver: KaiwaAIResolver) {
         self.store = store
         self.repository = repository
+        self.keys = keys
+        self.aiResolver = aiResolver
         scope = store.scope
         inputMode = store.inputMode
         examDate = store.examDate
         dailyGoal = store.dailyGoal
+        kaiwaEngine = store.kaiwaEngine
+        kaiwaContent = store.kaiwaContent
+        hasGeminiKey = aiResolver.availability(of: .gemini) == .available
+    }
+
+    public func setKaiwaEngine(_ engine: KaiwaEngine) {
+        kaiwaEngine = engine
+        store.kaiwaEngine = engine
+    }
+
+    public func setKaiwaContent(_ content: KaiwaContentSource) {
+        kaiwaContent = content
+        store.kaiwaContent = content
+    }
+
+    public func availability(of engine: KaiwaEngine) -> EngineAvailability {
+        aiResolver.availability(of: engine)
+    }
+
+    /// Generated content needs an AI engine; with offline rules the picker is disabled.
+    public var isContentPickerEnabled: Bool { kaiwaEngine != .rules }
+
+    /// Trims the key; a blank key is rejected and nothing is stored.
+    @discardableResult
+    public func saveGeminiKey(_ raw: String) -> Bool {
+        let key = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !key.isEmpty else { return false }
+        keys.setGeminiKey(key)
+        hasGeminiKey = true
+        return true
+    }
+
+    public func removeGeminiKey() {
+        keys.setGeminiKey(nil)
+        hasGeminiKey = false
     }
 
     public func isLevelSelected(_ level: Level) -> Bool { scope.levels.contains(level) }

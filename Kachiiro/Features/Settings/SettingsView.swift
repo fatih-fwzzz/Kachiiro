@@ -4,6 +4,7 @@ import KachiiroCore
 struct SettingsView: View {
     @State private var viewModel: SettingsViewModel
     @State private var confirmReset = false
+    @State private var geminiKeyDraft = ""
     @Environment(\.dismiss) private var dismiss
 
     init(viewModel: SettingsViewModel) {
@@ -49,6 +50,7 @@ struct SettingsView: View {
                 ), in: SettingsViewModel.goalBounds, step: SettingsViewModel.goalStep)
             }
 
+            kaiwaSection
             Section("Exam") {
                 Toggle("Exam date", isOn: Binding(
                     get: { viewModel.examDate != nil },
@@ -77,6 +79,50 @@ struct SettingsView: View {
             Button("Reset progress", role: .destructive) { viewModel.resetProgress() }
         } message: {
             Text("This cannot be undone.")
+        }
+    }
+
+    private var engineFooter: String {
+        switch viewModel.availability(of: viewModel.kaiwaEngine) {
+        case .available: viewModel.kaiwaEngine == .rules ? "Rule-based keigo checks and bundled content. Works offline." : "Ready"
+        case .unavailable(let reason): "Unavailable: \(reason). Offline rules are used instead."
+        }
+    }
+
+    private var kaiwaSection: some View {
+        Section {
+            Picker("Engine", selection: Binding(
+                get: { viewModel.kaiwaEngine }, set: { viewModel.setKaiwaEngine($0) }
+            )) {
+                ForEach(KaiwaEngine.allCases, id: \.self) { Text($0.label).tag($0) }
+            }
+            if viewModel.kaiwaEngine == .gemini {
+                if viewModel.hasGeminiKey {
+                    Label("API key saved", systemImage: "key.fill")
+                    Button("Remove key", role: .destructive) { viewModel.removeGeminiKey() }
+                } else {
+                    SecureField("Gemini API key", text: $geminiKeyDraft)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                    Button("Save key") {
+                        if viewModel.saveGeminiKey(geminiKeyDraft) { geminiKeyDraft = "" }
+                    }
+                    .disabled(geminiKeyDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+            Picker("Content", selection: Binding(
+                get: { viewModel.kaiwaContent }, set: { viewModel.setKaiwaContent($0) }
+            )) {
+                ForEach(KaiwaContentSource.allCases, id: \.self) { Text($0.label).tag($0) }
+            }
+            .disabled(!viewModel.isContentPickerEnabled)
+        } header: {
+            Text("Kaiwa (speaking)")
+        } footer: {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(engineFooter)
+                if viewModel.kaiwaEngine == .gemini { Text("Stored in the Keychain on this device.") }
+            }
         }
     }
 }

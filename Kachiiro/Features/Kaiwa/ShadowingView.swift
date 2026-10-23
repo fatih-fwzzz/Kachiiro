@@ -14,7 +14,9 @@ struct ShadowingView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            if let line = model.current {
+            if model.isLoading {
+                ProgressView("Generating phrases…").frame(maxHeight: .infinity)
+            } else if let line = model.current {
                 ScrollView {
                     VStack(spacing: 12) {
                         lineCard(line)
@@ -24,6 +26,9 @@ struct ShadowingView: View {
                             Text(voice.transcript).font(.callout).foregroundStyle(AppTheme.secondaryInk)
                         }
                         VoiceStatusCaption(voice: voice)
+                        if let error = model.errorMessage {
+                            Text(error).font(.caption).foregroundStyle(AppTheme.secondaryInk)
+                        }
                     }
                     .padding(16)
                 }
@@ -38,6 +43,7 @@ struct ShadowingView: View {
         .task {
             guard !started else { return }
             started = true
+            await model.load()
             #if DEBUG
             let args = ProcessInfo.processInfo.arguments
             if let i = args.firstIndex(of: "-ui-autoanswer"), args.indices.contains(i + 1) {
