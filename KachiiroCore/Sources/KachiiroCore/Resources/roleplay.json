@@ -1,0 +1,1828 @@
+[
+ {
+  "id": "phone-company",
+  "title": "Calling a company",
+  "titleJa": "会社に電話する",
+  "setting": "You call ABC Trading on behalf of your Japanese language school and ask for Manager Tanaka.",
+  "userRole": "Caller (Rin)",
+  "partnerRole": "ABC Trading receptionist",
+  "goal": "Reach Manager Tanaka or leave a clear callback arrangement.",
+  "start": "t1",
+  "closing": "ありがとうございます。それでは、失礼いたします。",
+  "turns": [
+   {
+    "id": "t1",
+    "partner": "はい、ABC商事でございます。",
+    "hint": "Introduce yourself as Rin and politely ask whether Manager Tanaka is in.",
+    "replies": [
+     {
+      "accepted": [
+       "リンと申しますが、田中部長はいらっしゃいますか",
+       "リンと申しますが、田中部長はおいでですか"
+      ],
+      "keyPhrases": [
+       [
+        "申します"
+       ],
+       [
+        "いらっしゃいますか",
+        "おいでですか"
+       ]
+      ],
+      "note": "申します is humble for your own name; いらっしゃいますか raises Tanaka.",
+      "next": "t2"
+     }
+    ]
+   },
+   {
+    "id": "t2",
+    "partner": "田中でございますね。恐れ入りますが、どちらの会社のリン様でしょうか。",
+    "hint": "Say you are Rin from Sakura Japanese School.",
+    "replies": [
+     {
+      "accepted": [
+       "さくら日本語学校のリンと申します",
+       "さくら日本語学校のリンと申します。いつもお世話になっております"
+      ],
+      "keyPhrases": [
+       [
+        "申します"
+       ]
+      ],
+      "note": "Use 申します for your own name, with your organization first.",
+      "next": "t3"
+     }
+    ]
+   },
+   {
+    "id": "t3",
+    "partner": "田中はただいま席を外しております。こちらから折り返しお電話しましょうか。それとも、またおかけになりますか。",
+    "hint": "Choose: ask them to call you back, or say you will call again later.",
+    "replies": [
+     {
+      "accepted": [
+       "お手数ですが、折り返しお電話をいただけますか",
+       "お手数ですが、折り返しお電話をいただけませんか"
+      ],
+      "keyPhrases": [
+       [
+        "お手数ですが"
+       ],
+       [
+        "いただけますか",
+        "いただけませんか"
+       ]
+      ],
+      "note": "いただけますか is a polite request; お手数ですが softens it.",
+      "next": "t4"
+     },
+     {
+      "accepted": [
+       "では、後ほどまたお電話いたします",
+       "それでは、後ほどあらためてお電話いたします"
+      ],
+      "keyPhrases": [
+       [
+        "お電話いたします"
+       ]
+      ],
+      "note": "お電話いたします is the humble form of calling.",
+      "next": "t5"
+     }
+    ]
+   },
+   {
+    "id": "t4",
+    "partner": "かしこまりました。お電話番号を教えていただけますか。",
+    "hint": "Give your phone number politely, ending with でございます.",
+    "replies": [
+     {
+      "accepted": [
+       "電話番号は、ゼロキュウゼロの一二三四の五六七八でございます",
+       "番号は、ゼロキュウゼロの一二三四の五六七八でございます"
+      ],
+      "keyPhrases": [
+       [
+        "でございます"
+       ]
+      ],
+      "note": "でございます is the formal form of です.",
+      "next": "t5"
+     }
+    ]
+   },
+   {
+    "id": "t5",
+    "partner": "承知いたしました。田中に申し伝えます。ほかにご用件はございますか。",
+    "hint": "Say that is all, and ask them to look after it (よろしくお願いいたします).",
+    "replies": [
+     {
+      "accepted": [
+       "いいえ、以上です。よろしくお願いいたします",
+       "いいえ、結構です。よろしくお願いいたします"
+      ],
+      "keyPhrases": [
+       [
+        "よろしくお願いいたします"
+       ]
+      ],
+      "note": "Standard polite closing request in business calls.",
+      "next": null
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "absent-boss-call",
+  "title": "Taking a call for your absent manager",
+  "titleJa": "不在の上司あての電話",
+  "setting": "You work at a Japanese company. A client calls for your manager Sato, who is out of the office.",
+  "userRole": "Employee (Rin)",
+  "partnerRole": "Client Yamada from Tokyo Shoji",
+  "goal": "Handle the call politely, using humble language for your own manager.",
+  "start": "t1",
+  "closing": "ありがとうございます。それでは、失礼いたします。",
+  "turns": [
+   {
+    "id": "t1",
+    "partner": "もしもし、東京商事の山田と申します。佐藤部長はいらっしゃいますか。",
+    "hint": "Greet the caller and say that Sato is away from his desk.",
+    "replies": [
+     {
+      "accepted": [
+       "お世話になっております。申し訳ございませんが、佐藤は席を外しております",
+       "いつもお世話になっております。あいにく佐藤は外出しております"
+      ],
+      "keyPhrases": [
+       [
+        "お世話になっております"
+       ],
+       [
+        "席を外しております",
+        "外出しております"
+       ]
+      ],
+      "note": "To outsiders, drop さん/部長 for your own manager and use humble verbs.",
+      "next": "t2"
+     }
+    ]
+   },
+   {
+    "id": "t2",
+    "partner": "そうですか。何時ごろお戻りになりますか。",
+    "hint": "Say he is expected back around three o'clock.",
+    "replies": [
+     {
+      "accepted": [
+       "三時ごろに戻る予定でございます",
+       "三時ごろには戻ると申しておりました"
+      ],
+      "keyPhrases": [
+       [
+        "予定でございます",
+        "申しておりました"
+       ]
+      ],
+      "note": "予定でございます / 申しておりました keep your manager in the humble register.",
+      "next": "t3"
+     }
+    ]
+   },
+   {
+    "id": "t3",
+    "partner": "では、急ぎの用件なのですが……。",
+    "hint": "Offer either to take a message or to have Sato call back.",
+    "replies": [
+     {
+      "accepted": [
+       "よろしければ、伝言を承りましょうか",
+       "よろしければ、ご伝言を承りましょうか"
+      ],
+      "keyPhrases": [
+       [
+        "伝言を承り"
+       ]
+      ],
+      "note": "承ります is the humble verb for receiving a message.",
+      "next": "t4"
+     },
+     {
+      "accepted": [
+       "戻りましたら、折り返しお電話いたしましょうか",
+       "戻り次第、折り返しお電話いたします"
+      ],
+      "keyPhrases": [
+       [
+        "折り返し"
+       ],
+       [
+        "お電話いたし",
+        "ご連絡いたし"
+       ]
+      ],
+      "note": "折り返しお電話いたします: we will call you back.",
+      "next": "t5"
+     }
+    ]
+   },
+   {
+    "id": "t4",
+    "partner": "では、明日の打ち合わせを十時からにしたいと、お伝えください。",
+    "hint": "Confirm the message back and say you will pass it on to Sato.",
+    "replies": [
+     {
+      "accepted": [
+       "かしこまりました。明日の打ち合わせは十時からですね。佐藤に申し伝えます",
+       "承知いたしました。明日の打ち合わせは十時からですね。佐藤にお伝えします"
+      ],
+      "keyPhrases": [
+       [
+        "かしこまりました",
+        "承知いたしました"
+       ],
+       [
+        "申し伝え",
+        "お伝えし"
+       ]
+      ],
+      "note": "申し伝えます is the humble way to convey a message.",
+      "next": "t6"
+     }
+    ]
+   },
+   {
+    "id": "t5",
+    "partner": "では、折り返しをお願いします。番号は先ほどの会社の番号で結構です。",
+    "hint": "Accept and say Sato will call back as soon as he returns.",
+    "replies": [
+     {
+      "accepted": [
+       "承知いたしました。戻り次第、佐藤から折り返しお電話いたします",
+       "かしこまりました。佐藤が戻りましたら、折り返しご連絡いたします"
+      ],
+      "keyPhrases": [
+       [
+        "承知いたしました",
+        "かしこまりました"
+       ],
+       [
+        "お電話いたします",
+        "ご連絡いたします"
+       ]
+      ],
+      "note": "Humble verbs: お電話いたします / ご連絡いたします.",
+      "next": "t6"
+     }
+    ]
+   },
+   {
+    "id": "t6",
+    "partner": "よろしくお願いします。失礼します。",
+    "hint": "Thank them for calling and close the call politely.",
+    "replies": [
+     {
+      "accepted": [
+       "お電話ありがとうございました。失礼いたします",
+       "お電話ありがとうございました。失礼します"
+      ],
+      "keyPhrases": [
+       [
+        "お電話ありがとうございました"
+       ],
+       [
+        "失礼いたします",
+        "失礼します"
+       ]
+      ],
+      "note": "Standard phone close.",
+      "next": null
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "shop-clerk",
+  "title": "Serving a customer",
+  "titleJa": "お客様に接客する",
+  "setting": "You are a clerk in a clothing shop. A customer comes to look at shirts.",
+  "userRole": "Shop clerk (Rin)",
+  "partnerRole": "Customer",
+  "goal": "Serve the customer with polite, humble shop language.",
+  "start": "t1",
+  "closing": "ありがとうございます。また来ますね。",
+  "turns": [
+   {
+    "id": "t1",
+    "partner": "すみません、これ、ちょっと見てもいいですか。",
+    "hint": "Tell the customer to go ahead and look (use ご覧ください).",
+    "replies": [
+     {
+      "accepted": [
+       "はい、どうぞご覧ください",
+       "いらっしゃいませ。どうぞご覧ください"
+      ],
+      "keyPhrases": [
+       [
+        "ご覧ください"
+       ]
+      ],
+      "note": "ご覧ください is the respectful way to say 'please look'.",
+      "next": "t2"
+     }
+    ]
+   },
+   {
+    "id": "t2",
+    "partner": "このシャツのMサイズはありますか。",
+    "hint": "Ask the customer to wait a moment and say you will check.",
+    "replies": [
+     {
+      "accepted": [
+       "少々お待ちください。確認してまいります",
+       "少々お待ちください。お調べします"
+      ],
+      "keyPhrases": [
+       [
+        "少々お待ちください"
+       ],
+       [
+        "確認してまいります",
+        "お調べします",
+        "確認いたします"
+       ]
+      ],
+      "note": "少々お待ちください plus a humble verb for what you do.",
+      "next": "t3"
+     }
+    ]
+   },
+   {
+    "id": "t3",
+    "partner": "どうでしたか。",
+    "hint": "Apologize: the M size is out of stock.",
+    "replies": [
+     {
+      "accepted": [
+       "申し訳ございません。Mサイズは今、在庫がございません",
+       "申し訳ございません。Mサイズは売り切れております"
+      ],
+      "keyPhrases": [
+       [
+        "申し訳ございません"
+       ],
+       [
+        "在庫がございません",
+        "売り切れております"
+       ]
+      ],
+      "note": "ございません is the formal form of ありません.",
+      "next": "t4"
+     }
+    ]
+   },
+   {
+    "id": "t4",
+    "partner": "そうですか。じゃあ、Lサイズを試着してもいいですか。",
+    "hint": "Say yes and offer to guide them to the fitting room.",
+    "replies": [
+     {
+      "accepted": [
+       "はい、試着室へご案内いたします",
+       "かしこまりました。試着室へご案内します"
+      ],
+      "keyPhrases": [
+       [
+        "ご案内いたします",
+        "ご案内します"
+       ]
+      ],
+      "note": "ご案内します / ご案内いたします: humble 'I will guide you'.",
+      "next": "t5"
+     }
+    ]
+   },
+   {
+    "id": "t5",
+    "partner": "これにします。いくらですか。",
+    "hint": "Tell the price: 5,000 yen, ending with でございます.",
+    "replies": [
+     {
+      "accepted": [
+       "五千円でございます",
+       "こちらは五千円でございます"
+      ],
+      "keyPhrases": [
+       [
+        "でございます"
+       ]
+      ],
+      "note": "でございます is the formal です.",
+      "next": "t6"
+     }
+    ]
+   },
+   {
+    "id": "t6",
+    "partner": "カードで払えますか。",
+    "hint": "Say that they can use a card.",
+    "replies": [
+     {
+      "accepted": [
+       "はい、カードもご利用いただけます",
+       "はい、カードもお使いいただけます"
+      ],
+      "keyPhrases": [
+       [
+        "ご利用いただけます",
+        "お使いいただけます"
+       ]
+      ],
+      "note": "〜いただけます: respectful 'you can ...'.",
+      "next": "t7"
+     }
+    ]
+   },
+   {
+    "id": "t7",
+    "partner": "じゃあ、カードでお願いします。",
+    "hint": "Thank them and say you look forward to their next visit.",
+    "replies": [
+     {
+      "accepted": [
+       "ありがとうございました。またのお越しをお待ちしております",
+       "ありがとうございました。またお待ちしております"
+      ],
+      "keyPhrases": [
+       [
+        "お待ちしております"
+       ]
+      ],
+      "note": "お待ちしております: humble 'we will be waiting'.",
+      "next": null
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "restaurant-booking",
+  "title": "Booking a restaurant",
+  "titleJa": "レストランを予約する",
+  "setting": "You phone a restaurant to reserve a table for four on Friday.",
+  "userRole": "Customer (Rin)",
+  "partnerRole": "Restaurant staff",
+  "goal": "Book a table for four on Friday evening politely.",
+  "start": "t1",
+  "closing": "お待ちしております。失礼いたします。",
+  "turns": [
+   {
+    "id": "t1",
+    "partner": "お電話ありがとうございます。レストラン花でございます。",
+    "hint": "Say you would like to make a reservation.",
+    "replies": [
+     {
+      "accepted": [
+       "予約をお願いしたいのですが",
+       "席を予約したいのですが"
+      ],
+      "keyPhrases": [
+       [
+        "予約をお願いしたい",
+        "予約したい"
+       ]
+      ],
+      "note": "〜たいのですが is a soft, polite way to state a request.",
+      "next": "t2"
+     }
+    ]
+   },
+   {
+    "id": "t2",
+    "partner": "ありがとうございます。何名様でいらっしゃいますか。",
+    "hint": "Say four people, politely.",
+    "replies": [
+     {
+      "accepted": [
+       "四人でお願いいたします",
+       "四人です。お願いいたします"
+      ],
+      "keyPhrases": [
+       [
+        "お願いいたします"
+       ]
+      ],
+      "note": "お願いいたします is a very polite way to ask.",
+      "next": "t3"
+     }
+    ]
+   },
+   {
+    "id": "t3",
+    "partner": "何日の何時がよろしいでしょうか。",
+    "hint": "Ask for Friday at 7 p.m.",
+    "replies": [
+     {
+      "accepted": [
+       "金曜日の午後七時でお願いできますか",
+       "金曜日の午後七時にお願いいたします"
+      ],
+      "keyPhrases": [
+       [
+        "お願いできますか",
+        "お願いいたします"
+       ]
+      ],
+      "note": "Request with お願い〜 forms.",
+      "next": "t4"
+     }
+    ]
+   },
+   {
+    "id": "t4",
+    "partner": "申し訳ございません。七時はあいにく満席でございます。八時でしたらご用意できますが、いかがでしょうか。",
+    "hint": "Accept 8 o'clock.",
+    "replies": [
+     {
+      "accepted": [
+       "はい、八時で結構です",
+       "では、八時でお願いします"
+      ],
+      "keyPhrases": [
+       [
+        "結構です",
+        "お願いします"
+       ]
+      ],
+      "note": "結構です here means 'that's fine'.",
+      "next": "t5"
+     }
+    ]
+   },
+   {
+    "id": "t5",
+    "partner": "ありがとうございます。お名前をお願いできますか。",
+    "hint": "Give your name as Rin, humbly.",
+    "replies": [
+     {
+      "accepted": [
+       "リンと申します",
+       "リンと申します。よろしくお願いします"
+      ],
+      "keyPhrases": [
+       [
+        "申します"
+       ]
+      ],
+      "note": "申します is humble for 'I am called'.",
+      "next": "t6"
+     }
+    ]
+   },
+   {
+    "id": "t6",
+    "partner": "ほかにご希望はございますか。",
+    "hint": "Politely ask for a window seat.",
+    "replies": [
+     {
+      "accepted": [
+       "窓側の席をお願いできますでしょうか",
+       "窓側の席をお願いできますか"
+      ],
+      "keyPhrases": [
+       [
+        "お願いできます"
+       ]
+      ],
+      "note": "Polite request form.",
+      "next": "t7"
+     }
+    ]
+   },
+   {
+    "id": "t7",
+    "partner": "かしこまりました。では、金曜日の八時にお待ちしております。",
+    "hint": "Thank them and ask them to take care of the booking.",
+    "replies": [
+     {
+      "accepted": [
+       "ありがとうございます。よろしくお願いいたします",
+       "ありがとうございます。それでは、よろしくお願いいたします"
+      ],
+      "keyPhrases": [
+       [
+        "よろしくお願いいたします"
+       ]
+      ],
+      "note": "よろしくお願いいたします closes a request politely.",
+      "next": null
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "day-off-request",
+  "title": "Asking your manager for a day off",
+  "titleJa": "上司に休みをお願いする",
+  "setting": "You want next Friday off to meet your mother at the airport. You speak to your section manager.",
+  "userRole": "Employee (Rin)",
+  "partnerRole": "Section manager (kachou)",
+  "goal": "Politely get permission for the day off.",
+  "start": "t1",
+  "closing": "うん、お疲れさま。",
+  "turns": [
+   {
+    "id": "t1",
+    "partner": "リンさん、どうしたの？何か話があるの？",
+    "hint": "Apologize for interrupting and ask if he has a moment.",
+    "replies": [
+     {
+      "accepted": [
+       "お忙しいところ恐れ入ります。少々お時間よろしいでしょうか",
+       "お忙しいところ申し訳ございません。少しお時間をいただけますか"
+      ],
+      "keyPhrases": [
+       [
+        "お忙しいところ恐れ入ります",
+        "お忙しいところ申し訳ございません"
+       ],
+       [
+        "お時間"
+       ]
+      ],
+      "note": "Opening cushion phrase for talking to a busy superior.",
+      "next": "t2"
+     }
+    ]
+   },
+   {
+    "id": "t2",
+    "partner": "いいよ。何ですか。",
+    "hint": "Say you would like to take next Friday off.",
+    "replies": [
+     {
+      "accepted": [
+       "来週の金曜日にお休みをいただきたいのですが",
+       "来週の金曜日に休ませていただきたいのですが"
+      ],
+      "keyPhrases": [
+       [
+        "いただきたい"
+       ]
+      ],
+      "note": "〜いただきたいのですが: humble request for permission.",
+      "next": "t3"
+     }
+    ]
+   },
+   {
+    "id": "t3",
+    "partner": "金曜日？どうして？",
+    "hint": "Explain that your mother is coming to Japan and you want to pick her up.",
+    "replies": [
+     {
+      "accepted": [
+       "実は、母が日本に来ますので、空港へ迎えに行きたいと思っております",
+       "実は、母が日本に来るので、空港へ迎えに行きたいと思っております"
+      ],
+      "keyPhrases": [
+       [
+        "思っております"
+       ]
+      ],
+      "note": "思っております is the humble form of 思っています.",
+      "next": "t4"
+     }
+    ]
+   },
+   {
+    "id": "t4",
+    "partner": "そうなんだ。金曜日は大事な会議があるけど……。",
+    "hint": "Say you will prepare the meeting materials by Thursday.",
+    "replies": [
+     {
+      "accepted": [
+       "会議の資料は、木曜日までに私が準備しておきます",
+       "会議の資料は、木曜日までに準備いたします"
+      ],
+      "keyPhrases": [
+       [
+        "準備しておきます",
+        "準備いたします",
+        "用意しておきます"
+       ]
+      ],
+      "note": "Offer a concrete solution to show responsibility.",
+      "next": "t5"
+     }
+    ]
+   },
+   {
+    "id": "t5",
+    "partner": "わかった。じゃあ、休んでいいよ。",
+    "hint": "Thank him and apologize for the trouble.",
+    "replies": [
+     {
+      "accepted": [
+       "ありがとうございます。ご迷惑をおかけして申し訳ありません",
+       "ありがとうございます。ご迷惑をおかけして申し訳ございません"
+      ],
+      "keyPhrases": [
+       [
+        "ありがとうございます"
+       ],
+       [
+        "ご迷惑をおかけして"
+       ]
+      ],
+      "note": "ご迷惑をおかけして is a standard apology.",
+      "next": "t6"
+     }
+    ]
+   },
+   {
+    "id": "t6",
+    "partner": "気にしないで。ほかの人にも伝えておくから。",
+    "hint": "Say thanks and politely leave.",
+    "replies": [
+     {
+      "accepted": [
+       "恐れ入ります。では、失礼いたします",
+       "恐れ入ります。それでは、失礼します"
+      ],
+      "keyPhrases": [
+       [
+        "失礼いたします",
+        "失礼します"
+       ]
+      ],
+      "note": "失礼いたします: polite way to leave.",
+      "next": null
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "teacher-office-visit",
+  "title": "Visiting a teacher's office",
+  "titleJa": "先生の研究室を訪ねる",
+  "setting": "You visit your teacher's office to ask for a deadline extension because you were ill.",
+  "userRole": "Student (Rin)",
+  "partnerRole": "Teacher (sensei)",
+  "goal": "Ask for an extension politely and respectfully.",
+  "start": "t1",
+  "closing": "はい、気をつけてお帰りなさい。",
+  "turns": [
+   {
+    "id": "t1",
+    "partner": "（ノック）はい、どうぞ。",
+    "hint": "Say excuse me as you enter, and give your name.",
+    "replies": [
+     {
+      "accepted": [
+       "失礼します。一年生のリンです",
+       "失礼いたします。リンと申します"
+      ],
+      "keyPhrases": [
+       [
+        "失礼します",
+        "失礼いたします"
+       ]
+      ],
+      "note": "失礼します on entering a teacher's room.",
+      "next": "t2"
+     }
+    ]
+   },
+   {
+    "id": "t2",
+    "partner": "リンさん、どうしましたか。",
+    "hint": "Ask whether he has time now.",
+    "replies": [
+     {
+      "accepted": [
+       "先生、今、少々お時間よろしいでしょうか",
+       "先生、今、お時間をいただいてもよろしいでしょうか"
+      ],
+      "keyPhrases": [
+       [
+        "お時間"
+       ],
+       [
+        "よろしいでしょうか"
+       ]
+      ],
+      "note": "お時間 raises the teacher's time.",
+      "next": "t3"
+     }
+    ]
+   },
+   {
+    "id": "t3",
+    "partner": "いいですよ。座ってください。",
+    "hint": "Thank him and say you will sit.",
+    "replies": [
+     {
+      "accepted": [
+       "ありがとうございます。失礼します",
+       "ありがとうございます。それでは、失礼いたします"
+      ],
+      "keyPhrases": [
+       [
+        "ありがとうございます"
+       ],
+       [
+        "失礼します",
+        "失礼いたします"
+       ]
+      ],
+      "note": "失礼します also works as 'excuse me' when sitting.",
+      "next": "t4"
+     }
+    ]
+   },
+   {
+    "id": "t4",
+    "partner": "それで、用件は何ですか。",
+    "hint": "Say you have something to consult him about the report.",
+    "replies": [
+     {
+      "accepted": [
+       "レポートのことで、ご相談したいことがあるのですが",
+       "レポートについて、ご相談したいことがございます"
+      ],
+      "keyPhrases": [
+       [
+        "ご相談"
+       ],
+       [
+        "あるのですが",
+        "ございます"
+       ]
+      ],
+      "note": "ご相談 is the humble prefix for 'consulting you'.",
+      "next": "t5"
+     }
+    ]
+   },
+   {
+    "id": "t5",
+    "partner": "何かありましたか。",
+    "hint": "Explain you were sick and ask if he can extend the deadline.",
+    "replies": [
+     {
+      "accepted": [
+       "病気で、レポートが書けませんでした。締め切りを延ばしていただけないでしょうか",
+       "病気で、レポートが書けませんでした。締め切りを延ばしていただけますか"
+      ],
+      "keyPhrases": [
+       [
+        "いただけないでしょうか",
+        "いただけますか"
+       ]
+      ],
+      "note": "Soft request: 〜ていただけないでしょうか.",
+      "next": "t6"
+     }
+    ]
+   },
+   {
+    "id": "t6",
+    "partner": "そうですか。来週の月曜日まででいいですよ。",
+    "hint": "Thank him and promise to submit by Monday.",
+    "replies": [
+     {
+      "accepted": [
+       "ありがとうございます。月曜日までに必ず提出いたします",
+       "ありがとうございます。月曜日までに必ずお出しします"
+      ],
+      "keyPhrases": [
+       [
+        "提出いたします",
+        "お出しします"
+       ]
+      ],
+      "note": "Humble verb for your action toward the teacher.",
+      "next": "t7"
+     }
+    ]
+   },
+   {
+    "id": "t7",
+    "partner": "体に気をつけてね。",
+    "hint": "Thank him and politely leave.",
+    "replies": [
+     {
+      "accepted": [
+       "ありがとうございました。失礼いたします",
+       "ありがとうございました。失礼します"
+      ],
+      "keyPhrases": [
+       [
+        "失礼いたします",
+        "失礼します"
+       ]
+      ],
+      "note": "Polite leave-taking.",
+      "next": null
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "part-time-interview",
+  "title": "Part-time job interview",
+  "titleJa": "アルバイトの面接",
+  "setting": "You are interviewing for a part-time job at a convenience store with the store manager.",
+  "userRole": "Applicant (Rin)",
+  "partnerRole": "Store manager (interviewer)",
+  "goal": "Present yourself politely and answer interview questions.",
+  "start": "t1",
+  "closing": "結果は来週連絡します。今日はありがとうございました。",
+  "turns": [
+   {
+    "id": "t1",
+    "partner": "では、面接を始めます。お名前をお願いします。",
+    "hint": "Introduce yourself as Rin and ask for a favourable consideration.",
+    "replies": [
+     {
+      "accepted": [
+       "リンと申します。よろしくお願いいたします",
+       "リンと申します。どうぞよろしくお願いいたします"
+      ],
+      "keyPhrases": [
+       [
+        "申します"
+       ],
+       [
+        "よろしくお願い"
+       ]
+      ],
+      "note": "Standard self-introduction at interviews.",
+      "next": "t2"
+     }
+    ]
+   },
+   {
+    "id": "t2",
+    "partner": "リンさんは、どうしてうちの店で働きたいと思いましたか。",
+    "hint": "Say you applied because you want a job using Japanese.",
+    "replies": [
+     {
+      "accepted": [
+       "日本語を使う仕事がしたいと思い、応募いたしました",
+       "接客の仕事に興味がございまして、応募いたしました"
+      ],
+      "keyPhrases": [
+       [
+        "応募いたしました",
+        "応募しました"
+       ]
+      ],
+      "note": "応募いたしました is humble 'I applied'.",
+      "next": "t3"
+     }
+    ]
+   },
+   {
+    "id": "t3",
+    "partner": "アルバイトの経験はありますか。",
+    "hint": "Answer: either you have experience (worked at a convenience store) or you do not.",
+    "replies": [
+     {
+      "accepted": [
+       "はい、去年、コンビニで半年間働いておりました",
+       "はい、コンビニで半年ほど働いておりました"
+      ],
+      "keyPhrases": [
+       [
+        "働いておりました"
+       ]
+      ],
+      "note": "〜ておりました is the humble past progressive.",
+      "next": "t4"
+     },
+     {
+      "accepted": [
+       "いいえ、経験はございませんが、一生懸命頑張ります",
+       "いいえ、まだ経験はございませんが、一生懸命頑張ります"
+      ],
+      "keyPhrases": [
+       [
+        "経験はございません"
+       ]
+      ],
+      "note": "ございません is the formal ありません.",
+      "next": "t5"
+     }
+    ]
+   },
+   {
+    "id": "t4",
+    "partner": "そうですか。経験があるのは心強いですね。どんな仕事をしましたか。",
+    "hint": "Say you worked the register and arranged goods.",
+    "replies": [
+     {
+      "accepted": [
+       "レジと商品の整理をしておりました",
+       "レジと商品の並べ方をしておりました"
+      ],
+      "keyPhrases": [
+       [
+        "しておりました"
+       ]
+      ],
+      "note": "Keep humble verbs when describing your own past work.",
+      "next": "t6"
+     }
+    ]
+   },
+   {
+    "id": "t5",
+    "partner": "そうですか。でも、やる気があれば大丈夫ですよ。覚えるのは早いほうですか。",
+    "hint": "Say you take notes and try to learn quickly.",
+    "replies": [
+     {
+      "accepted": [
+       "はい、メモを取って、すぐに覚えるようにしております",
+       "はい、メモを取って、早く覚えるようにしております"
+      ],
+      "keyPhrases": [
+       [
+        "しております"
+       ]
+      ],
+      "note": "Show effort using the humble form.",
+      "next": "t6"
+     }
+    ]
+   },
+   {
+    "id": "t6",
+    "partner": "週に何日くらい働けますか。",
+    "hint": "Say you can work three days a week.",
+    "replies": [
+     {
+      "accepted": [
+       "週に三日ほど働くことができます",
+       "週に三日、働けます"
+      ],
+      "keyPhrases": [
+       [
+        "働くことができます",
+        "働けます"
+       ]
+      ],
+      "note": "State availability clearly.",
+      "next": "t7"
+     }
+    ]
+   },
+   {
+    "id": "t7",
+    "partner": "最後に、何か質問はありますか。",
+    "hint": "Ask when you should start working.",
+    "replies": [
+     {
+      "accepted": [
+       "はい、いつから勤務を始めればよろしいでしょうか",
+       "はい、いつから働けばよろしいでしょうか"
+      ],
+      "keyPhrases": [
+       [
+        "よろしいでしょうか"
+       ]
+      ],
+      "note": "よろしいでしょうか is the polite 'is it okay / should I'.",
+      "next": null
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "late-apology",
+  "title": "Apologizing for being late",
+  "titleJa": "遅刻のおわび",
+  "setting": "You arrived at work late without calling. Your manager asks what happened.",
+  "userRole": "Employee (Rin)",
+  "partnerRole": "Manager",
+  "goal": "Apologize sincerely and recover with polite language.",
+  "start": "t1",
+  "closing": "わかった。じゃあ、仕事を始めてください。",
+  "turns": [
+   {
+    "id": "t1",
+    "partner": "リンさん、もう九時半だよ。どうしたの？",
+    "hint": "Apologize for being late.",
+    "replies": [
+     {
+      "accepted": [
+       "遅くなって、申し訳ございません",
+       "遅刻してしまい、申し訳ございません"
+      ],
+      "keyPhrases": [
+       [
+        "申し訳ございません"
+       ]
+      ],
+      "note": "申し訳ございません is a formal apology.",
+      "next": "t2"
+     }
+    ]
+   },
+   {
+    "id": "t2",
+    "partner": "連絡がなかったから、心配したよ。何があったの？",
+    "hint": "Explain the train stopped because of an accident and you could not contact him.",
+    "replies": [
+     {
+      "accepted": [
+       "電車が止まっていて、ご連絡できませんでした。申し訳ございません",
+       "電車が事故で止まっておりまして、ご連絡できませんでした。申し訳ございません"
+      ],
+      "keyPhrases": [
+       [
+        "ご連絡できません"
+       ],
+       [
+        "申し訳ございません"
+       ]
+      ],
+      "note": "ご連絡できません: humble 'I could not contact you'.",
+      "next": "t3"
+     }
+    ]
+   },
+   {
+    "id": "t3",
+    "partner": "そうか。次からはすぐに電話してください。",
+    "hint": "Promise to contact him immediately next time.",
+    "replies": [
+     {
+      "accepted": [
+       "次回からは、すぐにご連絡いたします",
+       "次回からは、すぐにお電話いたします"
+      ],
+      "keyPhrases": [
+       [
+        "ご連絡いたします",
+        "お電話いたします"
+       ]
+      ],
+      "note": "いたします promises your own action.",
+      "next": "t4"
+     }
+    ]
+   },
+   {
+    "id": "t4",
+    "partner": "朝の会議はもう終わったよ。",
+    "hint": "Ask him to tell you what was discussed.",
+    "replies": [
+     {
+      "accepted": [
+       "会議の内容を、あとで教えていただけますでしょうか",
+       "会議の内容を教えていただけませんか"
+      ],
+      "keyPhrases": [
+       [
+        "教えていただけ"
+       ]
+      ],
+      "note": "〜ていただけますでしょうか is a very polite request.",
+      "next": "t5"
+     }
+    ]
+   },
+   {
+    "id": "t5",
+    "partner": "資料は机の上にあるから、見ておいて。",
+    "hint": "Thank him and say you will read the material now.",
+    "replies": [
+     {
+      "accepted": [
+       "ありがとうございます。さっそく拝見いたします",
+       "ありがとうございます。さっそく拝見します"
+      ],
+      "keyPhrases": [
+       [
+        "拝見"
+       ]
+      ],
+      "note": "拝見します is the humble verb for 'see/read'.",
+      "next": "t6"
+     }
+    ]
+   },
+   {
+    "id": "t6",
+    "partner": "今日の仕事は大丈夫？",
+    "hint": "Say you will try to make up for the lost time today.",
+    "replies": [
+     {
+      "accepted": [
+       "はい、遅れた分は、今日中に取り戻せるよう努力いたします",
+       "はい、遅れた分は、今日中に取り戻せるよう頑張ります"
+      ],
+      "keyPhrases": [
+       [
+        "努力いたします",
+        "頑張ります"
+       ]
+      ],
+      "note": "努力いたします shows humble commitment.",
+      "next": null
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "visitor-reception",
+  "title": "Receiving a visitor",
+  "titleJa": "来客の受付",
+  "setting": "You work at a company reception desk. A visitor from ABC Trading arrives to meet Manager Sato.",
+  "userRole": "Receptionist (Rin)",
+  "partnerRole": "Visitor (Yamamoto)",
+  "goal": "Receive the visitor politely and guide them.",
+  "start": "t1",
+  "closing": "ありがとうございました。失礼いたします。",
+  "turns": [
+   {
+    "id": "t1",
+    "partner": "（受付に来て）こんにちは。ABC商事の山本です。",
+    "hint": "Welcome them and ask whether they have an appointment.",
+    "replies": [
+     {
+      "accepted": [
+       "いらっしゃいませ。お約束でいらっしゃいますか",
+       "いらっしゃいませ。お約束はございますか"
+      ],
+      "keyPhrases": [
+       [
+        "いらっしゃいませ"
+       ],
+       [
+        "でいらっしゃいますか",
+        "はございますか"
+       ]
+      ],
+      "note": "Respectful phrasing for a visitor's status.",
+      "next": "t2"
+     }
+    ]
+   },
+   {
+    "id": "t2",
+    "partner": "はい、十時に佐藤部長とお約束しています。",
+    "hint": "Confirm the name and ask them to wait a moment.",
+    "replies": [
+     {
+      "accepted": [
+       "山本様でいらっしゃいますね。少々お待ちください",
+       "ABC商事の山本様でいらっしゃいますね。少々お待ちくださいませ"
+      ],
+      "keyPhrases": [
+       [
+        "でいらっしゃいますね"
+       ],
+       [
+        "少々お待ちください"
+       ]
+      ],
+      "note": "Confirm the guest's name with でいらっしゃいますね.",
+      "next": "t3"
+     }
+    ]
+   },
+   {
+    "id": "t3",
+    "partner": "（しばらくして）……。",
+    "hint": "Say sorry for the wait; Sato will come soon; ask them to sit.",
+    "replies": [
+     {
+      "accepted": [
+       "お待たせいたしました。佐藤はすぐに参りますので、こちらにおかけになってお待ちください",
+       "お待たせいたしました。ただいま佐藤が参ります"
+      ],
+      "keyPhrases": [
+       [
+        "お待たせいたしました"
+       ],
+       [
+        "参ります"
+       ]
+      ],
+      "note": "参ります is humble for your own colleague coming; おかけになる raises the guest.",
+      "next": "t4"
+     }
+    ]
+   },
+   {
+    "id": "t4",
+    "partner": "ありがとうございます。あの、コートはどこに置けばいいですか。",
+    "hint": "Offer to hold their coat.",
+    "replies": [
+     {
+      "accepted": [
+       "こちらでお預かりいたします",
+       "コートはこちらでお預かりします"
+      ],
+      "keyPhrases": [
+       [
+        "お預かりいたします",
+        "お預かりします"
+       ]
+      ],
+      "note": "お預かりします is the humble 'I will keep it'.",
+      "next": "t5"
+     }
+    ]
+   },
+   {
+    "id": "t5",
+    "partner": "お願いします。会議室はどちらですか？",
+    "hint": "Offer to guide them to the meeting room.",
+    "replies": [
+     {
+      "accepted": [
+       "ご案内いたします。こちらへどうぞ",
+       "会議室までご案内いたします。こちらへどうぞ"
+      ],
+      "keyPhrases": [
+       [
+        "ご案内いたします",
+        "ご案内します"
+       ]
+      ],
+      "note": "ご案内いたします: humble 'I will guide you'.",
+      "next": "t6"
+     }
+    ]
+   },
+   {
+    "id": "t6",
+    "partner": "ありがとうございます。",
+    "hint": "Tell them to call you when they leave.",
+    "replies": [
+     {
+      "accepted": [
+       "お帰りの際は、受付にお声をおかけください",
+       "どうぞごゆっくり。お帰りの際は、お声をおかけください"
+      ],
+      "keyPhrases": [
+       [
+        "お声をおかけください"
+       ]
+      ],
+      "note": "お〜ください is a respectful request.",
+      "next": null
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "decline-invitation",
+  "title": "Declining an invitation",
+  "titleJa": "誘いを断る",
+  "setting": "Your section manager invites you to a dinner tonight, but you have prior plans.",
+  "userRole": "Employee (Rin)",
+  "partnerRole": "Section manager (kachou)",
+  "goal": "Decline politely without offending your manager.",
+  "start": "t1",
+  "closing": "じゃあ、お疲れさま。",
+  "turns": [
+   {
+    "id": "t1",
+    "partner": "リンさん、今夜、みんなで食事に行くんだけど、一緒にどう？",
+    "hint": "Thank him for the invitation.",
+    "replies": [
+     {
+      "accepted": [
+       "お誘いいただき、ありがとうございます",
+       "お誘いいただいて、ありがとうございます"
+      ],
+      "keyPhrases": [
+       [
+        "お誘いいただき",
+        "お誘いいただいて"
+       ],
+       [
+        "ありがとうございます"
+       ]
+      ],
+      "note": "お誘いいただき: humble 'thank you for inviting me'.",
+      "next": "t2"
+     }
+    ]
+   },
+   {
+    "id": "t2",
+    "partner": "来られる？",
+    "hint": "Politely say you cannot because you have a prior engagement.",
+    "replies": [
+     {
+      "accepted": [
+       "申し訳ございません。今夜は先約がございまして",
+       "申し訳ございません。今夜は用事がございまして"
+      ],
+      "keyPhrases": [
+       [
+        "申し訳ございません"
+       ],
+       [
+        "ございまして"
+       ]
+      ],
+      "note": "Use ございまして to give a reason politely.",
+      "next": "t3"
+     }
+    ]
+   },
+   {
+    "id": "t3",
+    "partner": "そうか、残念だな。じゃあ、来週の金曜日はどう？",
+    "hint": "Either accept next Friday, or decline again.",
+    "replies": [
+     {
+      "accepted": [
+       "来週の金曜日でしたら、ぜひ参加させていただきます",
+       "来週の金曜日でしたら、ぜひ伺います"
+      ],
+      "keyPhrases": [
+       [
+        "参加させていただきます",
+        "伺います"
+       ]
+      ],
+      "note": "参加させていただきます / 伺います: humble ways to say 'I will join'.",
+      "next": "t4"
+     },
+     {
+      "accepted": [
+       "せっかくですが、来週も予定が入っておりまして、難しいと思います",
+       "せっかくですが、来週も予定が入っておりまして、難しいです"
+      ],
+      "keyPhrases": [
+       [
+        "せっかくですが"
+       ],
+       [
+        "おりまして"
+       ]
+      ],
+      "note": "せっかくですが softens a refusal.",
+      "next": "t5"
+     }
+    ]
+   },
+   {
+    "id": "t4",
+    "partner": "よかった。じゃあ、店は私が予約しておくよ。",
+    "hint": "Thank him and say you look forward to it.",
+    "replies": [
+     {
+      "accepted": [
+       "ありがとうございます。楽しみにしております",
+       "ありがとうございます。楽しみにしています"
+      ],
+      "keyPhrases": [
+       [
+        "楽しみにしております",
+        "楽しみにしています"
+       ]
+      ],
+      "note": "楽しみにしております: humble 'I look forward to it'.",
+      "next": "t6"
+     }
+    ]
+   },
+   {
+    "id": "t5",
+    "partner": "そうか、わかった。また今度ね。",
+    "hint": "Ask him to invite you again.",
+    "replies": [
+     {
+      "accepted": [
+       "またぜひお誘いください",
+       "申し訳ございません。またぜひお誘いください"
+      ],
+      "keyPhrases": [
+       [
+        "お誘いください"
+       ]
+      ],
+      "note": "お誘いください: respectful request.",
+      "next": "t6"
+     }
+    ]
+   },
+   {
+    "id": "t6",
+    "partner": "じゃあ、今日もお疲れさま。",
+    "hint": "Say you are leaving first.",
+    "replies": [
+     {
+      "accepted": [
+       "お先に失礼いたします。お疲れ様でした",
+       "お先に失礼します。お疲れ様でした"
+      ],
+      "keyPhrases": [
+       [
+        "失礼いたします",
+        "失礼します"
+       ]
+      ],
+      "note": "お先に失礼します is the standard way to leave first.",
+      "next": null
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "hotel-checkin",
+  "title": "Checking in at a hotel",
+  "titleJa": "ホテルのチェックイン",
+  "setting": "You are a guest checking in at a hotel front desk in Japan.",
+  "userRole": "Hotel guest (Rin)",
+  "partnerRole": "Front desk staff",
+  "goal": "Check in, ask about breakfast, and request a late checkout.",
+  "start": "t1",
+  "closing": "どうぞごゆっくりお過ごしください。",
+  "turns": [
+   {
+    "id": "t1",
+    "partner": "いらっしゃいませ。ご予約はされていますか。",
+    "hint": "Say you have a reservation and give your name as Rin.",
+    "replies": [
+     {
+      "accepted": [
+       "はい、予約しています。リンと申します",
+       "はい、リンと申します。二泊で予約しております"
+      ],
+      "keyPhrases": [
+       [
+        "申します"
+       ]
+      ],
+      "note": "Guests can also use 申します for their own name.",
+      "next": "t2"
+     }
+    ]
+   },
+   {
+    "id": "t2",
+    "partner": "リン様ですね。パスポートを拝見できますか。",
+    "hint": "Hand over your passport.",
+    "replies": [
+     {
+      "accepted": [
+       "はい、どうぞ。これがパスポートです",
+       "はい、こちらです。お願いします"
+      ],
+      "keyPhrases": [
+       [
+        "どうぞ",
+        "こちらです"
+       ]
+      ],
+      "note": "どうぞ is natural when handing something over.",
+      "next": "t3"
+     }
+    ]
+   },
+   {
+    "id": "t3",
+    "partner": "ありがとうございます。朝食はご利用になりますか。",
+    "hint": "Say yes, and ask where it is.",
+    "replies": [
+     {
+      "accepted": [
+       "はい、お願いします。場所はどちらですか",
+       "はい、お願いします。レストランはどこですか"
+      ],
+      "keyPhrases": [
+       [
+        "お願いします"
+       ],
+       [
+        "どちらですか",
+        "どこですか"
+       ]
+      ],
+      "note": "どちら is more polite than どこ.",
+      "next": "t4"
+     }
+    ]
+   },
+   {
+    "id": "t4",
+    "partner": "二階のレストランでございます。チェックアウトは十一時でございます。",
+    "hint": "Ask whether you can check out later.",
+    "replies": [
+     {
+      "accepted": [
+       "あの、チェックアウトの時間を遅くしていただけますか",
+       "チェックアウトを少し遅くしてもよろしいでしょうか"
+      ],
+      "keyPhrases": [
+       [
+        "遅く"
+       ],
+       [
+        "いただけますか",
+        "よろしいでしょうか",
+        "できますか"
+       ]
+      ],
+      "note": "Make a polite request using 〜ていただけますか.",
+      "next": "t5"
+     }
+    ]
+   },
+   {
+    "id": "t5",
+    "partner": "申し訳ございません。十二時でしたら大丈夫です。",
+    "hint": "Accept twelve o'clock.",
+    "replies": [
+     {
+      "accepted": [
+       "ありがとうございます。それでお願いします",
+       "ありがとうございます。それでお願いいたします"
+      ],
+      "keyPhrases": [
+       [
+        "ありがとうございます"
+       ],
+       [
+        "お願いします",
+        "お願いいたします"
+       ]
+      ],
+      "note": "Accept the offer politely.",
+      "next": "t6"
+     }
+    ]
+   },
+   {
+    "id": "t6",
+    "partner": "こちらがお部屋の鍵でございます。",
+    "hint": "Thank them and ask if they can carry your luggage to the room.",
+    "replies": [
+     {
+      "accepted": [
+       "ありがとうございます。荷物を部屋まで運んでいただけますか",
+       "ありがとうございます。荷物を部屋まで運んでいただけませんか"
+      ],
+      "keyPhrases": [
+       [
+        "いただけますか",
+        "いただけませんか"
+       ]
+      ],
+      "note": "〜ていただけますか is a polite request.",
+      "next": null
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": "directions-stranger",
+  "title": "Asking a stranger for directions",
+  "titleJa": "道をたずねる",
+  "setting": "You are lost in town and ask a stranger how to get to the station.",
+  "userRole": "Person asking (Rin)",
+  "partnerRole": "Passer-by",
+  "goal": "Get directions politely using ordinary polite Japanese.",
+  "start": "t1",
+  "closing": "いえいえ、気をつけて。",
+  "turns": [
+   {
+    "id": "t1",
+    "partner": "（道で）はい、何でしょうか。",
+    "hint": "Say excuse me and that you would like to ask something.",
+    "replies": [
+     {
+      "accepted": [
+       "すみません、ちょっとお聞きしたいのですが",
+       "すみません、ちょっと教えていただけますか"
+      ],
+      "keyPhrases": [
+       [
+        "すみません"
+       ],
+       [
+        "お聞きしたい",
+        "教えていただけ"
+       ]
+      ],
+      "note": "すみません gets attention politely.",
+      "next": "t2"
+     }
+    ]
+   },
+   {
+    "id": "t2",
+    "partner": "はい、いいですよ。",
+    "hint": "Say you want to go to the station and ask how to get there.",
+    "replies": [
+     {
+      "accepted": [
+       "駅へ行きたいのですが、どう行けばいいですか",
+       "駅に行きたいのですが、道を教えていただけますか"
+      ],
+      "keyPhrases": [
+       [
+        "駅"
+       ],
+       [
+        "行きたいのですが"
+       ]
+      ],
+      "note": "〜たいのですが is a soft way to ask.",
+      "next": "t3"
+     }
+    ]
+   },
+   {
+    "id": "t3",
+    "partner": "駅ですか。この道をまっすぐ行って、二つ目の信号を右に曲がってください。",
+    "hint": "Repeat the key direction to confirm: right at the second light.",
+    "replies": [
+     {
+      "accepted": [
+       "二つ目の信号を右ですね",
+       "二つ目の信号を右に曲がるんですね"
+      ],
+      "keyPhrases": [
+       [
+        "二つ目の信号"
+       ],
+       [
+        "ですね"
+       ]
+      ],
+      "note": "Repeating back avoids misunderstanding.",
+      "next": "t4"
+     }
+    ]
+   },
+   {
+    "id": "t4",
+    "partner": "そうです。そのあと、左にコンビニがあります。その隣が駅です。",
+    "hint": "Ask how long it takes on foot.",
+    "replies": [
+     {
+      "accepted": [
+       "歩いてどのくらいかかりますか",
+       "歩いてどれくらいかかりますか"
+      ],
+      "keyPhrases": [
+       [
+        "どのくらい",
+        "どれくらい"
+       ],
+       [
+        "かかりますか"
+       ]
+      ],
+      "note": "どのくらいかかりますか: how long does it take.",
+      "next": "t5"
+     }
+    ]
+   },
+   {
+    "id": "t5",
+    "partner": "十分ぐらいですよ。",
+    "hint": "Thank them for their help.",
+    "replies": [
+     {
+      "accepted": [
+       "ありがとうございます。助かりました",
+       "ご親切にありがとうございます"
+      ],
+      "keyPhrases": [
+       [
+        "ありがとうございます"
+       ],
+       [
+        "助かりました",
+        "ご親切に"
+       ]
+      ],
+      "note": "助かりました: 'that helped me a lot'.",
+      "next": null
+     }
+    ]
+   }
+  ]
+ }
+]
