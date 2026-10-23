@@ -49,7 +49,10 @@ struct RoleplayView: View {
             }
             #endif
         }
-        .onDisappear { voice.cancel() }
+        .onDisappear {
+            voice.cancel()
+            model.end()
+        }
     }
 
     private var header: some View {
@@ -58,7 +61,11 @@ struct RoleplayView: View {
             Text("You: \(model.scenario.userRole) · Partner: \(model.scenario.partnerRole)")
                 .font(.footnote).foregroundStyle(AppTheme.secondaryInk)
             Label(model.scenario.goal, systemImage: "target").font(.footnote.weight(.semibold))
-            if model.isFreeMode {
+            if model.isLiveMode {
+                Label("Live voice · Gemini", systemImage: "waveform")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(AppTheme.accent)
+            } else if model.isFreeMode {
                 Label("AI conversation · \(environment.aiResolver.engineLabel)", systemImage: "sparkles")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(AppTheme.accent)
@@ -175,7 +182,7 @@ struct RoleplayView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             HStack(spacing: 10) {
-                MicButton(voice: voice, diameter: 52, onStop: { text in
+                MicButton(voice: voice, diameter: 52, onStart: { model.stopPartnerAudio() }, onStop: { text in
                     typed = text
                     send(text)
                 })

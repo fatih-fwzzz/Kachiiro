@@ -11,19 +11,22 @@ final class AppEnvironment {
     let settings: SettingsStore
     let speech: SpeechPlaying
     let audioPlayer: AudioPlaying
+    let liveAudio: PCMAudioStreaming
     let voiceInput: VoiceInputModel
     let keys: APIKeyStore
     let aiResolver: KaiwaAIResolver
 
     init(
         seed: SeedData, repository: ProgressRepository, settings: SettingsStore,
-        speech: SpeechPlaying, audioPlayer: AudioPlaying, voiceInput: VoiceInputModel, keys: APIKeyStore
+        speech: SpeechPlaying, audioPlayer: AudioPlaying, liveAudio: PCMAudioStreaming,
+        voiceInput: VoiceInputModel, keys: APIKeyStore
     ) {
         self.seed = seed
         self.repository = repository
         self.settings = settings
         self.speech = speech
         self.audioPlayer = audioPlayer
+        self.liveAudio = liveAudio
         self.voiceInput = voiceInput
         self.keys = keys
         aiResolver = KaiwaAIResolver(
@@ -44,7 +47,7 @@ final class AppEnvironment {
             let repository = SwiftDataProgressRepository(container: container)
             let env = AppEnvironment(
                 seed: seed, repository: repository, settings: UserDefaultsSettingsStore(),
-                speech: SpeechService(), audioPlayer: AudioPlayerService(),
+                speech: SpeechService(), audioPlayer: AudioPlayerService(), liveAudio: LiveAudioPlayer(),
                 voiceInput: VoiceInputModel(recognizer: SpeechRecognitionService()), keys: KeychainAPIKeyStore()
             )
             #if DEBUG
@@ -63,7 +66,7 @@ final class AppEnvironment {
             repository: InMemoryProgressRepository(),
             settings: InMemorySettingsStore(),
             speech: SpeechService(),
-            audioPlayer: AudioPlayerService(),
+            audioPlayer: AudioPlayerService(), liveAudio: LiveAudioPlayer(),
             voiceInput: VoiceInputModel(recognizer: SpeechRecognitionService()), keys: InMemoryAPIKeyStore()
         )
     }
@@ -106,7 +109,9 @@ final class AppEnvironment {
     @MainActor
     func makeRoleplayViewModel(_ scenario: RoleplayScenario) -> RoleplayViewModel {
         let mode: RoleplayViewModel.Mode
-        if aiResolver.usesGeneratedContent, let service = aiResolver.service() {
+        if let partner = aiResolver.liveRoleplayPartner(), let reviewer = aiResolver.service() {
+            mode = .live(partner: partner, reviewer: reviewer, audio: liveAudio)
+        } else if aiResolver.usesGeneratedContent, let service = aiResolver.service() {
             mode = .free(service)
         } else {
             mode = .scripted(judge: aiResolver.service())

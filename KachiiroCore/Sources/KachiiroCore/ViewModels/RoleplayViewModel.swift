@@ -26,6 +26,8 @@ public final class RoleplayViewModel {
         case scripted(judge: AnswerJudging?)
         /// The AI plays the partner and reviews every reply.
         case free(KaiwaAIService)
+        /// Gemini Live speaks the partner; the reviewer checks each learner line.
+        case live(partner: LiveRoleplayPartner, reviewer: KaiwaAIService, audio: PCMAudioStreaming?)
     }
 
     public let scenario: RoleplayScenario
@@ -35,6 +37,8 @@ public final class RoleplayViewModel {
     public private(set) var errorMessage: String?
     /// `true` after a free-mode request failed and `retryLast()` can re-send it.
     public private(set) var canRetry = false
+    /// The in-flight review of the learner's latest live line; exposed so tests can await it.
+    public private(set) var pendingReview: Task<Void, Never>?
 
     private let mode: Mode
     private let speech: SpeechPlaying?
@@ -47,7 +51,14 @@ public final class RoleplayViewModel {
     }
 
     public var isFreeMode: Bool {
-        if case .free = mode { return true }
+        switch mode {
+        case .free, .live: true
+        case .scripted: false
+        }
+    }
+
+    public var isLiveMode: Bool {
+        if case .live = mode { return true }
         return false
     }
 
@@ -88,6 +99,13 @@ public final class RoleplayViewModel {
         case .free(let service):
             currentTurnId = nil
             await requestPartnerTurn(service)
+        case .live(let partner, _, let audio):
+            currentTurnId = nil
+            pendingReview?.cancel()
+            pendingReview = nil
+            partner.close()
+            audio?.stop()
+            await requestLiveTurn(partner, audio)
         }
     }
 
@@ -102,14 +120,41 @@ public final class RoleplayViewModel {
             guard !canRetry else { return }
             append(.user, input)
             await requestPartnerTurn(service)
+        case .live(let partner, let reviewer, let audio):
+            guard !canRetry else { return }
+            append(.user, input)
+            reviewLiveLine(reviewer, input: input)
+            await requestLiveTurn(partner, audio)
         }
     }
 
-    /// Re-sends the last free-mode request after a failure.
+    /// Re-sends the last free-mode or live request after a failure.
     public func retryLast() async {
-        guard canRetry, !isWaiting, case .free(let service) = mode else { return }
-        errorMessage = nil
-        await requestPartnerTurn(service)
+        guard canRetry, !isWaiting else { return }
+        switch mode {
+        case .free(let service):
+            errorMessage = nil
+            await requestPartnerTurn(service)
+        case .live(let partner, _, let audio):
+            errorMessage = nil
+            await requestLiveTurn(partner, audio)
+        case .scripted:
+            return
+        }
+    }
+
+    /// Releases the live connection and stops partner audio; a no-op outside live mode.
+    public func end() {
+        guard case .live(let partner, _, let audio) = mode else { return }
+        pendingReview?.cancel()
+        partner.close()
+        audio?.stop()
+    }
+
+    /// Silences the partner's voice, e.g. when the learner starts talking.
+    public func stopPartnerAudio() {
+        guard case .live(_, _, let audio) = mode else { return }
+        audio?.stop()
     }
 
     public func replay(_ line: Line) {
@@ -194,8 +239,46 @@ public final class RoleplayViewModel {
         }
     }
 
-    private func append(_ speaker: Speaker, _ text: String, verdict: Verdict? = nil) {
+    // MARK: Live
+
+    private func requestLiveTurn(_ partner: LiveRoleplayPartner, _ audio: PCMAudioStreaming?) async {
+        isWaiting = true
+        canRetry = false
+        defer { isWaiting = false }
+        do {
+            let text = try await partner.reply(
+                system: KaiwaPrompts.livePartner(scenario), history: lines,
+                onAudio: { audio?.enqueue($0, sampleRate: 24_000) }
+            )
+            append(.partner, text, speak: false)
+            if userTurnCount >= Self.maxFreeTurns {
+                isFinished = true
+                partner.close()
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+            canRetry = true
+        }
+    }
+
+    private func reviewLiveLine(_ reviewer: KaiwaAIService, input: String) {
+        let index = lines.count - 1
+        let history = lines
+        pendingReview = Task { [scenario] in
+            guard let judgement = try? await reviewer.reviewRoleplayLine(scenario: scenario, history: history) else {
+                return
+            }
+            guard index < self.lines.count, self.lines[index].speaker == .user, self.lines[index].text == input else {
+                return
+            }
+            self.lines[index].verdict = .reviewed(
+                acceptable: judgement.acceptable, corrected: judgement.corrected, explanation: judgement.explanation
+            )
+        }
+    }
+
+    private func append(_ speaker: Speaker, _ text: String, verdict: Verdict? = nil, speak: Bool = true) {
         lines.append(Line(id: lines.count, speaker: speaker, text: text, verdict: verdict))
-        if speaker == .partner { speech?.speak(text, slow: false) }
+        if speaker == .partner, speak { speech?.speak(text, slow: false) }
     }
 }

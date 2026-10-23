@@ -8,18 +8,21 @@ public final class KaiwaAIResolver {
     private let appleAvailability: @MainActor () -> EngineAvailability
     private let makeAppleClient: @MainActor () -> LanguageModelClient?
     private let makeGeminiClient: (String) -> LanguageModelClient
+    private let makeGeminiLive: @MainActor (String) -> LiveRoleplayPartner
 
     public init(
         settings: SettingsStore, keys: APIKeyStore,
         appleAvailability: @escaping @MainActor () -> EngineAvailability,
         makeAppleClient: @escaping @MainActor () -> LanguageModelClient?,
-        makeGeminiClient: @escaping (String) -> LanguageModelClient = { GeminiClient(apiKey: $0) }
+        makeGeminiClient: @escaping (String) -> LanguageModelClient = { GeminiClient(apiKey: $0) },
+        makeGeminiLive: @escaping @MainActor (String) -> LiveRoleplayPartner = { GeminiLiveClient(apiKey: $0) }
     ) {
         self.settings = settings
         self.keys = keys
         self.appleAvailability = appleAvailability
         self.makeAppleClient = makeAppleClient
         self.makeGeminiClient = makeGeminiClient
+        self.makeGeminiLive = makeGeminiLive
     }
 
     private var trimmedGeminiKey: String? {
@@ -46,6 +49,14 @@ public final class KaiwaAIResolver {
         case .gemini: client = trimmedGeminiKey.map(makeGeminiClient)
         }
         return client.map(KaiwaAIService.init(client:))
+    }
+
+    /// A Gemini Live voice partner; `nil` unless the engine is Gemini, content is AI-generated and a key is stored.
+    public func liveRoleplayPartner() -> LiveRoleplayPartner? {
+        guard settings.kaiwaEngine == .gemini, settings.kaiwaContent == .generated, let key = trimmedGeminiKey else {
+            return nil
+        }
+        return makeGeminiLive(key)
     }
 
     public var usesGeneratedContent: Bool {
