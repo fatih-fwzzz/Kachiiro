@@ -1,0 +1,2532 @@
+{
+  "verbs": [
+    {
+      "id": 1,
+      "plain": "行く",
+      "reading": "いく",
+      "meaning": "to go",
+      "polite": "行きます",
+      "sonkeigo": [
+        "いらっしゃいます",
+        "おいでになります"
+      ],
+      "kenjougo": [
+        "参ります",
+        "伺います"
+      ],
+      "teineigo": [],
+      "rareru": "行かれます"
+    },
+    {
+      "id": 2,
+      "plain": "来る",
+      "reading": "くる",
+      "meaning": "to come",
+      "polite": "来ます",
+      "sonkeigo": [
+        "いらっしゃいます",
+        "おいでになります",
+        "お見えになります",
+        "お越しになります"
+      ],
+      "kenjougo": [
+        "参ります",
+        "伺います"
+      ],
+      "teineigo": [],
+      "rareru": "来られます"
+    },
+    {
+      "id": 3,
+      "plain": "いる",
+      "reading": "いる",
+      "meaning": "to be (people)",
+      "polite": "います",
+      "sonkeigo": [
+        "いらっしゃいます",
+        "おいでになります"
+      ],
+      "kenjougo": [
+        "おります"
+      ],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 4,
+      "plain": "言う",
+      "reading": "いう",
+      "meaning": "to say",
+      "polite": "言います",
+      "sonkeigo": [
+        "おっしゃいます"
+      ],
+      "kenjougo": [
+        "申します",
+        "申し上げます"
+      ],
+      "teineigo": [],
+      "rareru": "言われます"
+    },
+    {
+      "id": 5,
+      "plain": "する",
+      "reading": "する",
+      "meaning": "to do",
+      "polite": "します",
+      "sonkeigo": [
+        "なさいます"
+      ],
+      "kenjougo": [
+        "いたします"
+      ],
+      "teineigo": [],
+      "rareru": "されます"
+    },
+    {
+      "id": 6,
+      "plain": "食べる",
+      "reading": "たべる",
+      "meaning": "to eat",
+      "polite": "食べます",
+      "sonkeigo": [
+        "召し上がります"
+      ],
+      "kenjougo": [
+        "いただきます"
+      ],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 7,
+      "plain": "飲む",
+      "reading": "のむ",
+      "meaning": "to drink",
+      "polite": "飲みます",
+      "sonkeigo": [
+        "召し上がります"
+      ],
+      "kenjougo": [
+        "いただきます"
+      ],
+      "teineigo": [],
+      "rareru": "飲まれます"
+    },
+    {
+      "id": 8,
+      "plain": "見る",
+      "reading": "みる",
+      "meaning": "to see",
+      "polite": "見ます",
+      "sonkeigo": [
+        "ご覧になります"
+      ],
+      "kenjougo": [
+        "拝見します"
+      ],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 9,
+      "plain": "知っている",
+      "reading": "しっている",
+      "meaning": "to know",
+      "polite": "知っています",
+      "sonkeigo": [
+        "ご存じです"
+      ],
+      "kenjougo": [
+        "存じております",
+        "存じ上げております"
+      ],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 10,
+      "plain": "会う",
+      "reading": "あう",
+      "meaning": "to meet",
+      "polite": "会います",
+      "sonkeigo": [
+        "お会いになります"
+      ],
+      "kenjougo": [
+        "お目にかかります",
+        "お会いします"
+      ],
+      "teineigo": [],
+      "rareru": "会われます"
+    },
+    {
+      "id": 11,
+      "plain": "あげる",
+      "reading": "あげる",
+      "meaning": "to give",
+      "polite": "あげます",
+      "sonkeigo": [],
+      "kenjougo": [
+        "さしあげます"
+      ],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 12,
+      "plain": "くれる",
+      "reading": "くれる",
+      "meaning": "to give (to me)",
+      "polite": "くれます",
+      "sonkeigo": [
+        "くださいます"
+      ],
+      "kenjougo": [],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 13,
+      "plain": "もらう",
+      "reading": "もらう",
+      "meaning": "to receive",
+      "polite": "もらいます",
+      "sonkeigo": [],
+      "kenjougo": [
+        "いただきます"
+      ],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 14,
+      "plain": "聞く",
+      "reading": "きく",
+      "meaning": "to ask / to listen",
+      "polite": "聞きます",
+      "sonkeigo": [
+        "お聞きになります"
+      ],
+      "kenjougo": [
+        "伺います",
+        "お聞きします",
+        "拝聴します"
+      ],
+      "teineigo": [],
+      "rareru": "聞かれます"
+    },
+    {
+      "id": 15,
+      "plain": "訪ねる",
+      "reading": "たずねる",
+      "meaning": "to visit",
+      "polite": "訪ねます",
+      "sonkeigo": [
+        "お訪ねになります"
+      ],
+      "kenjougo": [
+        "伺います",
+        "お訪ねします"
+      ],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 16,
+      "plain": "寝る",
+      "reading": "ねる",
+      "meaning": "to sleep",
+      "polite": "寝ます",
+      "sonkeigo": [
+        "お休みになります"
+      ],
+      "kenjougo": [],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 17,
+      "plain": "着る",
+      "reading": "きる",
+      "meaning": "to wear",
+      "polite": "着ます",
+      "sonkeigo": [
+        "お召しになります"
+      ],
+      "kenjougo": [],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 18,
+      "plain": "思う",
+      "reading": "おもう",
+      "meaning": "to think",
+      "polite": "思います",
+      "sonkeigo": [
+        "お思いになります"
+      ],
+      "kenjougo": [
+        "存じます"
+      ],
+      "teineigo": [],
+      "rareru": "思われます"
+    },
+    {
+      "id": 19,
+      "plain": "分かる",
+      "reading": "わかる",
+      "meaning": "to understand",
+      "polite": "分かります",
+      "sonkeigo": [
+        "お分かりになります"
+      ],
+      "kenjougo": [
+        "承知します",
+        "承知いたします",
+        "かしこまります"
+      ],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 20,
+      "plain": "ある",
+      "reading": "ある",
+      "meaning": "to exist (things)",
+      "polite": "あります",
+      "sonkeigo": [],
+      "kenjougo": [],
+      "teineigo": [
+        "ございます"
+      ],
+      "rareru": null
+    },
+    {
+      "id": 21,
+      "plain": "だ",
+      "reading": "だ",
+      "meaning": "to be (copula)",
+      "polite": "です",
+      "sonkeigo": [],
+      "kenjougo": [],
+      "teineigo": [
+        "でございます"
+      ],
+      "rareru": null
+    },
+    {
+      "id": 22,
+      "plain": "待つ",
+      "reading": "まつ",
+      "meaning": "to wait",
+      "polite": "待ちます",
+      "sonkeigo": [
+        "お待ちになります"
+      ],
+      "kenjougo": [
+        "お待ちします",
+        "お待ちいたします"
+      ],
+      "teineigo": [],
+      "rareru": "待たれます"
+    },
+    {
+      "id": 23,
+      "plain": "書く",
+      "reading": "かく",
+      "meaning": "to write",
+      "polite": "書きます",
+      "sonkeigo": [
+        "お書きになります"
+      ],
+      "kenjougo": [
+        "お書きします"
+      ],
+      "teineigo": [],
+      "rareru": "書かれます"
+    },
+    {
+      "id": 24,
+      "plain": "読む",
+      "reading": "よむ",
+      "meaning": "to read",
+      "polite": "読みます",
+      "sonkeigo": [
+        "お読みになります"
+      ],
+      "kenjougo": [
+        "お読みします"
+      ],
+      "teineigo": [],
+      "rareru": "読まれます"
+    },
+    {
+      "id": 25,
+      "plain": "帰る",
+      "reading": "かえる",
+      "meaning": "to go home",
+      "polite": "帰ります",
+      "sonkeigo": [
+        "お帰りになります"
+      ],
+      "kenjougo": [
+        "失礼します"
+      ],
+      "teineigo": [],
+      "rareru": "帰られます"
+    },
+    {
+      "id": 26,
+      "plain": "使う",
+      "reading": "つかう",
+      "meaning": "to use",
+      "polite": "使います",
+      "sonkeigo": [
+        "お使いになります"
+      ],
+      "kenjougo": [
+        "お使いします"
+      ],
+      "teineigo": [],
+      "rareru": "使われます"
+    },
+    {
+      "id": 27,
+      "plain": "持つ",
+      "reading": "もつ",
+      "meaning": "to hold / carry",
+      "polite": "持ちます",
+      "sonkeigo": [
+        "お持ちになります"
+      ],
+      "kenjougo": [
+        "お持ちします"
+      ],
+      "teineigo": [],
+      "rareru": "持たれます"
+    },
+    {
+      "id": 28,
+      "plain": "座る",
+      "reading": "すわる",
+      "meaning": "to sit",
+      "polite": "座ります",
+      "sonkeigo": [
+        "おかけになります",
+        "お座りになります"
+      ],
+      "kenjougo": [],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 29,
+      "plain": "決める",
+      "reading": "きめる",
+      "meaning": "to decide",
+      "polite": "決めます",
+      "sonkeigo": [
+        "お決めになります"
+      ],
+      "kenjougo": [],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 30,
+      "plain": "送る",
+      "reading": "おくる",
+      "meaning": "to send",
+      "polite": "送ります",
+      "sonkeigo": [
+        "お送りになります"
+      ],
+      "kenjougo": [
+        "お送りします",
+        "お送りいたします"
+      ],
+      "teineigo": [],
+      "rareru": "送られます"
+    },
+    {
+      "id": 31,
+      "plain": "手伝う",
+      "reading": "てつだう",
+      "meaning": "to help",
+      "polite": "手伝います",
+      "sonkeigo": [],
+      "kenjougo": [
+        "お手伝いします",
+        "お手伝いいたします"
+      ],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 32,
+      "plain": "案内する",
+      "reading": "あんないする",
+      "meaning": "to guide",
+      "polite": "案内します",
+      "sonkeigo": [
+        "ご案内になります"
+      ],
+      "kenjougo": [
+        "ご案内します",
+        "ご案内いたします"
+      ],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 33,
+      "plain": "説明する",
+      "reading": "せつめいする",
+      "meaning": "to explain",
+      "polite": "説明します",
+      "sonkeigo": [
+        "ご説明になります"
+      ],
+      "kenjougo": [
+        "ご説明します",
+        "ご説明いたします"
+      ],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 34,
+      "plain": "連絡する",
+      "reading": "れんらくする",
+      "meaning": "to contact",
+      "polite": "連絡します",
+      "sonkeigo": [
+        "ご連絡になります"
+      ],
+      "kenjougo": [
+        "ご連絡します",
+        "ご連絡いたします"
+      ],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 35,
+      "plain": "電話する",
+      "reading": "でんわする",
+      "meaning": "to phone",
+      "polite": "電話します",
+      "sonkeigo": [
+        "お電話になります"
+      ],
+      "kenjougo": [
+        "お電話します",
+        "お電話いたします"
+      ],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 36,
+      "plain": "借りる",
+      "reading": "かりる",
+      "meaning": "to borrow",
+      "polite": "借ります",
+      "sonkeigo": [
+        "お借りになります"
+      ],
+      "kenjougo": [
+        "お借りします",
+        "拝借します"
+      ],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 37,
+      "plain": "見せる",
+      "reading": "みせる",
+      "meaning": "to show",
+      "polite": "見せます",
+      "sonkeigo": [
+        "お見せになります"
+      ],
+      "kenjougo": [
+        "お見せします",
+        "ご覧に入れます"
+      ],
+      "teineigo": [],
+      "rareru": null
+    },
+    {
+      "id": 38,
+      "plain": "住む",
+      "reading": "すむ",
+      "meaning": "to live",
+      "polite": "住みます",
+      "sonkeigo": [
+        "お住まいです",
+        "お住みになります"
+      ],
+      "kenjougo": [],
+      "teineigo": [],
+      "rareru": null
+    }
+  ],
+  "sentences": [
+    {
+      "id": 1,
+      "situation": "Asking when your manager will arrive tomorrow.",
+      "listener": "boss",
+      "target": "sonkeigo",
+      "plain": "部長は明日何時に来る？",
+      "answers": [
+        "部長は明日何時にいらっしゃいますか",
+        "部長は明日何時にお見えになりますか",
+        "部長は明日何時にお越しになりますか"
+      ],
+      "keyPhrases": [
+        [
+          "いらっしゃいます",
+          "おいでになります",
+          "お見えになります",
+          "お越しになります"
+        ]
+      ],
+      "wrong": [
+        "部長は明日何時に参りますか",
+        "部長は明日何時に来ますか",
+        "部長は明日何時にいらっしゃられますか"
+      ],
+      "explanation": "Your manager is the one coming, so use the respectful form of 来る: いらっしゃいます. 参ります is humble, and いらっしゃられます stacks two honorifics."
+    },
+    {
+      "id": 2,
+      "situation": "Asking your teacher what they said in class.",
+      "listener": "teacher",
+      "target": "sonkeigo",
+      "plain": "先生は何と言った？",
+      "answers": [
+        "先生は何とおっしゃいましたか",
+        "先生は何とおっしゃっていましたか"
+      ],
+      "keyPhrases": [
+        [
+          "おっしゃいました",
+          "おっしゃっていました"
+        ]
+      ],
+      "wrong": [
+        "先生は何と申しましたか",
+        "先生は何と言いましたか",
+        "先生は何とおっしゃられましたか"
+      ],
+      "explanation": "The teacher's words call for the respectful verb おっしゃる. 申す is humble and is only for your own words; おっしゃられる is double keigo."
+    },
+    {
+      "id": 3,
+      "situation": "Offering to let a customer look at an item in the shop.",
+      "listener": "customer",
+      "target": "sonkeigo",
+      "plain": "お客様、こちらを見る？",
+      "answers": [
+        "お客様、こちらをご覧になりますか",
+        "お客様、こちらもご覧になりますか"
+      ],
+      "keyPhrases": [
+        [
+          "ご覧になります"
+        ]
+      ],
+      "wrong": [
+        "お客様、こちらを拝見しますか",
+        "お客様、こちらを見ますか",
+        "お客様、こちらをご覧になられますか"
+      ],
+      "explanation": "The customer's action of looking needs the respectful ご覧になる. 拝見する is humble and would lower the customer."
+    },
+    {
+      "id": 4,
+      "situation": "Asking your company president what he would like to eat.",
+      "listener": "boss",
+      "target": "sonkeigo",
+      "plain": "社長は何を食べる？",
+      "answers": [
+        "社長は何を召し上がりますか",
+        "社長は何をお召し上がりになりますか"
+      ],
+      "keyPhrases": [
+        [
+          "召し上がります",
+          "お召し上がりになります"
+        ]
+      ],
+      "wrong": [
+        "社長は何をいただきますか",
+        "社長は何を食べますか",
+        "社長は何を召し上がられますか"
+      ],
+      "explanation": "召し上がる is the respectful verb for eating and drinking. いただく is humble, and 召し上がられる is double keigo."
+    },
+    {
+      "id": 5,
+      "situation": "Asking a client's representative whether he knows about a matter.",
+      "listener": "client",
+      "target": "sonkeigo",
+      "plain": "田中様はこの件を知っている？",
+      "answers": [
+        "田中様はこの件をご存じですか",
+        "田中様はこの件をご存知ですか"
+      ],
+      "keyPhrases": [
+        [
+          "ご存じです",
+          "ご存知です"
+        ]
+      ],
+      "wrong": [
+        "田中様はこの件を存じ上げていますか",
+        "田中様はこの件を知っていますか",
+        "田中様はこの件をお知りになられますか"
+      ],
+      "explanation": "The respectful form of 知っている is ご存じです. 存じ上げる is humble and is only for yourself."
+    },
+    {
+      "id": 6,
+      "situation": "Asking your teacher whether he will be at school tomorrow.",
+      "listener": "teacher",
+      "target": "sonkeigo",
+      "plain": "先生は明日学校にいる？",
+      "answers": [
+        "先生は明日学校にいらっしゃいますか",
+        "先生は明日学校におられますか"
+      ],
+      "keyPhrases": [
+        [
+          "いらっしゃいます",
+          "おられます",
+          "おいでになります"
+        ]
+      ],
+      "wrong": [
+        "先生は明日学校におりますか",
+        "先生は明日学校にいますか",
+        "先生は明日学校にいらっしゃられますか"
+      ],
+      "explanation": "The respectful form of いる is いらっしゃる (or おられる). おる is humble, so it cannot describe your teacher."
+    },
+    {
+      "id": 7,
+      "situation": "Asking whether your section chief has already gone home.",
+      "listener": "boss",
+      "target": "sonkeigo",
+      "plain": "課長はもう帰った？",
+      "answers": [
+        "課長はもうお帰りになりましたか",
+        "課長はもうお帰りですか"
+      ],
+      "keyPhrases": [
+        [
+          "お帰りになりました",
+          "お帰りです"
+        ]
+      ],
+      "wrong": [
+        "課長はもう失礼しましたか",
+        "課長はもう帰りましたか",
+        "課長はもうお帰りになられましたか"
+      ],
+      "explanation": "Use お + stem + になる for a superior's action. 失礼します describes your own leaving, and お帰りになられる doubles the honorific."
+    },
+    {
+      "id": 8,
+      "situation": "Asking a customer to write their name on a form.",
+      "listener": "customer",
+      "target": "sonkeigo",
+      "plain": "ここに名前を書いてください",
+      "answers": [
+        "こちらにお名前をお書きください",
+        "こちらにお名前をご記入ください"
+      ],
+      "keyPhrases": [
+        [
+          "お書きください",
+          "ご記入ください"
+        ]
+      ],
+      "wrong": [
+        "こちらにお名前をお書きします",
+        "こちらに名前を書いてください",
+        "こちらにお名前をお書きになられてください"
+      ],
+      "explanation": "お + stem + ください is the polite request for the other person's action. お書きします is humble and describes your own action."
+    },
+    {
+      "id": 9,
+      "situation": "Asking whether your teacher has read a certain book.",
+      "listener": "teacher",
+      "target": "sonkeigo",
+      "plain": "先生はこの本を読んだ？",
+      "answers": [
+        "先生はこの本をお読みになりましたか",
+        "先生はこの本を読まれましたか"
+      ],
+      "keyPhrases": [
+        [
+          "お読みになりました",
+          "読まれました"
+        ]
+      ],
+      "wrong": [
+        "先生はこの本をお読みしましたか",
+        "先生はこの本を読みましたか",
+        "先生はこの本をお読みになられましたか"
+      ],
+      "explanation": "お読みになる (or the passive-style 読まれる) honors the teacher. お読みする is humble, and お読みになられる is double keigo."
+    },
+    {
+      "id": 10,
+      "situation": "Offering your manager something to drink.",
+      "listener": "boss",
+      "target": "sonkeigo",
+      "plain": "部長、お茶を飲む？",
+      "answers": [
+        "部長、お茶を召し上がりますか",
+        "部長、お茶をお飲みになりますか"
+      ],
+      "keyPhrases": [
+        [
+          "召し上がります",
+          "お飲みになります"
+        ]
+      ],
+      "wrong": [
+        "部長、お茶をいただきますか",
+        "部長、お茶を飲みますか",
+        "部長、お茶を召し上がられますか"
+      ],
+      "explanation": "For your manager's drinking, use 召し上がる or お飲みになる. いただく is humble and describes your own drinking."
+    },
+    {
+      "id": 11,
+      "situation": "Asking a customer where they live.",
+      "listener": "customer",
+      "target": "sonkeigo",
+      "plain": "お客様はどこに住んでいる？",
+      "answers": [
+        "お客様はどちらにお住まいですか",
+        "お客様はどちらにお住みになっていますか"
+      ],
+      "keyPhrases": [
+        [
+          "お住まいです",
+          "お住みになって"
+        ]
+      ],
+      "wrong": [
+        "お客様はどちらに住んでおりますか",
+        "お客様はどちらに住んでいますか",
+        "お客様はどちらにお住まいになられますか"
+      ],
+      "explanation": "お住まいです is the standard respectful way to ask where someone lives. 住んでおります is humble and for yourself."
+    },
+    {
+      "id": 12,
+      "situation": "Asking your teacher whether he is going out now.",
+      "listener": "teacher",
+      "target": "sonkeigo",
+      "plain": "先生は今から出かける？",
+      "answers": [
+        "先生は今からお出かけになりますか",
+        "先生は今からお出かけですか"
+      ],
+      "keyPhrases": [
+        [
+          "お出かけになります",
+          "お出かけです"
+        ]
+      ],
+      "wrong": [
+        "先生は今からお出かけいたしますか",
+        "先生は今から出かけますか",
+        "先生は今からお出かけになられますか"
+      ],
+      "explanation": "お出かけになる / お出かけです honors the teacher. いたします is humble, and お出かけになられる is double keigo."
+    },
+    {
+      "id": 13,
+      "situation": "Asking whether the company president has looked at a document.",
+      "listener": "boss",
+      "target": "sonkeigo",
+      "plain": "社長はこの資料を見た？",
+      "answers": [
+        "社長はこの資料をご覧になりましたか",
+        "社長はこの資料をご覧になりましたでしょうか"
+      ],
+      "keyPhrases": [
+        [
+          "ご覧になりました"
+        ]
+      ],
+      "wrong": [
+        "社長はこの資料を拝見しましたか",
+        "社長はこの資料を見ましたか",
+        "社長はこの資料をご覧になられましたか"
+      ],
+      "explanation": "The president's action of looking is ご覧になる. 拝見する is humble, and ご覧になられる is double keigo."
+    },
+    {
+      "id": 14,
+      "situation": "Asking a client's representative whether he is going on a business trip next week.",
+      "listener": "client",
+      "target": "sonkeigo",
+      "plain": "山田様は来週出張に行く？",
+      "answers": [
+        "山田様は来週出張にいらっしゃいますか",
+        "山田様は来週出張に行かれますか"
+      ],
+      "keyPhrases": [
+        [
+          "いらっしゃいます",
+          "行かれます",
+          "おいでになります"
+        ]
+      ],
+      "wrong": [
+        "山田様は来週出張に参りますか",
+        "山田様は来週出張に行きますか",
+        "山田様は来週出張にいらっしゃられますか"
+      ],
+      "explanation": "The respectful form of 行く is いらっしゃる (or the passive-style 行かれる). 参る is humble."
+    },
+    {
+      "id": 15,
+      "situation": "Inviting a stranger to take a seat.",
+      "listener": "stranger",
+      "target": "sonkeigo",
+      "plain": "どうぞ、ここに座ってください",
+      "answers": [
+        "どうぞ、こちらにおかけください",
+        "どうぞ、こちらにお座りください"
+      ],
+      "keyPhrases": [
+        [
+          "おかけください",
+          "お座りください"
+        ]
+      ],
+      "wrong": [
+        "どうぞ、こちらに座らせていただきます",
+        "どうぞ、ここに座ってください",
+        "どうぞ、こちらにお座りになられてください"
+      ],
+      "explanation": "おかけください and お座りください are the standard polite invitations. 座らせていただく is about your own action, and お座りになられる is double keigo."
+    },
+    {
+      "id": 16,
+      "situation": "Asking when your teacher will decide the trip destination.",
+      "listener": "teacher",
+      "target": "sonkeigo",
+      "plain": "先生は旅行先をいつ決める？",
+      "answers": [
+        "先生は旅行先をいつお決めになりますか",
+        "先生は旅行先をいつ決められますか"
+      ],
+      "keyPhrases": [
+        [
+          "お決めになります",
+          "決められます"
+        ]
+      ],
+      "wrong": [
+        "先生は旅行先をいつお決めしますか",
+        "先生は旅行先をいつ決めますか",
+        "先生は旅行先をいつお決めになられますか"
+      ],
+      "explanation": "お決めになる honors the teacher's decision. お決めする is humble, and お決めになられる stacks two honorific patterns."
+    },
+    {
+      "id": 17,
+      "situation": "Asking your manager whether he will use a pen.",
+      "listener": "boss",
+      "target": "sonkeigo",
+      "plain": "部長、このペンを使う？",
+      "answers": [
+        "部長はこのペンをお使いになりますか",
+        "部長はこのペンを使われますか"
+      ],
+      "keyPhrases": [
+        [
+          "お使いになります",
+          "使われます"
+        ]
+      ],
+      "wrong": [
+        "部長はこのペンをお使いしますか",
+        "部長はこのペンを使いますか",
+        "部長はこのペンをお使いになられますか"
+      ],
+      "explanation": "お使いになる (or 使われる) raises your manager. お使いする is humble, and お使いになられる is double keigo."
+    },
+    {
+      "id": 18,
+      "situation": "Asking a customer whether they have an umbrella.",
+      "listener": "customer",
+      "target": "sonkeigo",
+      "plain": "お客様は傘を持っている？",
+      "answers": [
+        "お客様は傘をお持ちですか",
+        "お客様は傘をお持ちになっていますか"
+      ],
+      "keyPhrases": [
+        [
+          "お持ちです",
+          "お持ちになって"
+        ]
+      ],
+      "wrong": [
+        "お客様は傘をお持ちしますか",
+        "お客様は傘を持っていますか",
+        "お客様は傘をお持ちになられていますか"
+      ],
+      "explanation": "お持ちです is the natural respectful form for someone having something. お持ちする is humble, for carrying something for the customer."
+    },
+    {
+      "id": 19,
+      "situation": "Asking what time the president of a client company will return.",
+      "listener": "client",
+      "target": "sonkeigo",
+      "plain": "山田社長は何時に戻る？",
+      "answers": [
+        "山田社長は何時にお戻りになりますか",
+        "山田社長は何時にお戻りですか"
+      ],
+      "keyPhrases": [
+        [
+          "お戻りになります",
+          "お戻りです"
+        ]
+      ],
+      "wrong": [
+        "山田社長は何時にお戻りいたしますか",
+        "山田社長は何時に戻りますか",
+        "山田社長は何時にお戻りになられますか"
+      ],
+      "explanation": "お戻りになる / お戻りです honors the client's president. いたします is humble."
+    },
+    {
+      "id": 20,
+      "situation": "Asking whether your manager has already sent the document.",
+      "listener": "boss",
+      "target": "sonkeigo",
+      "plain": "部長はもう資料を送った？",
+      "answers": [
+        "部長はもう資料をお送りになりましたか",
+        "部長はもう資料を送られましたか"
+      ],
+      "keyPhrases": [
+        [
+          "お送りになりました",
+          "送られました"
+        ]
+      ],
+      "wrong": [
+        "部長はもう資料をお送りしましたか",
+        "部長はもう資料を送りましたか",
+        "部長はもう資料をお送りになられましたか"
+      ],
+      "explanation": "お送りになる (or 送られる) honors the manager. お送りする is the humble pattern for your own sending."
+    },
+    {
+      "id": 21,
+      "situation": "Asking where your teacher will wait.",
+      "listener": "teacher",
+      "target": "sonkeigo",
+      "plain": "先生はどこで待つ？",
+      "answers": [
+        "先生はどちらでお待ちになりますか",
+        "先生はどちらでお待ちですか"
+      ],
+      "keyPhrases": [
+        [
+          "お待ちになります",
+          "お待ちです"
+        ]
+      ],
+      "wrong": [
+        "先生はどちらでお待ちしますか",
+        "先生はどこで待ちますか",
+        "先生はどちらでお待ちになられますか"
+      ],
+      "explanation": "お待ちになる / お待ちです raises the teacher. お待ちする is humble and means you are the one waiting."
+    },
+    {
+      "id": 22,
+      "situation": "Asking your section chief what he will do on the weekend.",
+      "listener": "boss",
+      "target": "sonkeigo",
+      "plain": "課長は週末何をする？",
+      "answers": [
+        "課長は週末何をなさいますか",
+        "課長は週末何をされますか"
+      ],
+      "keyPhrases": [
+        [
+          "なさいます",
+          "されます"
+        ]
+      ],
+      "wrong": [
+        "課長は週末何をいたしますか",
+        "課長は週末何をしますか",
+        "課長は週末何をなさられますか"
+      ],
+      "explanation": "The respectful form of する is なさる (or される). いたす is humble, and なさられる is double keigo."
+    },
+    {
+      "id": 23,
+      "situation": "A shop clerk asking what the customer is looking for.",
+      "listener": "customer",
+      "target": "sonkeigo",
+      "plain": "お客様は何を探している？",
+      "answers": [
+        "お客様は何をお探しですか",
+        "お客様は何をお探しになっていますか"
+      ],
+      "keyPhrases": [
+        [
+          "お探しです",
+          "お探しになって"
+        ]
+      ],
+      "wrong": [
+        "お客様は何をお探しいたしますか",
+        "お客様は何を探していますか",
+        "お客様は何をお探しになられていますか"
+      ],
+      "explanation": "お探しです is the standard respectful phrase for a customer's search. お探しいたします is humble."
+    },
+    {
+      "id": 24,
+      "situation": "Asking a stranger on the street where he is headed.",
+      "listener": "stranger",
+      "target": "sonkeigo",
+      "plain": "どこへ行くの？",
+      "answers": [
+        "どちらへいらっしゃいますか",
+        "どちらへ行かれますか",
+        "どちらにお出かけですか"
+      ],
+      "keyPhrases": [
+        [
+          "いらっしゃいます",
+          "行かれます",
+          "お出かけです"
+        ]
+      ],
+      "wrong": [
+        "どちらへ参りますか",
+        "どこへ行きますか",
+        "どちらへいらっしゃられますか"
+      ],
+      "explanation": "Use the respectful いらっしゃる for another person's movement. 参る is humble."
+    },
+    {
+      "id": 25,
+      "situation": "A clerk asking a client whether he will buy a product.",
+      "listener": "client",
+      "target": "sonkeigo",
+      "plain": "山田様はこの商品を買う？",
+      "answers": [
+        "山田様はこの商品をお買い求めになりますか",
+        "山田様はこの商品をお買いになりますか"
+      ],
+      "keyPhrases": [
+        [
+          "お買い求めになります",
+          "お買いになります"
+        ]
+      ],
+      "wrong": [
+        "山田様はこの商品を買わせていただきますか",
+        "山田様はこの商品を買いますか",
+        "山田様はこの商品をお買い求めになられますか"
+      ],
+      "explanation": "お買い求めになる (or お買いになる) is the respectful way to say someone buys. 買わせていただく is about yourself."
+    },
+    {
+      "id": 26,
+      "situation": "Telling a client you will visit their office tomorrow.",
+      "listener": "client",
+      "target": "kenjougo",
+      "plain": "明日、そちらに行くよ",
+      "answers": [
+        "明日、そちらに伺います",
+        "明日、そちらに参ります"
+      ],
+      "keyPhrases": [
+        [
+          "伺います",
+          "参ります"
+        ]
+      ],
+      "wrong": [
+        "明日、そちらにいらっしゃいます",
+        "明日、そちらに行きます",
+        "明日、そちらに伺わせていただきます"
+      ],
+      "explanation": "謙譲語 lowers your own action. 伺う and 参る are humble forms of 行く, and いらっしゃる is respectful so it cannot describe yourself."
+    },
+    {
+      "id": 27,
+      "situation": "Introducing yourself on the phone.",
+      "listener": "customer",
+      "target": "kenjougo",
+      "plain": "私は田中です",
+      "answers": [
+        "田中と申します",
+        "田中でございます"
+      ],
+      "keyPhrases": [
+        [
+          "申します",
+          "でございます"
+        ]
+      ],
+      "wrong": [
+        "田中とおっしゃいます",
+        "田中です",
+        "田中とおっしゃられます"
+      ],
+      "explanation": "When you give your own name, use the humble 申します. おっしゃいます is respectful and is reserved for other people."
+    },
+    {
+      "id": 28,
+      "situation": "Telling your manager you will look at his document.",
+      "listener": "boss",
+      "target": "kenjougo",
+      "plain": "この資料を見るね",
+      "answers": [
+        "この資料を拝見します",
+        "この資料を拝見いたします"
+      ],
+      "keyPhrases": [
+        [
+          "拝見します",
+          "拝見いたします"
+        ]
+      ],
+      "wrong": [
+        "この資料をご覧になります",
+        "この資料を見ます",
+        "この資料を拝見されます"
+      ],
+      "explanation": "拝見する is the humble form of 見る for your own action. ご覧になる is respectful and describes the manager."
+    },
+    {
+      "id": 29,
+      "situation": "Telling a client you are waiting for them at the venue.",
+      "listener": "client",
+      "target": "kenjougo",
+      "plain": "ここで待ってるよ",
+      "answers": [
+        "こちらでお待ちしております",
+        "こちらでお待ちしています"
+      ],
+      "keyPhrases": [
+        [
+          "お待ちしており",
+          "お待ちしてい"
+        ]
+      ],
+      "wrong": [
+        "こちらでお待ちになっております",
+        "こちらで待っています",
+        "こちらでお待ちになられます"
+      ],
+      "explanation": "お待ちする is the humble pattern for your own waiting. お待ちになる would raise the other person instead."
+    },
+    {
+      "id": 30,
+      "situation": "Offering help to a customer.",
+      "listener": "customer",
+      "target": "kenjougo",
+      "plain": "手伝いましょうか？",
+      "answers": [
+        "何かお手伝いいたしましょうか",
+        "何かお手伝いしましょうか"
+      ],
+      "keyPhrases": [
+        [
+          "お手伝いいたし",
+          "お手伝いし"
+        ]
+      ],
+      "wrong": [
+        "何かお手伝いになりますか",
+        "何か手伝いましょうか",
+        "何かお手伝いされますか"
+      ],
+      "explanation": "お + stem + する / いたす is the humble pattern for an action you do for someone else."
+    },
+    {
+      "id": 31,
+      "situation": "Offering to take care of a task for your manager.",
+      "listener": "boss",
+      "target": "kenjougo",
+      "plain": "私がやります",
+      "answers": [
+        "私がいたします",
+        "私がやらせていただきます"
+      ],
+      "keyPhrases": [
+        [
+          "いたします",
+          "やらせていただきます"
+        ]
+      ],
+      "wrong": [
+        "私がなさいます",
+        "私がします",
+        "私がされます"
+      ],
+      "explanation": "いたす is the humble form of する. なさる is respectful and cannot be used for yourself."
+    },
+    {
+      "id": 32,
+      "situation": "Telling a client you will send an email later.",
+      "listener": "client",
+      "target": "kenjougo",
+      "plain": "後でメールを送ります",
+      "answers": [
+        "後ほど、メールをお送りします",
+        "後ほど、メールをお送りいたします"
+      ],
+      "keyPhrases": [
+        [
+          "お送りします",
+          "お送りいたします"
+        ]
+      ],
+      "wrong": [
+        "後ほど、メールをお送りになります",
+        "後で、メールを送ります",
+        "後ほど、メールをお送りになられます"
+      ],
+      "explanation": "Your own action takes お送りする / お送りいたす. お送りになる raises the other person."
+    },
+    {
+      "id": 33,
+      "situation": "Telling a customer that you know about the matter.",
+      "listener": "customer",
+      "target": "kenjougo",
+      "plain": "その件は知っています",
+      "answers": [
+        "その件は存じております",
+        "その件は存じ上げております"
+      ],
+      "keyPhrases": [
+        [
+          "存じており",
+          "存じ上げており"
+        ]
+      ],
+      "wrong": [
+        "その件はご存じです",
+        "その件は知っています",
+        "その件は存じていらっしゃいます"
+      ],
+      "explanation": "存じる is the humble form of 知る. ご存じです is respectful and describes the other person."
+    },
+    {
+      "id": 34,
+      "situation": "Telling your teacher that you will meet him tomorrow.",
+      "listener": "teacher",
+      "target": "kenjougo",
+      "plain": "明日先生に会います",
+      "answers": [
+        "明日、先生にお目にかかります",
+        "明日、先生にお会いします"
+      ],
+      "keyPhrases": [
+        [
+          "お目にかかります",
+          "お会いします"
+        ]
+      ],
+      "wrong": [
+        "明日、先生にお会いになります",
+        "明日、先生に会います",
+        "明日、先生にお目にかかられます"
+      ],
+      "explanation": "お目にかかる and お会いする are humble. お会いになる describes the teacher's action, not yours."
+    },
+    {
+      "id": 35,
+      "situation": "Telling your manager you will ask him about something.",
+      "listener": "boss",
+      "target": "kenjougo",
+      "plain": "部長に話を聞きます",
+      "answers": [
+        "部長にお話を伺います",
+        "部長にお話をお聞きします"
+      ],
+      "keyPhrases": [
+        [
+          "伺います",
+          "お聞きします"
+        ]
+      ],
+      "wrong": [
+        "部長にお話をお聞きになります",
+        "部長に話を聞きます",
+        "部長にお話をお伺いになります"
+      ],
+      "explanation": "伺う and お聞きする are humble forms of 聞く. お聞きになる is respectful."
+    },
+    {
+      "id": 36,
+      "situation": "Telling a client you will explain something.",
+      "listener": "client",
+      "target": "kenjougo",
+      "plain": "私から説明します",
+      "answers": [
+        "私からご説明いたします",
+        "私からご説明します"
+      ],
+      "keyPhrases": [
+        [
+          "ご説明いたします",
+          "ご説明します"
+        ]
+      ],
+      "wrong": [
+        "私からご説明になります",
+        "私から説明します",
+        "私からご説明されます"
+      ],
+      "explanation": "ご + noun + する / いたす is the humble pattern for する-verbs. ご説明になる would raise the other person."
+    },
+    {
+      "id": 37,
+      "situation": "Offering to guide a customer to a place.",
+      "listener": "customer",
+      "target": "kenjougo",
+      "plain": "こちらへ案内します",
+      "answers": [
+        "こちらへご案内いたします",
+        "こちらへご案内します"
+      ],
+      "keyPhrases": [
+        [
+          "ご案内いたします",
+          "ご案内します"
+        ]
+      ],
+      "wrong": [
+        "こちらへご案内になります",
+        "こちらへ案内します",
+        "こちらへご案内されます"
+      ],
+      "explanation": "ご案内する / ご案内いたす is the humble form for guiding someone."
+    },
+    {
+      "id": 38,
+      "situation": "Telling a client you will call back when you return.",
+      "listener": "client",
+      "target": "kenjougo",
+      "plain": "戻ったら電話します",
+      "answers": [
+        "戻りましたら、お電話いたします",
+        "戻りましたら、お電話します"
+      ],
+      "keyPhrases": [
+        [
+          "お電話いたします",
+          "お電話します"
+        ]
+      ],
+      "wrong": [
+        "戻りましたら、お電話になります",
+        "戻ったら、電話します",
+        "戻りましたら、お電話なさいます"
+      ],
+      "explanation": "お電話いたす / お電話する is humble. なさる is respectful and would describe the other person."
+    },
+    {
+      "id": 39,
+      "situation": "Asking a client for permission to borrow a document.",
+      "listener": "client",
+      "target": "kenjougo",
+      "plain": "資料を借りてもいいですか",
+      "answers": [
+        "資料をお借りしてもよろしいでしょうか",
+        "資料を拝借してもよろしいでしょうか"
+      ],
+      "keyPhrases": [
+        [
+          "お借りしても",
+          "拝借しても"
+        ]
+      ],
+      "wrong": [
+        "資料をお借りになってもよろしいでしょうか",
+        "資料を借りてもいいですか",
+        "資料を拝借されてもよろしいでしょうか"
+      ],
+      "explanation": "お借りする and 拝借する are humble. お借りになる and 拝借される would describe the other person's action."
+    },
+    {
+      "id": 40,
+      "situation": "Telling your manager you will show him a photo.",
+      "listener": "boss",
+      "target": "kenjougo",
+      "plain": "写真を見せます",
+      "answers": [
+        "写真をお見せします",
+        "写真をお見せいたします",
+        "写真をご覧に入れます"
+      ],
+      "keyPhrases": [
+        [
+          "お見せします",
+          "お見せいたします",
+          "ご覧に入れます"
+        ]
+      ],
+      "wrong": [
+        "写真をお見せになります",
+        "写真を見せます",
+        "写真をご覧になります"
+      ],
+      "explanation": "お見せする and ご覧に入れる are humble forms of 見せる."
+    },
+    {
+      "id": 41,
+      "situation": "Telling your teacher you received a book from him.",
+      "listener": "teacher",
+      "target": "kenjougo",
+      "plain": "先生から本をもらいました",
+      "answers": [
+        "先生から本をいただきました",
+        "先生から本を頂戴しました"
+      ],
+      "keyPhrases": [
+        [
+          "いただきました",
+          "頂戴しました"
+        ]
+      ],
+      "wrong": [
+        "先生から本をくださいました",
+        "先生から本をもらいました",
+        "先生から本をいただかれました"
+      ],
+      "explanation": "いただく is the humble form of もらう. くださる is respectful and describes the teacher giving."
+    },
+    {
+      "id": 42,
+      "situation": "Accepting food that a customer offers you.",
+      "listener": "customer",
+      "target": "kenjougo",
+      "plain": "じゃあ、食べます",
+      "answers": [
+        "では、いただきます",
+        "では、遠慮なくいただきます"
+      ],
+      "keyPhrases": [
+        [
+          "いただきます"
+        ]
+      ],
+      "wrong": [
+        "では、召し上がります",
+        "では、食べます",
+        "では、お食べいたします"
+      ],
+      "explanation": "いただく is the humble form of 食べる. 召し上がる is respectful and cannot describe yourself."
+    },
+    {
+      "id": 43,
+      "situation": "Responding to your manager's instruction.",
+      "listener": "boss",
+      "target": "kenjougo",
+      "plain": "分かりました",
+      "answers": [
+        "かしこまりました",
+        "承知いたしました",
+        "承知しました"
+      ],
+      "keyPhrases": [
+        [
+          "かしこまりました",
+          "承知いたしました",
+          "承知しました"
+        ]
+      ],
+      "wrong": [
+        "お分かりになりました",
+        "分かりました",
+        "承知されました"
+      ],
+      "explanation": "かしこまりました and 承知いたしました are the humble replies of 分かりました. お分かりになる would describe the manager."
+    },
+    {
+      "id": 44,
+      "situation": "Telling a client you will be leaving soon.",
+      "listener": "client",
+      "target": "kenjougo",
+      "plain": "そろそろ帰ります",
+      "answers": [
+        "そろそろ失礼いたします",
+        "そろそろ失礼します"
+      ],
+      "keyPhrases": [
+        [
+          "失礼いたします",
+          "失礼します"
+        ]
+      ],
+      "wrong": [
+        "そろそろお帰りになります",
+        "そろそろ帰ります",
+        "そろそろお帰りになられます"
+      ],
+      "explanation": "When leaving someone's place, 失礼します is the humble phrase. お帰りになる would raise yourself."
+    },
+    {
+      "id": 45,
+      "situation": "Expressing thanks at the start of a speech.",
+      "listener": "customer",
+      "target": "kenjougo",
+      "plain": "お礼を言います",
+      "answers": [
+        "一言お礼を申し上げます",
+        "心よりお礼を申し上げます"
+      ],
+      "keyPhrases": [
+        [
+          "申し上げます"
+        ]
+      ],
+      "wrong": [
+        "一言お礼をおっしゃいます",
+        "一言お礼を言います",
+        "一言お礼をおっしゃられます"
+      ],
+      "explanation": "申し上げる is the humble form of 言う when the words are directed to someone. おっしゃる is respectful."
+    },
+    {
+      "id": 46,
+      "situation": "Offering to carry your manager's luggage.",
+      "listener": "boss",
+      "target": "kenjougo",
+      "plain": "部長の荷物を持ちます",
+      "answers": [
+        "部長のお荷物をお持ちします",
+        "部長のお荷物をお持ちいたします"
+      ],
+      "keyPhrases": [
+        [
+          "お持ちします",
+          "お持ちいたします"
+        ]
+      ],
+      "wrong": [
+        "部長のお荷物をお持ちになります",
+        "部長の荷物を持ちます",
+        "部長のお荷物をお持ちになられます"
+      ],
+      "explanation": "お持ちする is the humble pattern for carrying something on behalf of someone."
+    },
+    {
+      "id": 47,
+      "situation": "Telling a client you will pick them up at the station.",
+      "listener": "client",
+      "target": "kenjougo",
+      "plain": "駅まで迎えに行きます",
+      "answers": [
+        "駅までお迎えに参ります",
+        "駅まで私がお迎えに参ります"
+      ],
+      "keyPhrases": [
+        [
+          "参ります"
+        ]
+      ],
+      "wrong": [
+        "駅までお迎えにいらっしゃいます",
+        "駅まで迎えに行きます",
+        "駅までお迎えに参られます"
+      ],
+      "explanation": "参る is the humble verb for your own going. いらっしゃる is respectful and describes someone else."
+    },
+    {
+      "id": 48,
+      "situation": "Asking your teacher for permission to ask a question.",
+      "listener": "teacher",
+      "target": "kenjougo",
+      "plain": "質問してもいいですか",
+      "answers": [
+        "質問させていただいてもよろしいでしょうか",
+        "一つお伺いしてもよろしいでしょうか"
+      ],
+      "keyPhrases": [
+        [
+          "させていただ",
+          "お伺いしても"
+        ]
+      ],
+      "wrong": [
+        "質問なさってもよろしいでしょうか",
+        "質問してもいいですか",
+        "質問されてもよろしいでしょうか"
+      ],
+      "explanation": "させていただく and お伺いする are humble. なさる and される would describe the teacher."
+    },
+    {
+      "id": 49,
+      "situation": "Offering to accompany your manager.",
+      "listener": "boss",
+      "target": "kenjougo",
+      "plain": "私も一緒に行きます",
+      "answers": [
+        "私もお供いたします",
+        "私もお供します"
+      ],
+      "keyPhrases": [
+        [
+          "お供いたします",
+          "お供します"
+        ]
+      ],
+      "wrong": [
+        "私もお供になります",
+        "私も一緒に行きます",
+        "私もお供されます"
+      ],
+      "explanation": "お供する is the humble verb for accompanying a superior."
+    },
+    {
+      "id": 50,
+      "situation": "Giving your opinion politely to a client.",
+      "listener": "client",
+      "target": "kenjougo",
+      "plain": "そう思います",
+      "answers": [
+        "そのように存じます",
+        "私もそのように存じます"
+      ],
+      "keyPhrases": [
+        [
+          "存じます"
+        ]
+      ],
+      "wrong": [
+        "そのようにお思いになります",
+        "そう思います",
+        "そのようにお存じになります"
+      ],
+      "explanation": "存じる is the humble form of 思う. お思いになる raises the other person and cannot be used for your own opinion."
+    },
+    {
+      "id": 51,
+      "situation": "A clerk telling a customer where the restroom is.",
+      "listener": "customer",
+      "target": "teineigo",
+      "plain": "トイレはあっちにあります",
+      "answers": [
+        "お手洗いはあちらにございます",
+        "お手洗いはあちらの突き当たりにございます"
+      ],
+      "keyPhrases": [
+        [
+          "ございます"
+        ]
+      ],
+      "wrong": [
+        "お手洗いはあちらにあります",
+        "お手洗いはあちらにあられます",
+        "お手洗いはあちらにおありになります"
+      ],
+      "explanation": "ございます is the formal 丁寧語 form of あります. あられます and おありになります are not natural here."
+    },
+    {
+      "id": 52,
+      "situation": "A clerk telling a customer the price.",
+      "listener": "customer",
+      "target": "teineigo",
+      "plain": "これは500円です",
+      "answers": [
+        "こちらは500円でございます",
+        "こちらは五百円でございます"
+      ],
+      "keyPhrases": [
+        [
+          "でございます"
+        ]
+      ],
+      "wrong": [
+        "こちらは500円です",
+        "こちらは500円になります",
+        "こちらは500円でいらっしゃいます"
+      ],
+      "explanation": "でございます is the formal form of です. 〜になります is a common but incorrect shop phrase, and でいらっしゃいます is respectful, not courteous."
+    },
+    {
+      "id": 53,
+      "situation": "A clerk confirming the seat with a customer.",
+      "listener": "customer",
+      "target": "teineigo",
+      "plain": "この席でいい？",
+      "answers": [
+        "こちらのお席でよろしいでしょうか",
+        "こちらのお席でよろしいですか"
+      ],
+      "keyPhrases": [
+        [
+          "よろしいでしょうか",
+          "よろしいですか"
+        ]
+      ],
+      "wrong": [
+        "こちらのお席でいいですか",
+        "こちらのお席でよろしかったでしょうか",
+        "こちらの席でいいでしょうか"
+      ],
+      "explanation": "よろしい is the polite form of いい. The past-tense よろしかったでしょうか is a common mistake."
+    },
+    {
+      "id": 54,
+      "situation": "Checking whether a client has time to talk on the phone.",
+      "listener": "client",
+      "target": "teineigo",
+      "plain": "今、時間ある？",
+      "answers": [
+        "今、お時間はよろしいでしょうか",
+        "今、お時間よろしいですか"
+      ],
+      "keyPhrases": [
+        [
+          "よろしいでしょうか",
+          "よろしいですか"
+        ]
+      ],
+      "wrong": [
+        "今、お時間はいいですか",
+        "今、お時間はよろしかったでしょうか",
+        "今、時間はありますか"
+      ],
+      "explanation": "Ask with お時間 and よろしい. Casual いい and the past-tense よろしかった both sound wrong."
+    },
+    {
+      "id": 55,
+      "situation": "A waiter confirming that the order is complete.",
+      "listener": "customer",
+      "target": "teineigo",
+      "plain": "注文はこれで全部ですか",
+      "answers": [
+        "ご注文は以上でよろしいでしょうか",
+        "ご注文は以上でよろしいですか"
+      ],
+      "keyPhrases": [
+        [
+          "よろしいでしょうか",
+          "よろしいですか"
+        ]
+      ],
+      "wrong": [
+        "ご注文は以上でよろしかったでしょうか",
+        "ご注文はこれで全部ですか",
+        "ご注文は以上でいいですか"
+      ],
+      "explanation": "Use ご注文 and よろしいでしょうか in the present tense."
+    },
+    {
+      "id": 56,
+      "situation": "Handing a document to a client.",
+      "listener": "client",
+      "target": "teineigo",
+      "plain": "資料はこれです",
+      "answers": [
+        "こちらが資料でございます",
+        "こちらが本日の資料でございます"
+      ],
+      "keyPhrases": [
+        [
+          "でございます"
+        ]
+      ],
+      "wrong": [
+        "こちらが資料です",
+        "こちらが資料になります",
+        "こちらが資料であります"
+      ],
+      "explanation": "でございます is the formal form of です when presenting something."
+    },
+    {
+      "id": 57,
+      "situation": "A customer asking a shop clerk whether a table is available.",
+      "listener": "stranger",
+      "target": "teineigo",
+      "plain": "席はありますか",
+      "answers": [
+        "お席はございますか",
+        "お席はございますでしょうか"
+      ],
+      "keyPhrases": [
+        [
+          "ございます"
+        ]
+      ],
+      "wrong": [
+        "席はありますか",
+        "席はありますでしょうか",
+        "お席はおありになりますか"
+      ],
+      "explanation": "ございます is the formal form of あります for things."
+    },
+    {
+      "id": 58,
+      "situation": "Closing a report in a meeting with your boss.",
+      "listener": "boss",
+      "target": "teineigo",
+      "plain": "今日の報告は以上です",
+      "answers": [
+        "以上が本日の報告でございます",
+        "以上でございます"
+      ],
+      "keyPhrases": [
+        [
+          "でございます"
+        ]
+      ],
+      "wrong": [
+        "以上が本日の報告です",
+        "以上が本日の報告であります",
+        "以上が本日の報告でござります"
+      ],
+      "explanation": "でございます is the formal ending for a report. であります and でござります are wrong."
+    },
+    {
+      "id": 59,
+      "situation": "A restaurant staff telling a customer the place is full.",
+      "listener": "customer",
+      "target": "teineigo",
+      "plain": "今日は満席です",
+      "answers": [
+        "本日は満席でございます",
+        "本日はあいにく満席でございます"
+      ],
+      "keyPhrases": [
+        [
+          "でございます"
+        ]
+      ],
+      "wrong": [
+        "本日は満席です",
+        "本日は満席であります",
+        "本日は満席でいらっしゃいます"
+      ],
+      "explanation": "でございます is the courteous form of です in service language."
+    },
+    {
+      "id": 60,
+      "situation": "Asking a client whether there is anything they do not understand.",
+      "listener": "client",
+      "target": "teineigo",
+      "plain": "分からないことはありませんか",
+      "answers": [
+        "ご不明な点はございませんか",
+        "ご不明な点はございませんでしょうか"
+      ],
+      "keyPhrases": [
+        [
+          "ございません"
+        ]
+      ],
+      "wrong": [
+        "ご不明な点はありませんか",
+        "ご不明な点はおありになりませんか",
+        "ご不明な点はありませんでしょうか"
+      ],
+      "explanation": "Use ございません, the formal form of ありません, together with ご不明な点."
+    }
+  ],
+  "uchiSoto": [
+    {
+      "id": 1,
+      "situation": "A client calls and asks for your manager, 田中部長, who is out.",
+      "question": "What do you say to the client?",
+      "choices": [
+        "田中部長は席を外されました",
+        "田中は今席を外しております",
+        "田中部長は今席を外していらっしゃいます",
+        "田中さんは今席にいらっしゃいません"
+      ],
+      "answer": "田中は今席を外しております",
+      "explanation": "To an outsider you treat your own manager as 'inside': drop さん and the title, and use the humble 〜ております."
+    },
+    {
+      "id": 2,
+      "situation": "A client asks if your manager 佐藤 is in.",
+      "question": "Which is the right answer?",
+      "choices": [
+        "佐藤部長はお出かけになっています",
+        "部長の佐藤さんは外出なさっています",
+        "部長の佐藤はただいま外出しております",
+        "部長の佐藤様は外出していらっしゃいます"
+      ],
+      "answer": "部長の佐藤はただいま外出しております",
+      "explanation": "Do not use honorifics for your own superior in front of a client. Use the plain name and a humble or courteous verb."
+    },
+    {
+      "id": 3,
+      "situation": "You tell a client that your section chief 鈴木 will attend the meeting.",
+      "question": "What is correct?",
+      "choices": [
+        "課長の鈴木さんがいらっしゃいます",
+        "鈴木課長がお越しになります",
+        "鈴木課長様が参られます",
+        "課長の鈴木が参ります"
+      ],
+      "answer": "課長の鈴木が参ります",
+      "explanation": "Your own company's people are 'uchi' when speaking to clients, so use the humble 参ります with no さん."
+    },
+    {
+      "id": 4,
+      "situation": "A client asks whether your president is in town tomorrow.",
+      "question": "How do you answer?",
+      "choices": [
+        "弊社の社長は明日出張でおりません",
+        "弊社の社長は明日出張でいらっしゃいません",
+        "弊社の社長様は明日出張です",
+        "うちの社長はお出かけになります"
+      ],
+      "answer": "弊社の社長は明日出張でおりません",
+      "explanation": "おりません is humble. いらっしゃいません would raise your own president in front of an outsider."
+    },
+    {
+      "id": 5,
+      "situation": "A client asks what your manager said about the plan.",
+      "question": "What do you say?",
+      "choices": [
+        "部長様がそのように申されました",
+        "部長がそのように申しておりました",
+        "部長がそのようにおっしゃっていました",
+        "部長がそのように言われていました"
+      ],
+      "answer": "部長がそのように申しておりました",
+      "explanation": "Report your own manager's words with the humble 申す, not おっしゃる, when talking to an outsider."
+    },
+    {
+      "id": 6,
+      "situation": "A client asks you to confirm something with your supervisor.",
+      "question": "Which sentence is best?",
+      "choices": [
+        "上司にご確認になります",
+        "上司にご確認ください",
+        "上司に確認いたします",
+        "上司に確認なさいます"
+      ],
+      "answer": "上司に確認いたします",
+      "explanation": "確認いたします is the humble form for your own action. なさる and ご〜になる are respectful."
+    },
+    {
+      "id": 7,
+      "situation": "You are telling a client who in your company handles the project.",
+      "question": "What do you say?",
+      "choices": [
+        "同僚の山田さんが担当されています",
+        "山田様が担当なさっています",
+        "山田さんが担当していらっしゃいます",
+        "同僚の山田が担当しております"
+      ],
+      "answer": "同僚の山田が担当しております",
+      "explanation": "Colleagues are inside your group, so refer to them without さん and with humble or plain verbs."
+    },
+    {
+      "id": 8,
+      "situation": "You are speaking to a client about the client's company.",
+      "question": "Which word means 'your company' in spoken business Japanese?",
+      "choices": [
+        "御社",
+        "弊社",
+        "当社",
+        "自社"
+      ],
+      "answer": "御社",
+      "explanation": "御社 is for the other party's company. 弊社 and 当社 are for your own."
+    },
+    {
+      "id": 9,
+      "situation": "You pick up the phone for a colleague, 田中, who is out of the office.",
+      "question": "What do you say to the caller?",
+      "choices": [
+        "田中はただいま外出されております",
+        "田中はただいま外出しております。ご伝言を承りましょうか",
+        "田中さんはただいまお出かけになっています",
+        "田中様は外出していらっしゃいます"
+      ],
+      "answer": "田中はただいま外出しております。ご伝言を承りましょうか",
+      "explanation": "To a caller from outside, refer to your colleague without honorifics and offer to take a message with the humble 承る."
+    },
+    {
+      "id": 10,
+      "situation": "A caller asks for 木村, who is in a meeting.",
+      "question": "What is the right reply?",
+      "choices": [
+        "木村様は会議中です",
+        "木村部長は会議にいらっしゃいます",
+        "木村は会議中でございます",
+        "木村さんは会議中でいらっしゃいます"
+      ],
+      "answer": "木村は会議中でございます",
+      "explanation": "Use the courteous でございます for an inside person. でいらっしゃいます raises him."
+    },
+    {
+      "id": 11,
+      "situation": "You offer a caller a callback from your colleague.",
+      "question": "How do you say it?",
+      "choices": [
+        "戻りましたら、折り返しこちらからお電話なさいます",
+        "戻りましたら、折り返しこちらからいらっしゃいます",
+        "戻りましたら、折り返しこちらからお電話になります",
+        "戻りましたら、折り返しこちらからお電話いたします"
+      ],
+      "answer": "戻りましたら、折り返しこちらからお電話いたします",
+      "explanation": "Your side's action takes the humble お電話いたす. Other forms raise your own side."
+    },
+    {
+      "id": 12,
+      "situation": "You do not recognise the caller.",
+      "question": "How do you politely ask who is calling?",
+      "choices": [
+        "失礼ですが、どちら様でしょうか",
+        "どちらですか",
+        "あなたは誰ですか",
+        "名前を言ってください"
+      ],
+      "answer": "失礼ですが、どちら様でしょうか",
+      "explanation": "どちら様 is the polite way to ask someone's identity. Plain forms like 誰 are rude."
+    },
+    {
+      "id": 13,
+      "situation": "A caller asks for 山田, who is on leave today.",
+      "question": "What do you say?",
+      "choices": [
+        "山田は本日お休みになっております",
+        "本日、山田は休みをいただいております",
+        "山田さんは本日お休みになっています",
+        "山田様は本日お休みです"
+      ],
+      "answer": "本日、山田は休みをいただいております",
+      "explanation": "For a colleague's absence, use no さん and a humble or courteous form like いただいております."
+    },
+    {
+      "id": 14,
+      "situation": "A receptionist wants to ask a visitor's name.",
+      "question": "What is the polite way?",
+      "choices": [
+        "お名前を申し上げてください",
+        "お名前をお書きしてください",
+        "お名前をお伺いしてもよろしいでしょうか",
+        "お名前を言いますか"
+      ],
+      "answer": "お名前をお伺いしてもよろしいでしょうか",
+      "explanation": "Use the humble 伺う and よろしいでしょうか to make a respectful request to a visitor."
+    },
+    {
+      "id": 15,
+      "situation": "A receptionist asks a visitor to wait in the lobby.",
+      "question": "What is correct?",
+      "choices": [
+        "こちらでお待ちします",
+        "こちらで待ちなさい",
+        "こちらでお待ちいたしてください",
+        "こちらでお待ちください"
+      ],
+      "answer": "こちらでお待ちください",
+      "explanation": "お待ちください is the respectful request to the visitor. お待ちします is humble and means you wait."
+    },
+    {
+      "id": 16,
+      "situation": "A receptionist tells a visitor that the manager is coming.",
+      "question": "Which sentence is correct?",
+      "choices": [
+        "部長の田中が参りますので、少々お待ちください",
+        "部長の田中がいらっしゃいますので、少々お待ちください",
+        "部長の田中様が参りますので、少々お待ちください",
+        "部長の田中さんがおいでになりますので、少々お待ちください"
+      ],
+      "answer": "部長の田中が参りますので、少々お待ちください",
+      "explanation": "To a visitor your own manager is 'uchi', so use 参ります and no さん."
+    },
+    {
+      "id": 17,
+      "situation": "A receptionist leads a visitor to the meeting room.",
+      "question": "What is the right thing to say?",
+      "choices": [
+        "会議室へ案内してください",
+        "会議室へご案内いたします",
+        "会議室へご案内になります",
+        "会議室へご案内なさいます"
+      ],
+      "answer": "会議室へご案内いたします",
+      "explanation": "ご案内いたします is the humble form for an action done for the visitor."
+    },
+    {
+      "id": 18,
+      "situation": "A receptionist offers a visitor a seat.",
+      "question": "Which is best?",
+      "choices": [
+        "どうぞ座らせていただきます",
+        "どうぞおかけいたします",
+        "どうぞおかけください",
+        "どうぞ座ってもらえますか"
+      ],
+      "answer": "どうぞおかけください",
+      "explanation": "おかけください is the respectful invitation. いたします and いただきます are about your own action."
+    },
+    {
+      "id": 19,
+      "situation": "A receptionist checks whom the visitor has an appointment with.",
+      "question": "What is the right phrase?",
+      "choices": [
+        "田中さんとお約束でしょうか",
+        "田中様とお約束ですか",
+        "田中部長様とお約束ですか",
+        "田中とお約束でいらっしゃいますか"
+      ],
+      "answer": "田中とお約束でいらっしゃいますか",
+      "explanation": "Refer to your own staff without さん or 様, and raise the visitor with でいらっしゃる."
+    },
+    {
+      "id": 20,
+      "situation": "Your teacher asks how your father is doing.",
+      "question": "How do you answer?",
+      "choices": [
+        "父は元気にしております",
+        "お父さんは元気にしていらっしゃいます",
+        "お父様は元気でいらっしゃいます",
+        "父は元気でいらっしゃいます"
+      ],
+      "answer": "父は元気にしております",
+      "explanation": "Talking about your own family to someone outside is 'uchi': use 父 and a humble or plain form."
+    },
+    {
+      "id": 21,
+      "situation": "You tell your teacher that your mother will come to the school.",
+      "question": "What is correct?",
+      "choices": [
+        "母が学校にお越しになります",
+        "母が学校に伺います",
+        "母が学校にいらっしゃいます",
+        "お母さんが学校に参られます"
+      ],
+      "answer": "母が学校に伺います",
+      "explanation": "Your mother is part of your own group, so use the humble 伺います, not respectful forms."
+    },
+    {
+      "id": 22,
+      "situation": "You ask your teacher about his wife.",
+      "question": "Which sentence is correct?",
+      "choices": [
+        "先生の奥さんは元気にしております",
+        "先生の家内はお元気ですか",
+        "先生の奥様はお元気ですか",
+        "先生の妻は元気ですか"
+      ],
+      "answer": "先生の奥様はお元気ですか",
+      "explanation": "The teacher's family is 'soto' for you, so use 奥様 and a respectful form. 妻 and 家内 are for your own wife."
+    },
+    {
+      "id": 23,
+      "situation": "Your teacher asks what your older brother does.",
+      "question": "What do you say?",
+      "choices": [
+        "お兄さんは会社で働いていらっしゃいます",
+        "兄は会社でお働きになっています",
+        "兄様は会社で働きます",
+        "兄は会社で働いております"
+      ],
+      "answer": "兄は会社で働いております",
+      "explanation": "Your own brother is 'uchi', so use 兄 and a humble form like 〜ております."
+    },
+    {
+      "id": 24,
+      "situation": "You ask your teacher about his family.",
+      "question": "How do you ask?",
+      "choices": [
+        "先生のご家族は何人ですか",
+        "先生の家族は何人ですか",
+        "先生の家族は何人でございますか",
+        "先生の家内は何人ですか"
+      ],
+      "answer": "先生のご家族は何人ですか",
+      "explanation": "Use the honorific ご家族 for your teacher's family. 家族 alone is plain."
+    },
+    {
+      "id": 25,
+      "situation": "Inside your company, a colleague asks whether the manager will come to the meeting.",
+      "question": "What is correct among colleagues?",
+      "choices": [
+        "部長は会議に参られますか",
+        "部長は会議にいらっしゃいますか",
+        "部長は会議に参りますか",
+        "部長は会議に伺いますか"
+      ],
+      "answer": "部長は会議にいらっしゃいますか",
+      "explanation": "Inside your company, you still raise the manager. 尊敬語 いらっしゃる is correct. The humble forms would lower him."
+    },
+    {
+      "id": 26,
+      "situation": "Inside your company, you ask a colleague where the section chief went.",
+      "question": "What is the natural question?",
+      "choices": [
+        "課長はどちらにお出かけいたしましたか",
+        "課長はどちらに出かけました",
+        "課長はどちらにお出かけですか",
+        "課長はどちらに出かけております"
+      ],
+      "answer": "課長はどちらにお出かけですか",
+      "explanation": "Within the company, use the respectful お出かけです for a superior."
+    },
+    {
+      "id": 27,
+      "situation": "Inside your company, you relay what the manager said to a colleague.",
+      "question": "What is correct?",
+      "choices": [
+        "部長が明日までにと申しておりました",
+        "部長が明日までにと申し上げていました",
+        "部長が明日までにと言っておりました",
+        "部長が明日までにとおっしゃっていました"
+      ],
+      "answer": "部長が明日までにとおっしゃっていました",
+      "explanation": "Among colleagues the manager is raised with おっしゃる. 申す is humble and is used toward outsiders."
+    },
+    {
+      "id": 28,
+      "situation": "You call a client company and ask for their section head, 山田部長.",
+      "question": "What do you say to their receptionist?",
+      "choices": [
+        "山田部長はいらっしゃいますか",
+        "山田はおりますか",
+        "山田部長はおりますか",
+        "山田さんはおりますか"
+      ],
+      "answer": "山田部長はいらっしゃいますか",
+      "explanation": "The other company's people are 'soto' for you, so use their title and いらっしゃる."
+    },
+    {
+      "id": 29,
+      "situation": "You present your own company's new product to a client.",
+      "question": "How do you phrase it?",
+      "choices": [
+        "御社の新商品をご紹介いたします",
+        "弊社の新商品をご紹介いたします",
+        "弊社の新商品をご紹介になります",
+        "弊社の新商品をご紹介なさいます"
+      ],
+      "answer": "弊社の新商品をご紹介いたします",
+      "explanation": "弊社 is your company, and ご紹介いたします is the humble form for your own action."
+    },
+    {
+      "id": 30,
+      "situation": "You ask what the client company's director thinks.",
+      "question": "What is the polite question?",
+      "choices": [
+        "御社の部長はどのように存じておりますか",
+        "弊社の部長はどのようにお考えでしょうか",
+        "御社の部長はどのようにお考えでしょうか",
+        "御社の部長はどのように考えております"
+      ],
+      "answer": "御社の部長はどのようにお考えでしょうか",
+      "explanation": "For the other company, use 御社 and the respectful お考え."
+    }
+  ],
+  "shadowing": [
+    {
+      "id": "k1",
+      "text": "お世話になっております",
+      "reading": "おせわになっております",
+      "meaning": "Thank you for your continued support (standard business greeting)"
+    },
+    {
+      "id": "k2",
+      "text": "失礼いたします",
+      "reading": "しつれいいたします",
+      "meaning": "Excuse me / goodbye (humble, when leaving or ending a call)"
+    },
+    {
+      "id": "k3",
+      "text": "少々お待ちいただけますか",
+      "reading": "しょうしょうおまちいただけますか",
+      "meaning": "Could you please wait a moment?"
+    },
+    {
+      "id": "k4",
+      "text": "かしこまりました",
+      "reading": "かしこまりました",
+      "meaning": "Certainly. / Understood. (humble reply)"
+    },
+    {
+      "id": "k5",
+      "text": "申し訳ございません",
+      "reading": "もうしわけございません",
+      "meaning": "I am very sorry. (formal apology)"
+    },
+    {
+      "id": "k6",
+      "text": "お忙しいところ恐れ入ります",
+      "reading": "おいそがしいところおそれいります",
+      "meaning": "I'm sorry to trouble you when you are busy."
+    },
+    {
+      "id": "k7",
+      "text": "よろしくお願いいたします",
+      "reading": "よろしくおねがいいたします",
+      "meaning": "Thank you in advance. / Please treat me well."
+    },
+    {
+      "id": "k8",
+      "text": "お先に失礼します",
+      "reading": "おさきにしつれいします",
+      "meaning": "Excuse me for leaving before you."
+    },
+    {
+      "id": "k9",
+      "text": "お疲れ様です",
+      "reading": "おつかれさまです",
+      "meaning": "Thank you for your hard work. (greeting among coworkers)"
+    },
+    {
+      "id": "k10",
+      "text": "承知いたしました",
+      "reading": "しょうちいたしました",
+      "meaning": "I understand. (humble confirmation)"
+    },
+    {
+      "id": "k11",
+      "text": "お待たせいたしました",
+      "reading": "おまたせいたしました",
+      "meaning": "Thank you for waiting."
+    },
+    {
+      "id": "k12",
+      "text": "お待ちしております",
+      "reading": "おまちしております",
+      "meaning": "I look forward to your visit. / I will be waiting for you."
+    },
+    {
+      "id": "k13",
+      "text": "恐れ入りますが、少々お待ちください",
+      "reading": "おそれいりますが、しょうしょうおまちください",
+      "meaning": "I'm sorry, but please wait a moment."
+    },
+    {
+      "id": "k14",
+      "text": "ただいま席を外しております",
+      "reading": "ただいませきをはずしております",
+      "meaning": "He/she is away from the desk at the moment."
+    },
+    {
+      "id": "k15",
+      "text": "お電話ありがとうございます",
+      "reading": "おでんわありがとうございます",
+      "meaning": "Thank you for calling."
+    },
+    {
+      "id": "k16",
+      "text": "失礼ですが、どちら様でしょうか",
+      "reading": "しつれいですが、どちらさまでしょうか",
+      "meaning": "Excuse me, but who is calling?"
+    },
+    {
+      "id": "k17",
+      "text": "ご確認をお願いいたします",
+      "reading": "ごかくにんをおねがいいたします",
+      "meaning": "Please check this."
+    },
+    {
+      "id": "k18",
+      "text": "確認して、折り返しお電話いたします",
+      "reading": "かくにんして、おりかえしおでんわいたします",
+      "meaning": "I will check and call you back."
+    },
+    {
+      "id": "k19",
+      "text": "お手数をおかけしますが、よろしくお願いいたします",
+      "reading": "おてすうをおかけしますが、よろしくおねがいいたします",
+      "meaning": "Sorry for the trouble, thank you in advance."
+    },
+    {
+      "id": "k20",
+      "text": "ご迷惑をおかけして、申し訳ございません",
+      "reading": "ごめいわくをおかけして、もうしわけございません",
+      "meaning": "I apologise for the inconvenience."
+    },
+    {
+      "id": "k21",
+      "text": "本日はありがとうございました",
+      "reading": "ほんじつはありがとうございました",
+      "meaning": "Thank you for today."
+    },
+    {
+      "id": "k22",
+      "text": "今後ともよろしくお願いいたします",
+      "reading": "こんごともよろしくおねがいいたします",
+      "meaning": "I look forward to your continued support."
+    },
+    {
+      "id": "k23",
+      "text": "いらっしゃいませ",
+      "reading": "いらっしゃいませ",
+      "meaning": "Welcome. (said to customers entering a shop)"
+    },
+    {
+      "id": "k24",
+      "text": "ご注文はお決まりでしょうか",
+      "reading": "ごちゅうもんはおきまりでしょうか",
+      "meaning": "Are you ready to order?"
+    },
+    {
+      "id": "k25",
+      "text": "こちらへご案内いたします",
+      "reading": "こちらへごあんないいたします",
+      "meaning": "I will show you this way."
+    },
+    {
+      "id": "k26",
+      "text": "何かございましたら、お申し付けください",
+      "reading": "なにかございましたら、おもうしつけください",
+      "meaning": "If there is anything, please let us know."
+    },
+    {
+      "id": "k27",
+      "text": "お気をつけてお帰りください",
+      "reading": "おきをつけておかえりください",
+      "meaning": "Please take care on your way home."
+    },
+    {
+      "id": "k28",
+      "text": "資料を拝見いたします",
+      "reading": "しりょうをはいけんいたします",
+      "meaning": "I will take a look at the document."
+    },
+    {
+      "id": "k29",
+      "text": "伝言をお伝えいたします",
+      "reading": "でんごんをおつたえいたします",
+      "meaning": "I will pass on your message."
+    },
+    {
+      "id": "k30",
+      "text": "以上でよろしいでしょうか",
+      "reading": "いじょうでよろしいでしょうか",
+      "meaning": "Is that everything?"
+    }
+  ]
+}

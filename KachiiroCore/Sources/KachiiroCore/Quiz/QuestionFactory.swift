@@ -22,6 +22,8 @@ public enum QuestionFactoryRegistry {
         RegisterShiftQuestionFactory(),
         DictationQuestionFactory(),
         SentenceListeningFactory(),
+        KeigoQuestionFactory(),
+        UchiSotoQuestionFactory(),
     ]
 
     public static func factory(for drill: DrillKind) -> (any QuestionFactory)? {

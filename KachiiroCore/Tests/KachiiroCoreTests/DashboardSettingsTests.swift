@@ -71,7 +71,7 @@ import Testing
         let settings = InMemorySettingsStore()
         let empty = makeDashboard(repo, settings, now: now)
         #expect(empty.accuracy.allSatisfy { $0.percent == nil })
-        #expect(!empty.accuracy.contains { $0.pillar == .kaiwa })
+        #expect(empty.accuracy.contains { $0.pillar == .kaiwa })
 
         repo.record(ItemKey("vocab:1:m2w"), pillar: .goi, correct: true, mode: .choice, at: date(2026, 10, 9))
         repo.record(ItemKey("vocab:2:m2w"), pillar: .goi, correct: false, mode: .choice, at: date(2026, 10, 10))
