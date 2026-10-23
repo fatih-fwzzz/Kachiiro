@@ -55,7 +55,7 @@ public final class PracticeViewModel {
         }
         message = nil
         return QuizSessionViewModel(
-            questions: questions, initialMode: inputModeOverride ?? settings.inputMode,
+            questions: questions, initialMode: inputModeOverride ?? (drill == .keigo ? .typing : settings.inputMode),
             repository: repository, speech: speech
         )
     }

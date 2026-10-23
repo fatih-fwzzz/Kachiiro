@@ -82,7 +82,8 @@ public final class QuizSessionViewModel {
     public func submitText(_ text: String) {
         guard let q = currentQuestion, result == nil, q.supportedModes.contains(.typing),
               !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        finishAnswer(q, correct: TypingValidator.isCorrect(text, accepted: q.acceptedAnswers), mode: .typing)
+        let correct = TypingValidator.isCorrect(text, accepted: q.acceptedAnswers, keyPhrases: q.keyPhrases)
+        finishAnswer(q, correct: correct, mode: .typing)
     }
 
     public func next() {

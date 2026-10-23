@@ -13,12 +13,19 @@ public struct QuizQuestion: Identifiable, Sendable, Equatable {
     public let acceptedAnswers: [String]
     public let explanation: String
     public let supportedModes: Set<InputMode>
+    /// Key phrases (any-of groups) that must all appear in a typed or spoken sentence answer.
+    public let keyPhrases: [[String]]
+    /// Whether the answer is a spoken sentence (shows the mic button).
+    public let isSpeakable: Bool
+    /// Situation text handed to an AI judge when the matcher misses.
+    public let judgingContext: String?
 
     public init(
         id: ItemKey, drill: DrillKind, promptTitle: String, promptBody: String,
         promptReading: String? = nil, pitch: PitchPattern? = nil, speech: String? = nil,
         choices: [String], correctChoice: String, acceptedAnswers: [String]? = nil,
-        explanation: String = "", supportedModes: Set<InputMode> = [.choice, .typing]
+        explanation: String = "", supportedModes: Set<InputMode> = [.choice, .typing],
+        keyPhrases: [[String]] = [], isSpeakable: Bool = false, judgingContext: String? = nil
     ) {
         self.id = id
         self.pillar = drill.pillar
@@ -35,5 +42,8 @@ public struct QuizQuestion: Identifiable, Sendable, Equatable {
         self.acceptedAnswers = accepted
         self.explanation = explanation
         self.supportedModes = supportedModes
+        self.keyPhrases = keyPhrases
+        self.isSpeakable = isSpeakable
+        self.judgingContext = judgingContext
     }
 }

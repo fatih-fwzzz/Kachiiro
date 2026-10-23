@@ -48,11 +48,11 @@ struct PracticeView: View {
                             AudioLibraryView(viewModel: environment.makeAudioLibraryViewModel())
                         }
                     }
+                    if section.pillar == .kaiwa {
+                        NavigationLink("Can-do checklist") { CanDoListView(viewModel: environment.makeCanDoViewModel()) }
+                        NavigationLink("Audio library") { AudioLibraryView(viewModel: environment.makeAudioLibraryViewModel()) }
+                    }
                 }
-            }
-            Section(Pillar.kaiwa.title) {
-                NavigationLink("Can-do checklist") { CanDoListView(viewModel: environment.makeCanDoViewModel()) }
-                NavigationLink("Audio library") { AudioLibraryView(viewModel: environment.makeAudioLibraryViewModel()) }
             }
         }
         .navigationTitle("Practice")

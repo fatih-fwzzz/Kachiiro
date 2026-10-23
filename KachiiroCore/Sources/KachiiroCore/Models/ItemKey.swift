@@ -1,7 +1,11 @@
+import Foundation
+
 /// Stable identity of a quizzable item; persisted by the SRS.
 /// Formats: `verb:{wordId}:{form}`, `infl:{wordId}:{cellRaw}`, `vocab:{wordId}:{m2w|w2m}`,
 /// `kanji:{rowId}:{r|w}`, `pitch:{wordId}`, `pattern:{patternId}`,
-/// `register:{wordId}:{tense}-{polarity}:{p2n|n2p}`, `dict:{wordId}`, `sent:{patternId}`.
+/// `register:{wordId}:{tense}-{polarity}:{p2n|n2p}`, `dict:{wordId}`, `sent:{patternId}`,
+/// `keigo:v:{verbId}:{son|ken|tei}`, `keigo:s:{sentenceId}`, `uchi:{id}`, and
+/// `ai:{drill}:{uuid}` for AI-generated items (never persisted, cannot be rebuilt).
 public struct ItemKey: Hashable, Codable, Sendable {
     public let raw: String
 
@@ -27,6 +31,12 @@ public struct ItemKey: Hashable, Codable, Sendable {
     }
     public static func dict(_ wordId: Int) -> ItemKey { ItemKey("dict:\(wordId)") }
     public static func sent(_ patternId: Int) -> ItemKey { ItemKey("sent:\(patternId)") }
+    public static func keigoVerb(_ id: Int, _ level: KeigoLevel) -> ItemKey { ItemKey("keigo:v:\(id):\(level.short)") }
+    public static func keigoSentence(_ id: Int) -> ItemKey { ItemKey("keigo:s:\(id)") }
+    public static func uchiSoto(_ id: Int) -> ItemKey { ItemKey("uchi:\(id)") }
+    public static func generated(_ drill: DrillKind) -> ItemKey { ItemKey("ai:\(drill.rawValue):\(UUID().uuidString)") }
+
+    public var isGenerated: Bool { prefix == "ai" }
 
     /// The `:`-separated parts after the prefix.
     public var parts: [String] {
@@ -48,6 +58,8 @@ public struct ItemKey: Hashable, Codable, Sendable {
         case "register": .registerShift
         case "dict": .dictation
         case "sent": .sentenceListening
+        case "keigo": .keigo
+        case "uchi": .uchiSoto
         default: nil
         }
     }
