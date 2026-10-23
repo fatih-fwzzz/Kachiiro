@@ -11,16 +11,18 @@ final class AppEnvironment {
     let settings: SettingsStore
     let speech: SpeechPlaying
     let audioPlayer: AudioPlaying
+    let voiceInput: VoiceInputModel
 
     init(
         seed: SeedData, repository: ProgressRepository, settings: SettingsStore,
-        speech: SpeechPlaying, audioPlayer: AudioPlaying
+        speech: SpeechPlaying, audioPlayer: AudioPlaying, voiceInput: VoiceInputModel
     ) {
         self.seed = seed
         self.repository = repository
         self.settings = settings
         self.speech = speech
         self.audioPlayer = audioPlayer
+        self.voiceInput = voiceInput
     }
 
     @MainActor
@@ -34,7 +36,8 @@ final class AppEnvironment {
             let repository = SwiftDataProgressRepository(container: container)
             let env = AppEnvironment(
                 seed: seed, repository: repository, settings: UserDefaultsSettingsStore(),
-                speech: SpeechService(), audioPlayer: AudioPlayerService()
+                speech: SpeechService(), audioPlayer: AudioPlayerService(),
+                voiceInput: VoiceInputModel(recognizer: SpeechRecognitionService())
             )
             #if DEBUG
             env.applyDebugLaunchArguments()
@@ -52,7 +55,8 @@ final class AppEnvironment {
             repository: InMemoryProgressRepository(),
             settings: InMemorySettingsStore(),
             speech: SpeechService(),
-            audioPlayer: AudioPlayerService()
+            audioPlayer: AudioPlayerService(),
+            voiceInput: VoiceInputModel(recognizer: SpeechRecognitionService())
         )
     }
 
