@@ -1,7 +1,8 @@
 import Foundation
 
 public struct GeminiClient: LanguageModelClient {
-    public static let model = "gemini-3.8-flash"
+    /// Tried in order; the lighter model answers when the first is overloaded (503/429) or times out.
+    public static let models = ["gemini-3.8-flash", "gemini-3.1-flash-lite"]
 
     private let apiKey: String
     private let session: URLSession
@@ -11,10 +12,10 @@ public struct GeminiClient: LanguageModelClient {
         self.session = session
     }
 
-    public func makeRequest(system: String, prompt: String, schema: JSONSchema) -> URLRequest {
-        var request = URLRequest(url: URL(string: "https://generativelanguage.googleapis.com/v1beta/models/\(Self.model):generateContent")!)
+    public func makeRequest(system: String, prompt: String, schema: JSONSchema, model: String = GeminiClient.models[0]) -> URLRequest {
+        var request = URLRequest(url: URL(string: "https://generativelanguage.googleapis.com/v1beta/models/\(model):generateContent")!)
         request.httpMethod = "POST"
-        request.timeoutInterval = 30
+        request.timeoutInterval = 12
         request.setValue(apiKey, forHTTPHeaderField: "x-goog-api-key")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         let body: [String: Any] = [
@@ -44,8 +45,19 @@ public struct GeminiClient: LanguageModelClient {
     }
 
     public func generateJSON(system: String, prompt: String, schema: JSONSchema) async throws -> Data {
-        let (data, response) = try await session.data(for: makeRequest(system: system, prompt: prompt, schema: schema))
-        guard let http = response as? HTTPURLResponse else { throw KaiwaAIError.invalidResponse }
-        return try Self.parse(data: data, status: http.statusCode)
+        var lastError: Error = KaiwaAIError.invalidResponse
+        for model in Self.models {
+            do {
+                let (data, response) = try await session.data(for: makeRequest(system: system, prompt: prompt, schema: schema, model: model))
+                guard let http = response as? HTTPURLResponse else { throw KaiwaAIError.invalidResponse }
+                return try Self.parse(data: data, status: http.statusCode)
+            } catch let error as KaiwaAIError {
+                guard case .http(let status, _) = error, status == 429 || status >= 500 else { throw error }
+                lastError = error
+            } catch let error as URLError where error.code == .timedOut {
+                lastError = error
+            }
+        }
+        throw lastError
     }
 }
