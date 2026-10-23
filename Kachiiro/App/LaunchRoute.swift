@@ -3,11 +3,12 @@ import KachiiroCore
 
 /// Debug/smoke launch arguments: `-ui-route <route>` and `-ui-mode <choice|typing>`.
 /// Routes: dashboard, practice, mock, review, drill.<DrillKind>, audio, cando, settings,
-/// kaiwa.roleplay, kaiwa.roleplay.<scenarioId>.
+/// kaiwa.roleplay, kaiwa.roleplay.<scenarioId>, kaiwa.shadowing.
 enum LaunchRoute: Equatable {
     case dashboard, practice, mock, review, audio, cando, settings
     case drill(DrillKind)
     case roleplay(String?)
+    case shadowing
 
     init?(argument: String) {
         switch argument {
@@ -19,6 +20,7 @@ enum LaunchRoute: Equatable {
         case "cando": self = .cando
         case "settings": self = .settings
         case "kaiwa.roleplay": self = .roleplay(nil)
+        case "kaiwa.shadowing": self = .shadowing
         default:
             if argument.hasPrefix("kaiwa.roleplay.") {
                 self = .roleplay(String(argument.dropFirst("kaiwa.roleplay.".count)))

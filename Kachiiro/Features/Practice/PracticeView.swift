@@ -10,6 +10,7 @@ struct PracticeView: View {
     @State private var showCanDo = false
     @State private var showRoleplayList = false
     @State private var roleplayScenario: RoleplayScenario?
+    @State private var showShadowing = false
     @Environment(AppEnvironment.self) private var environment
     private let launchRoute: LaunchRoute?
 
@@ -52,6 +53,7 @@ struct PracticeView: View {
                     }
                     if section.pillar == .kaiwa {
                         NavigationLink("Roleplay") { RoleplayListView(scenarios: RoleplayScenario.bundled) }
+                        NavigationLink("Shadowing") { ShadowingView(viewModel: environment.makeShadowingViewModel()) }
                         NavigationLink("Can-do checklist") { CanDoListView(viewModel: environment.makeCanDoViewModel()) }
                         NavigationLink("Audio library") { AudioLibraryView(viewModel: environment.makeAudioLibraryViewModel()) }
                     }
@@ -76,6 +78,9 @@ struct PracticeView: View {
         )) {
             if let scenario = roleplayScenario { RoleplayView(viewModel: environment.makeRoleplayViewModel(scenario)) }
         }
+        .navigationDestination(isPresented: $showShadowing) {
+            ShadowingView(viewModel: environment.makeShadowingViewModel())
+        }
         .task {
             guard !routeConsumed else { return }
             routeConsumed = true
@@ -89,6 +94,7 @@ struct PracticeView: View {
                 } else {
                     showRoleplayList = true
                 }
+            case .shadowing: showShadowing = true
             default: break
             }
         }
