@@ -6,7 +6,7 @@ enum AppTab: Hashable {
 
     init(route: LaunchRoute?) {
         switch route {
-        case .practice, .audio, .cando, .drill: self = .practice
+        case .practice, .audio, .cando, .drill, .roleplay: self = .practice
         case .mock: self = .mock
         case .review: self = .review
         case .dashboard, .settings, nil: self = .dashboard
