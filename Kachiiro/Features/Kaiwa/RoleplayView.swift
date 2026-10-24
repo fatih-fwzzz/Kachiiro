@@ -23,6 +23,15 @@ struct RoleplayView: View {
                         ForEach(model.lines) { line in
                             bubble(line).id(line.id)
                         }
+                        if model.isLiveMode {
+                            if !model.liveUserDraft.isEmpty {
+                                draftBubble(model.liveUserDraft, speaker: .user)
+                            }
+                            if !model.livePartnerDraft.isEmpty {
+                                draftBubble(model.livePartnerDraft, speaker: .partner)
+                            }
+                            Color.clear.frame(height: 1).id("bottom")
+                        }
                         if model.isFinished { finishedCard }
                     }
                     .padding(16)
@@ -32,8 +41,13 @@ struct RoleplayView: View {
                         withAnimation { proxy.scrollTo(last.id, anchor: .bottom) }
                     }
                 }
+                .onChange(of: model.livePartnerDraft) { proxy.scrollTo("bottom", anchor: .bottom) }
+                .onChange(of: model.liveUserDraft) { proxy.scrollTo("bottom", anchor: .bottom) }
+                .onChange(of: model.liveStatus) { proxy.scrollTo("bottom", anchor: .bottom) }
             }
-            if !model.isFinished { inputBar }
+            if !model.isFinished {
+                if model.isLiveMode { liveBar } else { inputBar }
+            }
         }
         .background(AppTheme.canvas)
         .navigationTitle(model.scenario.titleJa)
@@ -86,12 +100,14 @@ struct RoleplayView: View {
                 Text(line.text)
                     .font(AppTheme.Fonts.ui(.title3))
                     .quizCard(tint: AppTheme.cardSurface, padding: 12)
-                Button { model.replay(line) } label: {
-                    Image(systemName: "speaker.wave.2.fill").padding(8)
+                if !model.isLiveMode {
+                    Button { model.replay(line) } label: {
+                        Image(systemName: "speaker.wave.2.fill").padding(8)
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(AppTheme.accent)
+                    .accessibilityLabel("Play line")
                 }
-                .buttonStyle(.plain)
-                .foregroundStyle(AppTheme.accent)
-                .accessibilityLabel("Play line")
                 Spacer(minLength: 24)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -105,6 +121,16 @@ struct RoleplayView: View {
             .frame(maxWidth: .infinity, alignment: .trailing)
             .padding(.leading, 40)
         }
+    }
+
+    /// Speech transcribed so far in a live call, shown dimmed until it becomes a line.
+    private func draftBubble(_ text: String, speaker: RoleplayViewModel.Speaker) -> some View {
+        Text(text)
+            .font(AppTheme.Fonts.ui(.title3))
+            .quizCard(tint: speaker == .user ? AppTheme.accentSoftFill : AppTheme.cardSurface, padding: 12)
+            .opacity(0.6)
+            .frame(maxWidth: .infinity, alignment: speaker == .user ? .trailing : .leading)
+            .padding(speaker == .user ? .leading : .trailing, 40)
     }
 
     @ViewBuilder
@@ -171,18 +197,9 @@ struct RoleplayView: View {
             if model.isWaiting {
                 ProgressView().frame(maxWidth: .infinity, alignment: .leading)
             }
-            if let error = model.errorMessage {
-                HStack {
-                    Text(error).font(.caption).foregroundStyle(AppTheme.secondaryInk)
-                    if model.canRetry {
-                        Button("Retry") { Task { await model.retryLast() } }
-                            .font(.caption.weight(.semibold))
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
+            errorRow
             HStack(spacing: 10) {
-                MicButton(voice: voice, diameter: 52, onStart: { model.stopPartnerAudio() }, onStop: { text in
+                MicButton(voice: voice, diameter: 52, onStop: { text in
                     typed = text
                     send(text)
                 })
@@ -204,6 +221,72 @@ struct RoleplayView: View {
             if voice.state == .listening { typed = voice.transcript }
         }
         .onChange(of: model.lines.count) { showModelAnswer = false }
+    }
+
+    private var errorRow: some View {
+        Group {
+            if let error = model.errorMessage {
+                HStack {
+                    Text(error).font(.caption).foregroundStyle(AppTheme.secondaryInk)
+                    if model.canRetry {
+                        Button("Retry") { Task { await model.retryLast() } }
+                            .font(.caption.weight(.semibold))
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+    }
+
+    private var liveBar: some View {
+        let typingDisabled = model.liveStatus == .connecting || model.liveSession == nil
+        return VStack(spacing: 8) {
+            Label(model.scenario.goal, systemImage: "lightbulb")
+                .font(.footnote)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            errorRow
+            HStack {
+                liveStatusLabel
+                Spacer()
+                Button(role: .destructive) { model.hangUp() } label: {
+                    Label("End", systemImage: "phone.down.fill")
+                }
+                .buttonStyle(.bordered)
+            }
+            HStack(spacing: 10) {
+                TextField("Type a reply", text: $typed)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .submitLabel(.send)
+                    .onSubmit { send(typed) }
+                    .disabled(typingDisabled)
+                Button("Send") { send(typed) }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(typingDisabled || typed.trimmingCharacters(in: .whitespaces).isEmpty)
+            }
+        }
+        .padding(12)
+        .background(AppTheme.cardSurface)
+    }
+
+    @ViewBuilder
+    private var liveStatusLabel: some View {
+        switch model.liveStatus {
+        case .connecting:
+            HStack(spacing: 6) { ProgressView(); Text("Connecting…") }
+                .font(.footnote)
+        case .listening where model.isMicrophoneOn:
+            Label("Listening — just speak", systemImage: "waveform")
+                .font(.footnote.weight(.semibold)).foregroundStyle(AppTheme.accent)
+        case .listening:
+            Label("Mic off — type your reply", systemImage: "mic.slash")
+                .font(.footnote).foregroundStyle(AppTheme.secondaryInk)
+        case .partnerSpeaking:
+            Label("Partner speaking — talk to interrupt", systemImage: "speaker.wave.2.fill")
+                .font(.footnote.weight(.semibold)).foregroundStyle(AppTheme.accent)
+        case .idle:
+            EmptyView()
+        }
     }
 
     private func send(_ text: String) {

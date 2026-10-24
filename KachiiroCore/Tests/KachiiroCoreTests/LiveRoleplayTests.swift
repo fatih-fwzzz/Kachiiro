@@ -4,33 +4,54 @@ import Testing
 
 @MainActor
 final class FakeLivePartner: LiveRoleplayPartner {
-    var transcripts: [String]
-    var failNext = false
-    private(set) var historyCounts: [Int] = []
+    var failConnect = false
+    private let opening: [LiveEvent]
+    private var continuation: AsyncThrowingStream<LiveEvent, Error>.Continuation?
+    private(set) var connectHistoryCounts: [Int] = []
+    private(set) var sentTexts: [String] = []
+    private(set) var sentAudio: [Data] = []
     private(set) var closeCount = 0
 
-    init(_ transcripts: [String]) { self.transcripts = transcripts }
+    init(opening: [LiveEvent] = []) { self.opening = opening }
 
-    func reply(
-        system: String, history: [RoleplayViewModel.Line], onAudio: @escaping @MainActor (Data) -> Void
-    ) async throws -> String {
-        historyCounts.append(history.count)
-        if failNext {
-            failNext = false
+    func connect(system: String, history: [RoleplayViewModel.Line]) async throws -> AsyncThrowingStream<LiveEvent, Error> {
+        connectHistoryCounts.append(history.count)
+        if failConnect {
+            failConnect = false
             throw JudgeFailure()
         }
-        onAudio(Data([1, 2]))
-        return transcripts.count > 1 ? transcripts.removeFirst() : transcripts[0]
+        let (stream, continuation) = AsyncThrowingStream<LiveEvent, Error>.makeStream()
+        self.continuation = continuation
+        for event in opening { continuation.yield(event) }
+        return stream
     }
 
-    func close() { closeCount += 1 }
+    func sendAudio(_ pcm16: Data) { sentAudio.append(pcm16) }
+    func sendText(_ text: String) { sentTexts.append(text) }
+
+    func close() {
+        closeCount += 1
+        continuation?.finish()
+    }
+
+    func endSession(throwing error: Error? = nil) { continuation?.finish(throwing: error) }
 }
 
 @MainActor
-final class FakePCM: PCMAudioStreaming {
-    private(set) var chunks: [(Data, Double)] = []
+final class FakeAudioIO: LiveAudioIO {
+    var startError: Error?
+    private(set) var onChunk: (@MainActor @Sendable (Data) -> Void)?
+    private(set) var played: [Data] = []
+    private(set) var flushCount = 0
     private(set) var stopCount = 0
-    func enqueue(_ pcm16: Data, sampleRate: Double) { chunks.append((pcm16, sampleRate)) }
+
+    func start(onChunk: @escaping @MainActor @Sendable (Data) -> Void) async throws {
+        if let startError { throw startError }
+        self.onChunk = onChunk
+    }
+
+    func play(_ pcm16: Data) { played.append(pcm16) }
+    func flushPlayback() { flushCount += 1 }
     func stop() { stopCount += 1 }
 }
 
@@ -39,20 +60,46 @@ final class FakePCM: PCMAudioStreaming {
         try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
     }
 
-    @Test func setupAsksForJapaneseAudioWithTranscript() throws {
-        let setup = try #require(try object(GeminiLiveClient.setupMessage(system: "sys"))["setup"] as? [String: Any])
-        #expect(setup["model"] as? String == "models/gemini-3.1-flash-live-preview")
-        let config = try #require(setup["generationConfig"] as? [String: Any])
-        #expect(config["responseModalities"] as? [String] == ["AUDIO"])
-        #expect(setup["outputAudioTranscription"] != nil)
+    private func content(_ data: Data) throws -> [String: Any] {
+        try #require(try object(data)["clientContent"] as? [String: Any])
     }
 
-    @Test func turnMessageCompletesTheTurn() throws {
-        let content = try #require(
-            try object(GeminiLiveClient.turnMessage([("user", "a"), ("model", "b")]))["clientContent"] as? [String: Any]
-        )
-        #expect(content["turnComplete"] as? Bool == true)
-        #expect((content["turns"] as? [[String: Any]])?.map { $0["role"] as? String } == ["user", "model"])
+    private func line(_ id: Int, _ speaker: RoleplayViewModel.Speaker) -> RoleplayViewModel.Line {
+        RoleplayViewModel.Line(id: id, speaker: speaker, text: "t\(id)")
+    }
+
+    @Test func setupStreamsAudioWithToleranceForPauses() throws {
+        let setup = try #require(try object(GeminiLiveClient.setupMessage(system: "sys"))["setup"] as? [String: Any])
+        #expect(setup["model"] as? String == "models/gemini-3.8-live")
+        let config = try #require(setup["generationConfig"] as? [String: Any])
+        #expect(config["responseModalities"] as? [String] == ["AUDIO"])
+        #expect(config["speechConfig"] == nil && setup["thinkingConfig"] == nil)
+        let input = try #require(setup["inputAudioTranscription"] as? [String: Any])
+        #expect(input["languageCodes"] as? [String] == ["ja-JP"])
+        #expect(setup["outputAudioTranscription"] != nil)
+        let realtime = try #require(setup["realtimeInputConfig"] as? [String: Any])
+        let activity = try #require(realtime["automaticActivityDetection"] as? [String: Any])
+        #expect(activity["silenceDurationMs"] as? Int == 1200)
+        #expect(activity["endOfSpeechSensitivity"] as? String == "END_SENSITIVITY_LOW")
+    }
+
+    @Test func audioMessageCarriesBase64Pcm16k() throws {
+        let realtime = try #require(try object(GeminiLiveClient.audioMessage(Data([0, 1])))["realtimeInput"] as? [String: Any])
+        let audio = try #require(realtime["audio"] as? [String: Any])
+        #expect(audio["data"] as? String == "AAE=" && audio["mimeType"] as? String == "audio/pcm;rate=16000")
+    }
+
+    @Test func seedWaitsForTheLearnerOnlyWhenThePartnerSpokeLast() throws {
+        func roles(_ history: [RoleplayViewModel.Line]) throws -> ([String?], Bool?) {
+            let body = try content(GeminiLiveClient.seedMessage(history: history))
+            return ((body["turns"] as? [[String: Any]] ?? []).map { $0["role"] as? String }, body["turnComplete"] as? Bool)
+        }
+        let empty = try roles([])
+        #expect(empty.0 == ["user"] && empty.1 == true)
+        let partnerLast = try roles([line(0, .partner)])
+        #expect(partnerLast.0 == ["user", "model"] && partnerLast.1 == false)
+        let learnerLast = try roles([line(0, .partner), line(1, .user)])
+        #expect(learnerLast.0 == ["user", "model", "user"] && learnerLast.1 == true)
     }
 
     @Test func urlCarriesPercentEncodedKey() {
@@ -68,6 +115,12 @@ final class FakePCM: PCMAudioStreaming {
         #expect(GeminiLiveClient.parse(Data(#"{"serverContent":{}}"#.utf8)) == [.other])
         #expect(GeminiLiveClient.parse(Data("nope".utf8)) == [.other])
     }
+
+    @Test func parseReportsInterruptionAndLearnerTranscript() {
+        #expect(GeminiLiveClient.parse(Data(#"{"serverContent":{"interrupted":true}}"#.utf8)) == [.interrupted])
+        let frame = #"{"serverContent":{"inputTranscription":{"text":"もしもし"}}}"#
+        #expect(GeminiLiveClient.parse(Data(frame.utf8)) == [.inputTranscript("もしもし")])
+    }
 }
 
 @MainActor
@@ -76,74 +129,156 @@ final class FakePCM: PCMAudioStreaming {
     private let reviewJSON = #"{"acceptable":true,"corrected":"c","explanation":"e"}"#
 
     private func make(
-        _ partner: FakeLivePartner, review: FakeLanguageModelClient? = nil, speech: SpySpeech? = nil
-    ) -> (RoleplayViewModel, FakePCM) {
-        let pcm = FakePCM()
+        _ partner: FakeLivePartner? = nil, review: FakeLanguageModelClient? = nil, speech: SpySpeech? = nil
+    ) -> (RoleplayViewModel, FakeAudioIO) {
+        let audio = FakeAudioIO()
         let reviewer = KaiwaAIService(client: review ?? FakeLanguageModelClient(json: reviewJSON))
         let vm = RoleplayViewModel(
-            scenario: scenario, mode: .live(partner: partner, reviewer: reviewer, audio: pcm), speech: speech
+            scenario: scenario, mode: .live(partner: partner ?? FakeLivePartner(), reviewer: reviewer, audio: audio),
+            speech: speech
         )
-        return (vm, pcm)
+        return (vm, audio)
     }
 
-    @Test func startShowsTranscriptAndStreamsAudioWithoutTTS() async {
+    private func handle(_ vm: RoleplayViewModel, _ events: [LiveEvent]) {
+        for event in events { vm.handleLive(event) }
+    }
+
+    @Test func openingStreamsAudioAndTranscriptWithoutTTS() async {
         let speech = SpySpeech()
-        let (vm, pcm) = make(FakeLivePartner(["はい、ABC商事です"]), speech: speech)
+        let partner = FakeLivePartner(
+            opening: [.transcript("はい、ABC商事です"), .audio(Data([1, 2])), .turnComplete]
+        )
+        let (vm, audio) = make(partner, speech: speech)
         await vm.start()
+        let session = vm.liveSession
+        partner.endSession()
+        await session?.value
         #expect(vm.lines.map(\.text) == ["はい、ABC商事です"] && vm.isLiveMode && vm.isFreeMode)
-        #expect(pcm.chunks.count == 1 && pcm.chunks[0].1 == 24_000)
-        #expect(speech.spoken.isEmpty && vm.currentHint == scenario.goal && vm.modelAnswer == nil)
+        #expect(audio.played == [Data([1, 2])] && speech.spoken.isEmpty)
+        #expect(partner.connectHistoryCounts == [0])
+        #expect(vm.errorMessage == "The live session ended." && vm.canRetry)
     }
 
-    @Test func submitRepliesAndReviewsTheLearnerLine() async {
-        let partner = FakeLivePartner(["はい", "少々お待ちください"])
-        let (vm, _) = make(partner)
+    @Test func microphoneChunksReachThePartner() async {
+        let partner = FakeLivePartner()
+        let (vm, audio) = make(partner)
         await vm.start()
-        await vm.submit("リンと申します")
+        audio.onChunk?(Data([9]))
+        #expect(partner.sentAudio == [Data([9])] && vm.isMicrophoneOn && vm.liveStatus == .listening)
+    }
+
+    @Test func spokenTurnBecomesReviewedLines() async {
+        let (vm, _) = make()
+        await vm.start()
+        handle(vm, [
+            .inputTranscript("リンと"), .inputTranscript("申します"),
+            .transcript("少々"), .transcript("お待ちください"), .turnComplete,
+        ])
         await vm.pendingReview?.value
-        #expect(vm.lines.map(\.text) == ["はい", "リンと申します", "少々お待ちください"])
-        #expect(vm.lines[1].verdict == .reviewed(acceptable: true, corrected: "c", explanation: "e"))
-        #expect(partner.historyCounts == [0, 2])
+        #expect(vm.lines.map(\.text) == ["リンと申します", "少々お待ちください"])
+        #expect(vm.lines[0].verdict == .reviewed(acceptable: true, corrected: "c", explanation: "e"))
+        #expect(vm.liveUserDraft.isEmpty && vm.livePartnerDraft.isEmpty && vm.liveStatus == .listening)
     }
 
-    @Test func partnerFailureAllowsRetry() async {
-        let partner = FakeLivePartner(["はい", "どうぞ"])
+    @Test func pauseDoesNotSplitTheLearnerSentence() async {
+        let (vm, _) = make()
+        await vm.start()
+        handle(vm, [.inputTranscript("リンと"), .turnComplete])
+        #expect(vm.lines.isEmpty && vm.liveUserDraft == "リンと")
+        handle(vm, [.inputTranscript("申します"), .transcript("はい"), .turnComplete])
+        #expect(vm.lines.filter { $0.speaker == .user }.map(\.text) == ["リンと申します"])
+    }
+
+    @Test func bargeInFlushesAudioAndKeepsTheSpokenPart() async {
+        let (vm, audio) = make()
+        await vm.start()
+        handle(vm, [.transcript("少々お待"), .audio(Data([1])), .interrupted])
+        #expect(audio.flushCount == 1 && vm.liveStatus == .listening)
+        #expect(vm.lines.last?.speaker == .partner && vm.lines.last?.text == "少々お待")
+        handle(vm, [.turnComplete])
+        #expect(vm.lines.count == 1)
+    }
+
+    @Test func typedLineIsSentAndReviewed() async {
+        let partner = FakeLivePartner()
         let (vm, _) = make(partner)
         await vm.start()
-        partner.failNext = true
         await vm.submit("もしもし")
-        #expect(vm.errorMessage == "boom" && vm.canRetry && vm.lines.count == 2)
+        #expect(partner.sentTexts == ["もしもし"] && vm.lines.last?.speaker == .user)
+    }
+
+    @Test func sessionErrorAllowsRetryFromHistory() async {
+        let partner = FakeLivePartner()
+        let (vm, audio) = make(partner)
+        await vm.start()
+        handle(vm, [.transcript("はい"), .turnComplete])
+        let session = vm.liveSession
+        let stops = audio.stopCount
+        partner.endSession(throwing: JudgeFailure())
+        await session?.value
+        #expect(vm.errorMessage == "boom" && vm.canRetry && !vm.isMicrophoneOn && audio.stopCount == stops + 1)
         await vm.retryLast()
-        #expect(vm.errorMessage == nil && !vm.canRetry && vm.lines.map(\.text) == ["はい", "もしもし", "どうぞ"])
+        #expect(partner.connectHistoryCounts == [0, 1] && vm.errorMessage == nil && !vm.canRetry)
+    }
+
+    @Test func connectFailureAllowsRetry() async {
+        let partner = FakeLivePartner()
+        partner.failConnect = true
+        let (vm, _) = make(partner)
+        await vm.start()
+        #expect(vm.errorMessage == "boom" && vm.canRetry && vm.liveStatus == .idle)
+    }
+
+    @Test func deniedMicrophoneKeepsTypingAvailable() async {
+        let partner = FakeLivePartner()
+        let (vm, audio) = make(partner)
+        audio.startError = LiveAudioError.microphoneDenied
+        await vm.start()
+        #expect(vm.errorMessage == LiveAudioError.microphoneDenied.localizedDescription && !vm.isMicrophoneOn)
+        await vm.submit("もしもし")
+        #expect(partner.sentTexts == ["もしもし"])
     }
 
     @Test func reviewFailureNeitherBlocksNorRetries() async {
         let review = FakeLanguageModelClient([.failure(JudgeFailure())])
-        let (vm, _) = make(FakeLivePartner(["はい", "どうぞ"]), review: review)
+        let (vm, _) = make(review: review)
         await vm.start()
-        await vm.submit("もしもし")
+        handle(vm, [.inputTranscript("もしもし"), .transcript("はい"), .turnComplete])
         await vm.pendingReview?.value
-        #expect(vm.lines[1].verdict == nil && !vm.canRetry && vm.errorMessage == nil && vm.lines.count == 3)
+        #expect(vm.lines[0].verdict == nil && !vm.canRetry && vm.errorMessage == nil && vm.lines.count == 2)
     }
 
     @Test func stopsAfterEightLearnerLinesAndClosesTheSession() async {
-        let partner = FakeLivePartner(["次"])
+        let partner = FakeLivePartner()
         let (vm, _) = make(partner)
         await vm.start()
         let closesBefore = partner.closeCount
-        for i in 1...8 { await vm.submit("発話\(i)") }
+        for turn in 1...8 {
+            await vm.submit("発話\(turn)")
+            handle(vm, [.transcript("次"), .turnComplete])
+        }
         #expect(vm.isFinished && vm.userTurnCount == 8 && partner.closeCount == closesBefore + 1)
     }
 
     @Test func endClosesTheSessionAndSilencesAudio() async {
-        let partner = FakeLivePartner(["はい"])
-        let (vm, pcm) = make(partner)
+        let partner = FakeLivePartner()
+        let (vm, audio) = make(partner)
         await vm.start()
-        let stops = pcm.stopCount
+        let session = vm.liveSession
+        let stops = audio.stopCount
         let closes = partner.closeCount
-        vm.stopPartnerAudio()
         vm.end()
-        #expect(pcm.stopCount == stops + 2 && partner.closeCount == closes + 1)
+        await session?.value
+        #expect(audio.stopCount == stops + 1 && partner.closeCount == closes + 1)
+        #expect(vm.liveStatus == .idle && vm.errorMessage == nil)
+    }
+
+    @Test func hangUpFinishesTheCall() async {
+        let (vm, _) = make()
+        await vm.start()
+        vm.hangUp()
+        #expect(vm.isFinished && vm.liveStatus == .idle && vm.liveSession == nil)
     }
 }
 
@@ -157,7 +292,7 @@ final class FakePCM: PCMAudioStreaming {
             settings: settings, keys: InMemoryAPIKeyStore(key: key), appleAvailability: { .available },
             makeAppleClient: { FakeLanguageModelClient(json: "{}") },
             makeGeminiClient: { _ in FakeLanguageModelClient(json: "{}") },
-            makeGeminiLive: { _ in FakeLivePartner(["x"]) }
+            makeGeminiLive: { _ in FakeLivePartner() }
         )
     }
 
