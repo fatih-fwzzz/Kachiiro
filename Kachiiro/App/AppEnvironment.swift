@@ -32,7 +32,8 @@ final class AppEnvironment {
         aiResolver = KaiwaAIResolver(
             settings: settings, keys: keys,
             appleAvailability: { AppleIntelligence.availability() },
-            makeAppleClient: { AppleIntelligence.makeClient() }
+            makeAppleClient: { AppleIntelligence.makeClient() },
+            readings: JapaneseReading(words: seed.words)
         )
     }
 
@@ -98,7 +99,7 @@ final class AppEnvironment {
 
     @MainActor
     func makeSettingsViewModel() -> SettingsViewModel {
-        SettingsViewModel(store: settings, repository: repository, keys: keys, aiResolver: aiResolver)
+        SettingsViewModel(store: settings, repository: repository, aiResolver: aiResolver)
     }
 
     @MainActor

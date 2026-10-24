@@ -46,7 +46,7 @@ func makeSettingsViewModel(
 ) -> SettingsViewModel {
     let keys = keys ?? InMemoryAPIKeyStore()
     return SettingsViewModel(
-        store: store, repository: repository, keys: keys,
+        store: store, repository: repository,
         aiResolver: KaiwaAIResolver(
             settings: store, keys: keys, appleAvailability: { .unavailable("requires iOS 26") }, makeAppleClient: { nil }
         )
@@ -154,6 +154,33 @@ private let acceptJudgement = KeigoJudgement(acceptable: true, corrected: "bette
         FactoryTestSupport.expectWellFormed(qs, KeigoQuestionFactory())
     }
 
+    @Test func labelsInPlaceOfWrongSentencesDropTheChoices() async throws {
+        let json = #"{"items":[{"situation":"s","listener":"boss","target":"sonkeigo","plain":"来る？","answer":"いらっしゃいますか。","wrong":["plain ます形","参りますか。","来ますか。"],"explanation":"e"}]}"#
+        let (svc, _) = service(json)
+        let qs = try await svc.generateKeigoQuestions(count: 1)
+        #expect(qs.count == 1 && qs[0].choices.isEmpty && qs[0].supportedModes == [.typing])
+    }
+
+    @Test func shadowingReadingsComeFromTheDeviceNotTheModel() async throws {
+        let json = #"{"items":[{"text":"承諾いたします。","reading":"しょうのっといたしましょ。","meaning":"I accept."},{"text":"承諾いたします。","reading":"x","meaning":"dup"}]}"#
+        let (svc, _) = service(json)
+        let lines = try await svc.generateShadowingLines(count: 2)
+        #expect(lines.map(\.text) == ["承諾いたします。"])
+        #expect(lines[0].reading == "しょうだくいたします。")
+    }
+
+    @Test func readingsUseTheCourseWordsAndKeepPunctuation() {
+        let words = [Word(id: 1, headword: "今", reading: "いま", meaning: "now", pos: .noun)]
+        let r = JapaneseReading(words: words)
+        #expect(r.hiragana(for: "日本人です。") == "にほんじんです。")
+        #expect(r.hiragana(for: "田中は今席を外しております。") == "たなかはいませきをはずしております。")
+        #expect(JapaneseReading.isJapaneseSentence("お待ちください。") && !JapaneseReading.isJapaneseSentence("plain ます形"))
+    }
+
+    @Test func aPartnerSpeakingAsTheLearnerIsRetried() async throws {
+        #expect(KaiwaAIService.speaksAsLearner("こんにちは、リンです。") && !KaiwaAIService.speaksAsLearner("はい、ABC商事でございます。"))
+    }
+
     @Test func allInvalidItemsThrowNoValidItems() async {
         let (svc, _) = service(#"{"items":[{"situation":"s","listener":"boss","target":"bogus","plain":"p","answer":"a","wrong":[],"explanation":"e"}]}"#)
         await #expect(throws: KaiwaAIError.noValidItems) { try await svc.generateKeigoQuestions(count: 1) }
@@ -162,15 +189,16 @@ private let acceptJudgement = KeigoJudgement(acceptable: true, corrected: "bette
     @Test func uchiSotoItemsNeedFourDistinctChoicesAndValidIndex() async throws {
         let json = """
         {"items":[
-          {"situation":"s","question":"q","choices":["a","b","c","d"],"answerIndex":2,"explanation":"e"},
-          {"situation":"s","question":"q","choices":["a","a","c","d"],"answerIndex":0,"explanation":"e"},
-          {"situation":"s","question":"q","choices":["a","b","c","d"],"answerIndex":4,"explanation":"e"}
+          {"situation":"s","question":"q","choices":["あ","い","う","え"],"answerIndex":2,"explanation":"e"},
+          {"situation":"s","question":"q","choices":["あ","あ","う","え"],"answerIndex":0,"explanation":"e"},
+          {"situation":"s","question":"q","choices":["あ","い","う","え"],"answerIndex":4,"explanation":"e"},
+          {"situation":"s","question":"q","choices":["plain form","い","う","え"],"answerIndex":1,"explanation":"e"}
         ]}
         """
         let (svc, _) = service(json)
-        let qs = try await svc.generateUchiSotoQuestions(count: 3)
+        let qs = try await svc.generateUchiSotoQuestions(count: 2)
         #expect(qs.count == 1)
-        #expect(qs[0].correctChoice == "c" && qs[0].supportedModes == [.choice] && qs[0].id.isGenerated)
+        #expect(qs[0].correctChoice == "う" && qs[0].supportedModes == [.choice] && qs[0].id.isGenerated)
         FactoryTestSupport.expectWellFormed(qs, UchiSotoQuestionFactory())
     }
 
@@ -213,8 +241,8 @@ private let acceptJudgement = KeigoJudgement(acceptable: true, corrected: "bette
     }
 
     @Test func rulesNeverUsesAI() {
-        let r = make(engine: .rules)
-        #expect(r.service() == nil && !r.usesGeneratedContent && r.notice == nil)
+        let r = make(engine: .rules, key: "K", apple: .available)
+        #expect(r.service() == nil && !r.usesGeneratedContent && r.notice == nil && r.activeEngine == .rules)
         #expect(r.availability(of: .rules) == .available)
     }
 
@@ -222,23 +250,37 @@ private let acceptJudgement = KeigoJudgement(acceptable: true, corrected: "bette
         #expect(make(engine: .rules, content: .generated).notice == "AI-generated content needs Apple Intelligence or Gemini. Using bundled content.")
     }
 
+    @Test func automaticPrefersAppleIntelligenceThenGemini() {
+        let both = make(engine: .automatic, content: .generated, key: "K", apple: .available)
+        #expect(both.activeEngine == .appleIntelligence && both.engineChoices == [.appleIntelligence, .gemini])
+        #expect(both.service() != nil && both.usesGeneratedContent && both.notice == nil)
+        let geminiOnly = make(engine: .automatic, key: "K")
+        #expect(geminiOnly.activeEngine == .gemini && geminiOnly.engineChoices == [.gemini] && geminiOnly.notice == nil)
+    }
+
+    @Test func aChosenEngineWinsWhenAvailable() {
+        #expect(make(engine: .gemini, key: "K", apple: .available).activeEngine == .gemini)
+        #expect(make(engine: .appleIntelligence, key: "K", apple: .available).activeEngine == .appleIntelligence)
+    }
+
+    @Test func anUnavailableChoiceFallsBackWithNotice() {
+        let r = make(engine: .appleIntelligence, content: .generated, key: "K")
+        #expect(r.activeEngine == .gemini && r.service() != nil)
+        #expect(r.notice == "Apple Intelligence (on-device) isn’t available (requires iOS 26), so Gemini is used.")
+    }
+
     @Test func geminiNeedsANonBlankKey() {
-        #expect(make(engine: .gemini).availability(of: .gemini) == .unavailable("add a Gemini API key in Settings"))
+        #expect(make(engine: .gemini).availability(of: .gemini) == .unavailable("no Gemini API key in this build"))
         #expect(make(engine: .gemini, key: "  ").service() == nil)
         let ready = make(engine: .gemini, content: .generated, key: " K ")
         #expect(ready.service() != nil && ready.usesGeneratedContent && ready.notice == nil)
         #expect(make(engine: .gemini, content: .bundled, key: "K").usesGeneratedContent == false)
     }
 
-    @Test func unavailableAppleFallsBackWithNotice() {
-        let r = make(engine: .appleIntelligence, content: .generated)
-        #expect(r.service() == nil && !r.usesGeneratedContent)
-        #expect(r.notice == "Apple Intelligence (on-device) unavailable: requires iOS 26. Using offline rules and bundled content.")
-    }
-
-    @Test func availableAppleProvidesService() {
-        let r = make(engine: .appleIntelligence, content: .generated, apple: .available)
-        #expect(r.service() != nil && r.usesGeneratedContent && r.notice == nil)
+    @Test func noEngineAtAllFallsBackOffline() {
+        let r = make(engine: .automatic, content: .generated)
+        #expect(r.activeEngine == .rules && r.service() == nil && !r.usesGeneratedContent)
+        #expect(r.notice == "AI isn’t available right now. Using offline checks and bundled content.")
     }
 }
 
@@ -341,12 +383,12 @@ private let acceptJudgement = KeigoJudgement(acceptable: true, corrected: "bette
     }
 
     @Test func generatedSessionUsesAIQuestionsAndJudge() async throws {
-        let json = #"{"items":[{"situation":"s","question":"q","choices":["a","b","c","d"],"answerIndex":1,"explanation":"e"}]}"#
+        let json = #"{"items":[{"situation":"s","question":"q","choices":["あ","い","う","え"],"answerIndex":1,"explanation":"e"}]}"#
         let (r, settings) = resolver(json: json)
         let vm = PracticeViewModel(seed: TestSeed.shared, settings: settings, repository: InMemoryProgressRepository(), aiResolver: r)
         #expect(vm.usesGeneratedContent(for: .keigo) && !vm.usesGeneratedContent(for: .vocab))
         let session = try #require(await vm.makeGeneratedSession(for: .uchiSoto))
-        #expect(session.total == 1 && session.questions[0].correctChoice == "b")
+        #expect(session.total == 1 && session.questions[0].correctChoice == "い")
         #expect(!vm.isGenerating)
     }
 
@@ -456,6 +498,12 @@ private let acceptJudgement = KeigoJudgement(acceptable: true, corrected: "bette
         #expect(vm.errorMessage == "Couldn't generate lines: boom. Showing bundled lines.")
     }
 
+    @Test func aGeneratorStartsInTheLoadingState() {
+        let service = KaiwaAIService(client: FakeLanguageModelClient(json: "{}"))
+        #expect(ShadowingViewModel(lines: bundled, generator: service).isLoading)
+        #expect(!ShadowingViewModel(lines: bundled).isLoading)
+    }
+
     @Test func generatorSuccessReplacesLines() async {
         let service = KaiwaAIService(client: FakeLanguageModelClient(json: #"{"items":[{"text":"承知いたしました","reading":"しょうちいたしました","meaning":"Understood"}]}"#))
         let vm = ShadowingViewModel(lines: bundled, generator: service)
@@ -465,20 +513,16 @@ private let acceptJudgement = KeigoJudgement(acceptable: true, corrected: "bette
 
     @Test func engineAndContentPersistThroughTheStore() {
         let store = InMemorySettingsStore()
-        let vm = makeSettingsViewModel(store: store, repository: InMemoryProgressRepository())
-        #expect(vm.kaiwaEngine == .rules && vm.kaiwaContent == .bundled && !vm.isContentPickerEnabled)
+        let vm = makeSettingsViewModel(store: store, repository: InMemoryProgressRepository(), keys: InMemoryAPIKeyStore(key: "k"))
+        #expect(vm.kaiwaEngine == .automatic && vm.kaiwaContent == .bundled && vm.isContentPickerEnabled)
+        #expect(vm.engineChoices == [.gemini] && vm.activeEngine == .gemini)
         vm.setKaiwaEngine(.gemini)
         vm.setKaiwaContent(.generated)
-        #expect(store.kaiwaEngine == .gemini && store.kaiwaContent == .generated && vm.isContentPickerEnabled)
+        #expect(store.kaiwaEngine == .gemini && store.kaiwaContent == .generated)
     }
 
-    @Test func geminiKeySaveTrimsAndRejectsBlank() {
-        let keys = InMemoryAPIKeyStore()
-        let vm = makeSettingsViewModel(store: InMemorySettingsStore(), repository: InMemoryProgressRepository(), keys: keys)
-        #expect(!vm.saveGeminiKey("  \n") && keys.geminiKey() == nil && !vm.hasGeminiKey)
-        #expect(vm.saveGeminiKey("  abc ") && keys.geminiKey() == "abc" && vm.hasGeminiKey)
-        #expect(vm.availability(of: .gemini) == .available)
-        vm.removeGeminiKey()
-        #expect(keys.geminiKey() == nil && !vm.hasGeminiKey)
+    @Test func withoutAnyEngineTheContentPickerIsOff() {
+        let vm = makeSettingsViewModel(store: InMemorySettingsStore(), repository: InMemoryProgressRepository())
+        #expect(vm.activeEngine == .rules && !vm.isContentPickerEnabled && vm.engineChoices.isEmpty)
     }
 }

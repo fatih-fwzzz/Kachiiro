@@ -26,7 +26,8 @@ One branch per feature: `git checkout main && git checkout -b feature/<name>`; k
 ## Gemini facts for plan 2
 - `gemini-2.5-flash` retires 2026-10-20; docs currently list `gemini-3.8-flash`.
 - REST structured output: `generationConfig.responseFormat.text{mimeType,schema}`.
-- No on-device provider (iPhone 15 / A16 lacks Apple Intelligence). Gemini is the only provider. API key goes in Settings → Keychain.
+- Engine choice is automatic: Apple Intelligence when the device has it, else Gemini, else offline rules (`KaiwaAIResolver.activeEngine`). The Gemini key ships in the git-ignored `Kachiiro/Secrets.plist` (`GeminiAPIKey`); Settings no longer asks for one. iPhone 15 (A16) has no Apple Intelligence, so it uses Gemini.
+- The on-device model writes and grades keigo poorly; readings never come from a model (`JapaneseReading`: tokenizer + course words + overrides).
 
 ## LaunchRoute smoke technique
 Simulator taps cannot be scripted, so screens are reached with launch arguments: `-ui-route <route>` (dashboard, setup, practice, mock, review, `drill.<DrillKind raw>`, audio, cando, settings, `kaiwa.roleplay`, `kaiwa.roleplay.<scenarioId>`, `kaiwa.shadowing`) and `-ui-mode <choice|typing>`. Launch with RUN, wait ~3 s, screenshot, then read the PNG. New screens register their route in `LaunchRoute` and `RootView`.
@@ -42,7 +43,7 @@ Simulator taps cannot be scripted, so screens are reached with launch arguments:
 `-ui-autoplay <fileName>` (with `-ui-route audio`) plays a bundled track; check `xcrun simctl spawn <sim> log show --last 1m --predicate 'subsystem == "com.muhammadfawwaz.Kachiiro"'` for `load ok <fileName>`.
 `-ui-autostart start|submit` (with `-ui-route mock`) starts the mock exam, optionally submitting it unanswered, to screenshot the exam and result screens.
 `-ui-listen` (with `-ui-route drill.keigo`) starts the microphone so the permission alerts can be screenshotted; reset them with `xcrun simctl privacy <sim> reset all com.muhammadfawwaz.Kachiiro`. Real recognition accuracy needs a device.
-`-ui-kaiwa-engine rules|appleIntelligence|gemini`, `-ui-kaiwa-content bundled|generated` and `-ui-gemini-key <key>` set the Kaiwa AI settings (persisted in UserDefaults/Keychain: relaunch with `rules`/`bundled` to undo). `-ui-autoanswer` also drives the roleplay and shadowing screens.
+`-ui-kaiwa-engine automatic|appleIntelligence|gemini|rules`, `-ui-kaiwa-content bundled|generated` and `-ui-gemini-key <key>` set the Kaiwa AI settings (persisted in UserDefaults/Keychain: relaunch with `automatic`/`bundled` to undo; `rules` forces offline). The iOS 26 simulators have Apple Intelligence switched off in their Settings app, so they fall back to Gemini. `-ui-autoanswer` also drives the roleplay and shadowing screens.
 - SwiftData: keep the `ModelContainer` alive for as long as its `ModelContext` is used.
 
 ## Kaiwa content and AI

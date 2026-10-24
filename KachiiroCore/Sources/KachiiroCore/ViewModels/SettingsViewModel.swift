@@ -14,17 +14,14 @@ public final class SettingsViewModel {
     public private(set) var dailyGoal: Int
     public private(set) var kaiwaEngine: KaiwaEngine
     public private(set) var kaiwaContent: KaiwaContentSource
-    public private(set) var hasGeminiKey: Bool
 
     private let store: SettingsStore
     private let repository: ProgressRepository
-    private let keys: APIKeyStore
     private let aiResolver: KaiwaAIResolver
 
-    public init(store: SettingsStore, repository: ProgressRepository, keys: APIKeyStore, aiResolver: KaiwaAIResolver) {
+    public init(store: SettingsStore, repository: ProgressRepository, aiResolver: KaiwaAIResolver) {
         self.store = store
         self.repository = repository
-        self.keys = keys
         self.aiResolver = aiResolver
         scope = store.scope
         inputMode = store.inputMode
@@ -32,7 +29,6 @@ public final class SettingsViewModel {
         dailyGoal = store.dailyGoal
         kaiwaEngine = store.kaiwaEngine
         kaiwaContent = store.kaiwaContent
-        hasGeminiKey = aiResolver.availability(of: .gemini) == .available
     }
 
     public func setKaiwaEngine(_ engine: KaiwaEngine) {
@@ -49,23 +45,17 @@ public final class SettingsViewModel {
         aiResolver.availability(of: engine)
     }
 
-    /// Generated content needs an AI engine; with offline rules the picker is disabled.
-    public var isContentPickerEnabled: Bool { kaiwaEngine != .rules }
+    /// The engine actually in use after fallbacks.
+    public var activeEngine: KaiwaEngine { aiResolver.activeEngine }
 
-    /// Trims the key; a blank key is rejected and nothing is stored.
-    @discardableResult
-    public func saveGeminiKey(_ raw: String) -> Bool {
-        let key = raw.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !key.isEmpty else { return false }
-        keys.setGeminiKey(key)
-        hasGeminiKey = true
-        return true
-    }
+    /// What the learner can pick; Apple Intelligence appears only on devices that have it.
+    public var engineChoices: [KaiwaEngine] { aiResolver.engineChoices }
 
-    public func removeGeminiKey() {
-        keys.setGeminiKey(nil)
-        hasGeminiKey = false
-    }
+    /// Why the chosen engine isn't the one in use, if it isn't.
+    public var engineNotice: String? { aiResolver.notice }
+
+    /// Generated content needs an AI engine; offline, the picker is disabled.
+    public var isContentPickerEnabled: Bool { aiResolver.activeEngine != .rules }
 
     public func isLevelSelected(_ level: Level) -> Bool { scope.levels.contains(level) }
 

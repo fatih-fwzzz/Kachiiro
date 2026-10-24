@@ -19,6 +19,8 @@ public final class ShadowingViewModel {
         self.lines = lines
         self.speech = speech
         self.generator = generator
+        // With a generator the screen starts in its loading state, so bundled lines never flash first.
+        isLoading = generator != nil
     }
 
     public var current: ShadowingLine? { lines.indices.contains(index) ? lines[index] : nil }

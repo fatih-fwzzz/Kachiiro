@@ -32,7 +32,7 @@ final class UserDefaultsSettingsStore: SettingsStore {
     }
 
     var kaiwaEngine: KaiwaEngine {
-        get { defaults.string(forKey: "kaiwaEngine").flatMap(KaiwaEngine.init(rawValue:)) ?? .rules }
+        get { defaults.string(forKey: "kaiwaEngine").flatMap(KaiwaEngine.init(rawValue:)) ?? .automatic }
         set { defaults.set(newValue.rawValue, forKey: "kaiwaEngine") }
     }
 

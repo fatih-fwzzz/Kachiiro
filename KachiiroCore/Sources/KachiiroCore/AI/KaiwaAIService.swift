@@ -23,7 +23,7 @@ public protocol AnswerJudging: Sendable {
 }
 
 enum KaiwaPrompts {
-    static let system = "You are a Japanese keigo coach for a learner at JLPT N4–N3 level preparing to work in Japan. Write Japanese in natural kanji with standard okurigana. Write explanations in English, at most two sentences. Respond only with JSON that matches the schema."
+    static let system = "You are a Japanese keigo coach for a learner at JLPT N4–N3 level preparing to work in Japan. Write Japanese in natural kanji with standard okurigana. Every Japanese field is a complete, natural Japanese sentence, never a label, description or English. Write explanations in English, at most two sentences. Respond only with JSON that matches the schema."
 
     static func judge(context: String, accepted: [String], answer: String) -> String {
         """
@@ -35,19 +35,33 @@ enum KaiwaPrompts {
     }
 
     static func keigoItems(count: Int) -> String {
-        "Create \(count) varied workplace and service keigo exercises. Mix sonkeigo, kenjougo and teineigo. `plain` is the casual sentence, `answer` the correct keigo sentence, `wrong` exactly three typical mistakes (wrong direction, plain ます form, double keigo)."
+        """
+        Create \(count) varied workplace and service keigo exercises. Mix the three targets.
+        - sonkeigo raises the action of the listener or a superior (いらっしゃる, おっしゃる, ご覧になる).
+        - kenjougo lowers the speaker's own action (参る, 申す, 拝見する, いたす).
+        - teineigo is polite です/ます speech, including ございます.
+        `plain` is the casual sentence. `answer` is the same meaning in the target keigo. `wrong` is exactly three complete Japanese sentences with typical mistakes: keigo in the wrong direction, plain ます form, and double keigo.
+        Example item: {"situation": "Asking your manager when they will arrive tomorrow", "listener": "boss", "target": "sonkeigo", "plain": "部長は明日何時に来る？", "answer": "部長は明日何時にいらっしゃいますか。", "wrong": ["部長は明日何時に参りますか。", "部長は明日何時に来ますか。", "部長は明日何時にいらっしゃられますか。"], "explanation": "Your manager is the one coming, so raise their action with いらっしゃる."}
+        """
     }
 
     static func uchiSotoItems(count: Int) -> String {
-        "Create \(count) uchi/soto register-choice questions (talking about your own company's people to outsiders, phone calls, reception, family to teachers)."
+        """
+        Create \(count) uchi/soto register-choice questions: talking about your own company's people to outsiders, phone calls, reception, or about family to a teacher.
+        `choices` are four complete Japanese sentences the speaker could say; exactly one is right.
+        Example item: {"situation": "A client calls and asks for your manager, 田中部長, who is out.", "question": "What do you say to the client?", "choices": ["田中は今席を外しております。", "田中部長は席を外されました。", "田中部長は今席を外していらっしゃいます。", "田中さんは今席にいらっしゃいません。"], "answerIndex": 0, "explanation": "To an outsider your own manager is inside: drop the title and use humble ております."}
+        """
     }
 
     static func shadowingLines(count: Int) -> String {
-        "Create \(count) short, natural business keigo phrases for shadowing practice."
+        """
+        Create \(count) different short business keigo phrases for shadowing practice, each under 25 characters.
+        Example item: {"text": "少々お待ちください。", "reading": "しょうしょうおまちください。", "meaning": "Please wait a moment."}
+        """
     }
 
     static func partnerTurn(scenario: RoleplayScenario, history: String) -> String {
-        "Scenario: \(scenario.setting) You play: \(scenario.partnerRole). The learner plays: \(scenario.userRole), named リン. Goal: \(scenario.goal). Reply only as \(scenario.partnerRole), in one or two short sentences, in the register this scenario requires. In `feedback`, judge the learner's latest line (if there is none yet, set acceptable true and leave corrected and explanation empty). Set `finished` true when the goal is reached or after the learner's eighth line.\nConversation so far:\n\(history)"
+        "Scenario: \(scenario.setting) You play: \(scenario.partnerRole). The learner plays: \(scenario.userRole), named リン. You are never リン: never say リン's lines or introduce yourself as リン. Goal: \(scenario.goal). Reply only as \(scenario.partnerRole), in one or two short sentences, in the register this scenario requires. If the conversation is empty, open it as \(scenario.partnerRole) would, for example a receptionist answers the phone with the company name. In `feedback`, judge the learner's latest line (if there is none yet, set acceptable true and leave corrected and explanation empty). Set `finished` true when the goal is reached or after the learner's eighth line.\nConversation so far:\n\(history)"
     }
 
     static let liveOpening = "Begin the conversation now with your opening line."
@@ -63,8 +77,27 @@ enum KaiwaPrompts {
 
 public struct KaiwaAIService: AnswerJudging, Sendable {
     let client: LanguageModelClient
+    let readings: JapaneseReading
 
-    public init(client: LanguageModelClient) { self.client = client }
+    public init(client: LanguageModelClient, readings: JapaneseReading = JapaneseReading()) {
+        self.client = client
+        self.readings = readings
+    }
+
+    /// Calls `make` once more when fewer than half the requested items were valid, keeping both batches
+    /// without duplicates (same `key`).
+    private func atLeastHalf<T>(
+        _ count: Int, key: (T) -> String, _ make: () async throws -> [T]
+    ) async throws -> [T] {
+        var items = try await make()
+        if items.count * 2 < count, let more = try? await make() { items += more }
+        var seen = Set<String>()
+        items = items.filter { seen.insert(key($0)).inserted }
+        guard !items.isEmpty else { throw KaiwaAIError.noValidItems }
+        return Array(items.prefix(count))
+    }
+
+    private static func questionKey(_ q: QuizQuestion) -> String { q.promptBody + "→" + q.correctChoice }
 
     // MARK: Schemas
 
@@ -154,16 +187,22 @@ public struct KaiwaAIService: AnswerJudging, Sendable {
     }
 
     public func generateKeigoQuestions(count: Int) async throws -> [QuizQuestion] {
+        try await atLeastHalf(count, key: Self.questionKey) { try await keigoBatch(count: count) }
+    }
+
+    private func keigoBatch(count: Int) async throws -> [QuizQuestion] {
         let items = try await decode(
             Items<KeigoItem>.self, prompt: KaiwaPrompts.keigoItems(count: count), schema: Self.keigoSchema(count: count)
         ).items
-        let questions: [QuizQuestion] = items.compactMap { item in
+        return items.compactMap { item in
             let plain = item.plain.trimmingCharacters(in: .whitespacesAndNewlines)
             let answer = item.answer.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !plain.isEmpty, !answer.isEmpty, let target = KeigoLevel(rawValue: item.target) else { return nil }
+            guard JapaneseReading.isJapaneseSentence(plain), JapaneseReading.isJapaneseSentence(answer), plain != answer,
+                  let target = KeigoLevel(rawValue: item.target) else { return nil }
             let listener = Listener(rawValue: item.listener) ?? .stranger
             let wrong = item.wrong.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             let hasChoices = wrong.count == 3 && Set(wrong).count == 3 && !wrong.contains(answer)
+                && wrong.allSatisfy(JapaneseReading.isJapaneseSentence)
             return QuizQuestion(
                 id: .generated(.keigo), drill: .keigo,
                 promptTitle: "To \(listener.label) · \(target.label)", promptBody: plain,
@@ -174,8 +213,6 @@ public struct KaiwaAIService: AnswerJudging, Sendable {
                 judgingContext: "Situation: \(item.situation). Listener: \(listener.label). Say this in \(target.rawValue): \(plain)"
             )
         }
-        guard !questions.isEmpty else { throw KaiwaAIError.noValidItems }
-        return questions
     }
 
     private struct UchiSotoGenerated: Decodable {
@@ -183,12 +220,17 @@ public struct KaiwaAIService: AnswerJudging, Sendable {
     }
 
     public func generateUchiSotoQuestions(count: Int) async throws -> [QuizQuestion] {
+        try await atLeastHalf(count, key: Self.questionKey) { try await uchiSotoBatch(count: count) }
+    }
+
+    private func uchiSotoBatch(count: Int) async throws -> [QuizQuestion] {
         let items = try await decode(
             Items<UchiSotoGenerated>.self, prompt: KaiwaPrompts.uchiSotoItems(count: count),
             schema: Self.uchiSotoSchema(count: count)
         ).items
-        let questions: [QuizQuestion] = items.compactMap { item in
-            guard item.choices.count == 4, Set(item.choices).count == 4, (0...3).contains(item.answerIndex) else { return nil }
+        return items.compactMap { item in
+            guard item.choices.count == 4, Set(item.choices).count == 4, (0...3).contains(item.answerIndex),
+                  item.choices.allSatisfy(JapaneseReading.isJapaneseSentence) else { return nil }
             return QuizQuestion(
                 id: .generated(.uchiSoto), drill: .uchiSoto,
                 promptTitle: item.situation, promptBody: item.question,
@@ -196,35 +238,48 @@ public struct KaiwaAIService: AnswerJudging, Sendable {
                 explanation: item.explanation, supportedModes: [.choice]
             )
         }
-        guard !questions.isEmpty else { throw KaiwaAIError.noValidItems }
-        return questions
     }
 
     private struct ShadowingGenerated: Decodable { let text: String, reading: String, meaning: String }
 
+    /// Readings come from `readings`, not the model, which often misreads kanji.
     public func generateShadowingLines(count: Int) async throws -> [ShadowingLine] {
-        let items = try await decode(
-            Items<ShadowingGenerated>.self, prompt: KaiwaPrompts.shadowingLines(count: count),
-            schema: Self.shadowingSchema(count: count)
-        ).items
-        let lines = items.enumerated().compactMap { index, item -> ShadowingLine? in
-            let text = item.text.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !text.isEmpty else { return nil }
-            return ShadowingLine(id: "a\(index)", text: text, reading: item.reading, meaning: item.meaning)
+        let lines = try await atLeastHalf(count, key: \.text) {
+            let items = try await decode(
+                Items<ShadowingGenerated>.self, prompt: KaiwaPrompts.shadowingLines(count: count),
+                schema: Self.shadowingSchema(count: count)
+            ).items
+            return items.compactMap { item -> ShadowingLine? in
+                let text = item.text.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard JapaneseReading.isJapaneseSentence(text) else { return nil }
+                return ShadowingLine(id: "", text: text, reading: readings.hiragana(for: text), meaning: item.meaning)
+            }
         }
-        guard !lines.isEmpty else { throw KaiwaAIError.noValidItems }
-        return lines
+        return lines.enumerated().map { index, line in
+            ShadowingLine(id: "a\(index)", text: line.text, reading: line.reading, meaning: line.meaning)
+        }
     }
 
     private static func transcript(_ history: [RoleplayViewModel.Line]) -> String {
         history.map { ($0.speaker == .partner ? "相手: " : "リン: ") + $0.text }.joined(separator: "\n")
     }
 
+    /// Retries once when the model speaks as the learner (リン) instead of as the partner.
     public func partnerTurn(scenario: RoleplayScenario, history: [RoleplayViewModel.Line]) async throws -> PartnerTurn {
-        try await decode(
-            PartnerTurn.self, prompt: KaiwaPrompts.partnerTurn(scenario: scenario, history: Self.transcript(history)),
+        let prompt = KaiwaPrompts.partnerTurn(scenario: scenario, history: Self.transcript(history))
+        let first = try await decode(PartnerTurn.self, prompt: prompt, schema: Self.partnerTurnSchema)
+        guard Self.speaksAsLearner(first.partnerLine) else { return first }
+        let second = try await decode(
+            PartnerTurn.self,
+            prompt: prompt + "\nYour previous reply spoke as リン. Reply again as \(scenario.partnerRole) only.",
             schema: Self.partnerTurnSchema
         )
+        guard !Self.speaksAsLearner(second.partnerLine) else { throw KaiwaAIError.invalidResponse }
+        return second
+    }
+
+    static func speaksAsLearner(_ line: String) -> Bool {
+        ["リンです", "リンと申します", "リンといいます"].contains { line.contains($0) }
     }
 
     /// Judges only the learner's last line, for sessions where a Live voice model plays the partner.
