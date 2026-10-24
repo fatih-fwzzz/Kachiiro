@@ -1,0 +1,38 @@
+import Foundation
+import Testing
+@testable import KachiiroCore
+
+@MainActor
+@Suite struct PracticeRedesignTests {
+    var calendar: Calendar {
+        var c = Calendar(identifier: .gregorian)
+        c.timeZone = TimeZone(identifier: "UTC")!
+        return c
+    }
+
+    func date(_ y: Int, _ m: Int, _ d: Int) -> Date {
+        calendar.date(from: DateComponents(year: y, month: m, day: d, hour: 12))!
+    }
+
+    @Test func scopeLabels() {
+        #expect(StudyScope.all.label == "All books")
+        #expect(StudyScope(levels: [.a21], lessonRange: 1...9).label == "初級1 · L1–9")
+        #expect(StudyScope(levels: [.a22, .a21], lessonRange: 4...4).label == "初級1 + 初級2 · L4")
+        #expect(StudyScope(levels: [.a1, .a22]).label == "入門 + 初級2")
+    }
+
+    @Test func practiceRecommendsTheWeakestPillarThenUnpractised() {
+        let now = date(2026, 10, 24)
+        let repo = InMemoryProgressRepository(calendar: calendar)
+        let fresh = PracticeViewModel(seed: TestSeed.shared, settings: InMemorySettingsStore(), repository: repo,
+                                      now: { now }, calendar: calendar)
+        #expect(fresh.recommendation == .init(drill: .verbForms, reason: .notPractised))
+        #expect(fresh.percent(for: .goi) == nil)
+
+        repo.record(ItemKey("vocab:1:m2w"), pillar: .goi, correct: false, mode: .choice, at: now)
+        repo.record(ItemKey("vocab:2:m2w"), pillar: .goi, correct: true, mode: .choice, at: now)
+        fresh.refresh()
+        #expect(fresh.percent(for: .goi) == 50)
+        #expect(fresh.recommendation == .init(drill: .vocab, reason: .weakest(percent: 50)))
+    }
+}

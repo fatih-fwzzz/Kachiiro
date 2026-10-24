@@ -17,6 +17,15 @@ public final class PracticeViewModel {
     public private(set) var message: String?
     /// `true` while AI-generated questions are being fetched.
     public private(set) var isGenerating = false
+    /// 7-day accuracy per pillar, for the pillar cards.
+    public private(set) var accuracy: [DashboardViewModel.PillarAccuracy] = []
+    /// The drill to do next: the weakest pillar, else one not practised this week.
+    public private(set) var recommendation: Recommendation?
+
+    public struct Recommendation: Equatable, Sendable {
+        public let drill: DrillKind
+        public let reason: DashboardViewModel.PlanStep.Reason
+    }
 
     private let seed: SeedData
     private let settings: SettingsStore
@@ -24,10 +33,13 @@ public final class PracticeViewModel {
     private let speech: SpeechPlaying?
     private let inputModeOverride: InputMode?
     private let aiResolver: KaiwaAIResolver?
+    private let now: () -> Date
+    private let calendar: Calendar
 
     public init(
         seed: SeedData, settings: SettingsStore, repository: ProgressRepository,
-        speech: SpeechPlaying? = nil, inputModeOverride: InputMode? = nil, aiResolver: KaiwaAIResolver? = nil
+        speech: SpeechPlaying? = nil, inputModeOverride: InputMode? = nil, aiResolver: KaiwaAIResolver? = nil,
+        now: @escaping () -> Date = { Date() }, calendar: Calendar = .current
     ) {
         self.seed = seed
         self.settings = settings
@@ -35,7 +47,26 @@ public final class PracticeViewModel {
         self.speech = speech
         self.inputModeOverride = inputModeOverride
         self.aiResolver = aiResolver
+        self.now = now
+        self.calendar = calendar
+        refresh()
     }
+
+    public func refresh() {
+        accuracy = DashboardViewModel.weekAccuracy(repository: repository, now: now(), calendar: calendar).pillars
+        recommendation = DashboardViewModel.plan(dueCount: 0, accuracy: accuracy).first.flatMap { step in
+            guard case .drill(let drill, let reason) = step.kind else { return nil }
+            return Recommendation(drill: drill, reason: reason)
+        }
+    }
+
+    /// 7-day accuracy for `pillar`; `nil` without answers.
+    public func percent(for pillar: Pillar) -> Int? {
+        accuracy.first { $0.pillar == pillar }?.percent
+    }
+
+    /// The study scope as a short label ("初級1 · L1–9").
+    public var scopeLabel: String { settings.scope.label }
 
     /// Pillars with at least one registered drill, in `Pillar.allCases` order.
     public var sections: [PillarSection] {
