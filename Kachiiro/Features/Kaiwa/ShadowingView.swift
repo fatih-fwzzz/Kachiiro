@@ -23,11 +23,7 @@ struct ShadowingView: View {
     var body: some View {
         VStack(spacing: 0) {
             if model.isLoading {
-                VStack(spacing: 10) {
-                    ProgressView().controlSize(.large)
-                    Text("Writing fresh phrases…").font(AppTheme.Fonts.ui(.headline, weight: .heavy))
-                }
-                .frame(maxHeight: .infinity)
+                loadingSkeleton
             } else if let line = model.current {
                 ScrollView {
                     VStack(spacing: 14) {
@@ -56,13 +52,14 @@ struct ShadowingView: View {
                                        description: Text("Shadowing phrases couldn’t be loaded."))
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AppTheme.canvas)
         .toolbar(.hidden, for: .tabBar)
         .navigationTitle("Shadowing")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                if model.count > 0 {
+                if model.count > 0, !model.isLoading {
                     Text("\(model.index + 1) / \(model.count)")
                         .font(AppTheme.Fonts.ui(.subheadline, weight: .bold))
                         .monospacedDigit()
@@ -83,6 +80,35 @@ struct ShadowingView: View {
         }
         .onChange(of: model.index) { voice.cancel() }
         .onDisappear { voice.cancel() }
+    }
+
+    /// The real layout in grey while AI writes the phrases, with what is happening on top.
+    private var loadingSkeleton: some View {
+        VStack(spacing: 14) {
+            HStack(spacing: 6) {
+                ForEach(0..<3, id: \.self) { _ in Capsule().fill(AppTheme.track).frame(height: 6) }
+            }
+            VStack(spacing: 14) {
+                RoundedRectangle(cornerRadius: 10).fill(AppTheme.elevatedField).frame(width: 220, height: 40)
+                RoundedRectangle(cornerRadius: 8).fill(AppTheme.elevatedField).frame(width: 160, height: 20)
+                RoundedRectangle(cornerRadius: 8).fill(AppTheme.elevatedField).frame(width: 240, height: 16)
+                HStack(spacing: 10) {
+                    Capsule().fill(AppTheme.accentSoftFill).frame(width: 110, height: 44)
+                    Capsule().fill(AppTheme.accentSoftFill).frame(width: 90, height: 44)
+                }
+            }
+            .padding(.vertical, 26)
+            .frame(maxWidth: .infinity)
+            .background(AppTheme.cardSurface, in: RoundedRectangle(cornerRadius: AppTheme.Radius.hero, style: .continuous))
+            .overlay { PreparingCard(title: "Preparing phrases", message: "AI is writing fresh phrases for you…") }
+            Spacer()
+            Circle().fill(AppTheme.accentSoftFill).frame(width: 84, height: 84).padding(.bottom, 30)
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .frame(maxWidth: 640)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Preparing phrases. AI is writing fresh phrases for you.")
     }
 
     private var stepBar: some View {
