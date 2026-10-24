@@ -12,8 +12,11 @@ final class LiveVoiceEngine: LiveAudioIO {
     private let playbackFormat = AVAudioFormat(
         commonFormat: .pcmFormatFloat32, sampleRate: 24_000, channels: 1, interleaved: false
     )!
-    private var isConnected = false
+    /// Set while a call is running; `nil` when the microphone is off.
+    private var onChunk: (@MainActor @Sendable (Data) -> Void)?
+    private var isActive = false
     private var isTapInstalled = false
+    private var configurationObserver: NSObjectProtocol?
 
     init() {
         engine.attach(node)
@@ -22,34 +25,21 @@ final class LiveVoiceEngine: LiveAudioIO {
     func start(onChunk: @escaping @MainActor @Sendable (Data) -> Void) async throws {
         let granted = await AVAudioApplication.requestRecordPermission()
         try await Self.activateSession(record: granted)
-
         if granted {
             do {
                 try engine.inputNode.setVoiceProcessingEnabled(true)
             } catch {
                 Self.log.error("voice processing unavailable: \(error.localizedDescription)")
             }
-            // Read the format after enabling voice processing: it changes the input format.
-            let format = engine.inputNode.outputFormat(forBus: 0)
-            if let converter = MicrophoneConverter(input: format) {
-                engine.inputNode.installTap(
-                    onBus: 0, bufferSize: 4096, format: format, block: Self.tapBlock(converter, onChunk)
-                )
-                isTapInstalled = true
-            }
         }
-
-        // The audio session must be active before the engine's mixer is touched, or the output node reports no format.
-        if !isConnected {
-            engine.connect(node, to: engine.mainMixerNode, format: playbackFormat)
-            isConnected = true
-        }
-        engine.prepare()
+        self.onChunk = granted ? onChunk : nil
+        isActive = true
+        observeConfigurationChanges()
         do {
-            try engine.start()
+            try startGraph()
         } catch {
             Self.log.error("AVAudioEngine start failed: \(error.localizedDescription)")
-            removeTapIfNeeded()
+            stop()
             throw error
         }
         if !granted { throw LiveAudioError.microphoneDenied }
@@ -76,12 +66,57 @@ final class LiveVoiceEngine: LiveAudioIO {
     }
 
     func stop() {
+        isActive = false
+        onChunk = nil
+        if let configurationObserver { NotificationCenter.default.removeObserver(configurationObserver) }
+        configurationObserver = nil
         node.stop()
         removeTapIfNeeded()
         engine.stop()
         try? engine.inputNode.setVoiceProcessingEnabled(false)
         Task.detached {
             try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        }
+    }
+
+    /// Connects playback, installs the microphone tap for the current input format and starts the engine.
+    /// The audio session must be active first, or the output node reports no format.
+    private func startGraph() throws {
+        removeTapIfNeeded()
+        engine.connect(node, to: engine.mainMixerNode, format: playbackFormat)
+        if let onChunk {
+            // Read the format after enabling voice processing: it changes the input format.
+            let format = engine.inputNode.outputFormat(forBus: 0)
+            if format.sampleRate > 0, format.channelCount > 0, let converter = MicrophoneConverter(input: format) {
+                engine.inputNode.installTap(
+                    onBus: 0, bufferSize: 4096, format: format, block: Self.tapBlock(converter, onChunk)
+                )
+                isTapInstalled = true
+            } else {
+                Self.log.error("microphone format unusable: \(format.description)")
+            }
+        }
+        engine.prepare()
+        try engine.start()
+    }
+
+    /// Enabling voice processing reconfigures the audio I/O, and the engine stops itself right after starting.
+    /// The graph is rebuilt and restarted whenever that happens during a call.
+    private func observeConfigurationChanges() {
+        guard configurationObserver == nil else { return }
+        configurationObserver = NotificationCenter.default.addObserver(
+            forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.restartAfterConfigurationChange() }
+        }
+    }
+
+    private func restartAfterConfigurationChange() {
+        guard isActive, !engine.isRunning else { return }
+        do {
+            try startGraph()
+        } catch {
+            Self.log.error("AVAudioEngine restart failed: \(error.localizedDescription)")
         }
     }
 
