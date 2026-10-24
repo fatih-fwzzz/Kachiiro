@@ -6,6 +6,7 @@ struct QuizView: View {
     @State private var typed = ""
     @State private var selectedChoice: String?
     @State private var showScratchpad = QuizView.scratchpadOpenAtLaunch
+    @State private var showReference = true
     @FocusState private var typingFocused: Bool
     @State private var voiceEngaged = false
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -48,30 +49,52 @@ struct QuizView: View {
     private func session(_ q: QuizQuestion) -> some View {
         Group {
             if isRegular {
-                HStack(alignment: .top, spacing: 16) {
-                    if let reference = referenceContent {
-                        ConjugationReferenceView(content: reference)
-                            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                            .overlay { RoundedRectangle(cornerRadius: 20, style: .continuous).strokeBorder(AppTheme.hairlineBorder) }
-                            .frame(maxWidth: .infinity)
+                // The study desk: reference on the left, the drill in the middle, the scratchpad on the right.
+                GeometryReader { geo in
+                // Three columns need a landscape-wide desk; narrower, the scratchpad takes the reference's place.
+                let roomForAll = geo.size.width >= 1150
+                VStack(spacing: 10) {
+                    HStack(alignment: .top, spacing: 20) {
+                        if let reference = referenceContent, showReference, roomForAll || !showScratchpad {
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text("Reference").font(AppTheme.Fonts.ui(.headline, weight: .heavy))
+                                ConjugationReferenceView(content: reference, compact: true, focusForm: q.id.verbForm)
+                            }
+                            .frame(width: 330)
+                            .transition(.move(edge: .leading).combined(with: .opacity))
+                        }
+                        quizColumn(q).frame(maxWidth: 640)
+                        if showScratchpad {
+                            ScratchpadPanel()
+                                .id(model.index)
+                                .frame(width: 320)
+                                .transition(.move(edge: .trailing).combined(with: .opacity))
+                        }
                     }
-                    VStack(spacing: 12) {
-                        quizColumn(q)
-                        if showScratchpad { ScratchpadPanel().id(model.index) }
-                    }
-                    .frame(maxWidth: referenceContent == nil ? 760 : .infinity)
+                    .frame(maxWidth: .infinity)
+                    keyboardHints
                 }
-                .padding(16)
+                .padding(.horizontal, 24)
+                .padding(.top, 12)
+                }
             } else {
                 quizColumn(q)
             }
         }
         .toolbar {
             if isRegular {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button { withAnimation { showScratchpad.toggle() } } label: {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    if referenceContent != nil {
+                        Button { withAnimation(.snappy) { showReference.toggle() } } label: {
+                            Image(systemName: showReference ? "book.fill" : "book")
+                        }
+                        .keyboardShortcut("r", modifiers: .command)
+                        .accessibilityLabel(showReference ? "Hide reference" : "Show reference")
+                    }
+                    Button { withAnimation(.snappy) { showScratchpad.toggle() } } label: {
                         Image(systemName: showScratchpad ? "pencil.and.scribble" : "pencil.tip.crop.circle")
                     }
+                    .keyboardShortcut("k", modifiers: .command)
                     .accessibilityLabel(showScratchpad ? "Hide scratchpad" : "Show scratchpad")
                 }
             }
@@ -108,7 +131,7 @@ struct QuizView: View {
                     progressHeader
                     stimulus(q)
                         .frame(maxWidth: .infinity)
-                        .frame(height: geo.size.height * (showScratchpad ? 0.42 : 0.4))
+                        .frame(height: geo.size.height * 0.4)
                     ScrollView {
                         VStack(spacing: 4) {
                             answerArea(q)
@@ -177,6 +200,32 @@ struct QuizView: View {
 
     private func focusIfTyping() {
         typingFocused = model.activeMode == .typing && model.result == nil && !voiceEngaged
+    }
+
+    /// Keyboard shortcuts on iPad, shown so they are discoverable.
+    private var keyboardHints: some View {
+        HStack(spacing: 18) {
+            hint("1–4", "answer")
+            hint("Return", "next")
+            if referenceContent != nil { hint("⌘R", "reference") }
+            hint("⌘K", "scratchpad")
+        }
+        .font(AppTheme.Fonts.ui(.caption))
+        .foregroundStyle(AppTheme.secondaryInk)
+        .padding(.bottom, 6)
+        .accessibilityHidden(true)
+    }
+
+    private func hint(_ key: String, _ action: String) -> some View {
+        HStack(spacing: 4) {
+            Text(key)
+                .font(AppTheme.Fonts.ui(.caption, weight: .heavy))
+                .foregroundStyle(AppTheme.primaryInk)
+                .padding(.horizontal, 6)
+                .frame(minHeight: 20)
+                .background(AppTheme.cardSurface, in: RoundedRectangle(cornerRadius: 5, style: .continuous))
+            Text(action)
+        }
     }
 
     /// One segment per question plus the current run of correct answers.
