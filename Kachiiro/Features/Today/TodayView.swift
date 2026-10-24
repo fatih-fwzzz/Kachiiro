@@ -241,9 +241,7 @@ struct TodayView: View {
     private func subtitle(_ step: DashboardViewModel.PlanStep) -> String {
         switch step.kind {
         case .review(let count): count == 1 ? "1 card due" : "\(count) cards due"
-        case .drill(_, .weakest(let percent)): "Your weakest this week · \(percent)%"
-        case .drill(_, .notPractised): "Not practised this week"
-        case .drill(_, .keepSharp(let percent)): "Keep it sharp · \(percent)%"
+        case .drill(_, let reason): reason.text
         }
     }
 

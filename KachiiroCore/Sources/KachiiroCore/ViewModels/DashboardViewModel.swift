@@ -89,22 +89,31 @@ public final class DashboardViewModel {
         dueCount = repository.dueKeys(now: current, limit: 10_000).count
         let studyDays = repository.studyDays()
         streak = Self.streak(studyDays: studyDays, today: current, calendar: calendar)
-        let weekAgo = calendar.date(byAdding: .day, value: -7, to: current) ?? current
+        let week = Self.weekAccuracy(repository: repository, now: current, calendar: calendar)
+        accuracy = week.pillars
+        weekAccuracy = week.overall
+        track = Self.track(studyDays: studyDays, daysLeft: daysLeft, today: current, calendar: calendar)
+        plan = Self.plan(dueCount: dueCount, accuracy: accuracy)
+    }
+
+    /// Per-pillar and overall percent correct over the 7 days before `now`.
+    public static func weekAccuracy(
+        repository: ProgressRepository, now: Date, calendar: Calendar = .current
+    ) -> (pillars: [PillarAccuracy], overall: Int?) {
+        let weekAgo = calendar.date(byAdding: .day, value: -7, to: now) ?? now
         let quizzed = Set(DrillKind.allCases.map(\.pillar))
         var correct = 0, total = 0
-        accuracy = Pillar.allCases.filter(quizzed.contains).map { pillar in
+        let pillars = Pillar.allCases.filter(quizzed.contains).map { pillar in
             let a = repository.accuracy(pillar: pillar, since: weekAgo)
             correct += a.correct
             total += a.total
-            return PillarAccuracy(
-                pillar: pillar,
-                percent: a.total == 0 ? nil : Int((Double(a.correct) / Double(a.total) * 100).rounded()),
-                answered: a.total
-            )
+            return PillarAccuracy(pillar: pillar, percent: percent(a.correct, of: a.total), answered: a.total)
         }
-        weekAccuracy = total == 0 ? nil : Int((Double(correct) / Double(total) * 100).rounded())
-        track = Self.track(studyDays: studyDays, daysLeft: daysLeft, today: current, calendar: calendar)
-        plan = Self.plan(dueCount: dueCount, accuracy: accuracy)
+        return (pillars, percent(correct, of: total))
+    }
+
+    static func percent(_ part: Int, of whole: Int) -> Int? {
+        whole == 0 ? nil : Int((Double(part) / Double(whole) * 100).rounded())
     }
 
     /// Seven days ending on the exam day when it is at most six days away, else the last seven days ending today.
