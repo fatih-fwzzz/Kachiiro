@@ -29,6 +29,7 @@ struct QuizView: View {
         }
         .background(AppTheme.canvas)
         .toolbar(.hidden, for: .tabBar)
+        .toolbar(model.isFinished ? .hidden : .automatic, for: .navigationBar)
         .navigationTitle(model.isFinished ? "Summary" : "\(model.index + 1) / \(model.total)")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -137,8 +138,17 @@ struct QuizView: View {
 
     #if DEBUG
     /// `-ui-autoanswer <text>` answers the first question at launch (screenshot smoke tests only).
+    /// `-ui-autofinish` answers every choice question (every third one wrongly) to reach the summary.
     private func applyDebugAutoAnswer() {
         let args = ProcessInfo.processInfo.arguments
+        if args.contains("-ui-autofinish"), model.index == 0, model.result == nil {
+            for (i, question) in model.questions.enumerated() {
+                model.submitChoice(i % 3 == 2 ? "-" : question.correctChoice)
+                guard model.result != nil else { return }
+                model.next()
+            }
+            return
+        }
         guard model.index == 0, model.result == nil, let i = args.firstIndex(of: "-ui-autoanswer"),
               args.indices.contains(i + 1) else { return }
         if model.activeMode == .typing {
@@ -316,40 +326,6 @@ struct QuizView: View {
                     .foregroundStyle(AppTheme.primaryInk)
                     .padding(10)
                     .background(AppTheme.cardSurface, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-            }
-        }
-    }
-}
-
-struct QuizSummaryView: View {
-    let model: QuizSessionViewModel
-    let onRetry: (QuizSessionViewModel) -> Void
-
-    var body: some View {
-        List {
-            Section {
-                VStack(spacing: 4) {
-                    Text("\(model.score) / \(model.total)")
-                        .font(AppTheme.Fonts.ui(.largeTitle, weight: .bold))
-                    Text("correct").foregroundStyle(AppTheme.secondaryInk)
-                }
-                .frame(maxWidth: .infinity)
-                if let retry = model.makeRetrySession() {
-                    Button("Retry wrong (\(retry.total))") { onRetry(retry) }
-                }
-            }
-            Section("Questions") {
-                ForEach(Array(zip(model.questions, model.answers).enumerated()), id: \.offset) { _, pair in
-                    let (question, answer) = pair
-                    HStack {
-                        Image(systemName: answer.correct ? "checkmark.circle.fill" : "xmark.circle.fill")
-                            .foregroundStyle(answer.correct ? .green : .red)
-                        VStack(alignment: .leading) {
-                            Text(question.promptBody).lineLimit(2)
-                            Text(question.correctChoice).font(.caption).foregroundStyle(AppTheme.secondaryInk)
-                        }
-                    }
-                }
             }
         }
     }
