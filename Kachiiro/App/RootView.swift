@@ -26,13 +26,9 @@ struct RootView: View {
 
     var body: some View {
         TabView(selection: $selection) {
-            Tab("Dashboard", systemImage: "gauge.with.dots.needle.33percent", value: AppTab.dashboard) {
+            Tab("Today", systemImage: "sun.max", value: AppTab.dashboard) {
                 NavigationStack {
-                    DashboardView(
-                        viewModel: environment.makeDashboardViewModel(),
-                        showSettings: route == .settings,
-                        openReview: { selection = .review }
-                    )
+                    TodayView(viewModel: environment.makeDashboardViewModel(), showSettings: route == .settings)
                 }
             }
             Tab("Practice", systemImage: "square.grid.2x2", value: AppTab.practice) {
