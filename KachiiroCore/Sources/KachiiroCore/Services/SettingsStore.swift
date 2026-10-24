@@ -8,4 +8,6 @@ public protocol SettingsStore: AnyObject {
     var dailyGoal: Int { get set }
     var kaiwaEngine: KaiwaEngine { get set }
     var kaiwaContent: KaiwaContentSource { get set }
+    /// Set once the first-run setup is finished or skipped.
+    var hasCompletedSetup: Bool { get set }
 }
