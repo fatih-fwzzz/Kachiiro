@@ -36,11 +36,11 @@ struct RootView: View {
                     PracticeView(viewModel: environment.makePracticeViewModel(), launchRoute: route)
                 }
             }
-            Tab("Mock Exam", systemImage: "timer", value: AppTab.mock) {
-                NavigationStack { MockExamView(viewModel: environment.makeMockExamViewModel()) }
-            }
             Tab("Review", systemImage: "arrow.triangle.2.circlepath", value: AppTab.review) {
                 NavigationStack { ReviewView(viewModel: environment.makeReviewViewModel()) }
+            }
+            Tab("Exam", systemImage: "flag.checkered", value: AppTab.mock) {
+                NavigationStack { MockExamView(viewModel: environment.makeMockExamViewModel()) }
             }
         }
         .tabViewStyle(.sidebarAdaptable)
