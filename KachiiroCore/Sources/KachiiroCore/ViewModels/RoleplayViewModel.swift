@@ -27,7 +27,7 @@ public final class RoleplayViewModel {
         /// The AI plays the partner and reviews every reply.
         case free(KaiwaAIService)
         /// Gemini Live speaks the partner; the reviewer checks each learner line.
-        case live(partner: LiveRoleplayPartner, reviewer: KaiwaAIService, audio: PCMAudioStreaming?)
+        case live(partner: LiveRoleplayPartner, reviewer: KaiwaAIService, audio: LiveAudioIO)
     }
 
     public let scenario: RoleplayScenario
@@ -39,6 +39,16 @@ public final class RoleplayViewModel {
     public private(set) var canRetry = false
     /// The in-flight review of the learner's latest live line; exposed so tests can await it.
     public private(set) var pendingReview: Task<Void, Never>?
+
+    public enum LiveStatus: Equatable, Sendable { case idle, connecting, listening, partnerSpeaking }
+    public private(set) var liveStatus: LiveStatus = .idle
+    /// Learner speech transcribed so far, not yet a line.
+    public private(set) var liveUserDraft = ""
+    /// Partner speech transcribed so far, not yet a line.
+    public private(set) var livePartnerDraft = ""
+    public private(set) var isMicrophoneOn = false
+    /// The running session's event loop; exposed so tests can await it.
+    public private(set) var liveSession: Task<Void, Never>?
 
     private let mode: Mode
     private let speech: SpeechPlaying?
@@ -99,13 +109,13 @@ public final class RoleplayViewModel {
         case .free(let service):
             currentTurnId = nil
             await requestPartnerTurn(service)
-        case .live(let partner, _, let audio):
+        case .live:
+            end()
+            liveUserDraft = ""
+            livePartnerDraft = ""
             currentTurnId = nil
-            pendingReview?.cancel()
             pendingReview = nil
-            partner.close()
-            audio?.stop()
-            await requestLiveTurn(partner, audio)
+            await connectLive()
         }
     }
 
@@ -120,11 +130,11 @@ public final class RoleplayViewModel {
             guard !canRetry else { return }
             append(.user, input)
             await requestPartnerTurn(service)
-        case .live(let partner, let reviewer, let audio):
-            guard !canRetry else { return }
+        case .live(let partner, let reviewer, _):
+            guard !canRetry, liveSession != nil else { return }
             append(.user, input)
             reviewLiveLine(reviewer, input: input)
-            await requestLiveTurn(partner, audio)
+            partner.sendText(input)
         }
     }
 
@@ -135,30 +145,36 @@ public final class RoleplayViewModel {
         case .free(let service):
             errorMessage = nil
             await requestPartnerTurn(service)
-        case .live(let partner, _, let audio):
+        case .live:
             errorMessage = nil
-            await requestLiveTurn(partner, audio)
+            await connectLive()
         case .scripted:
             return
         }
     }
 
-    /// Releases the live connection and stops partner audio; a no-op outside live mode.
+    /// Releases the live connection and stops the call audio; a no-op outside live mode.
     public func end() {
         guard case .live(let partner, _, let audio) = mode else { return }
         pendingReview?.cancel()
+        let session = liveSession
+        liveSession = nil
+        session?.cancel()
         partner.close()
-        audio?.stop()
+        audio.stop()
+        isMicrophoneOn = false
+        liveStatus = .idle
     }
 
-    /// Silences the partner's voice, e.g. when the learner starts talking.
-    public func stopPartnerAudio() {
-        guard case .live(_, _, let audio) = mode else { return }
-        audio?.stop()
+    /// Ends the call; pending drafts are dropped.
+    public func hangUp() {
+        guard isLiveMode, !isFinished else { return }
+        isFinished = true
+        end()
     }
 
     public func replay(_ line: Line) {
-        guard line.speaker == .partner else { return }
+        guard line.speaker == .partner, !isLiveMode else { return }
         speech?.speak(line.text, slow: false)
     }
 
@@ -241,22 +257,91 @@ public final class RoleplayViewModel {
 
     // MARK: Live
 
-    private func requestLiveTurn(_ partner: LiveRoleplayPartner, _ audio: PCMAudioStreaming?) async {
+    private func connectLive() async {
+        guard case .live(let partner, _, let audio) = mode else { return }
         isWaiting = true
         canRetry = false
+        liveStatus = .connecting
         defer { isWaiting = false }
+        let events: AsyncThrowingStream<LiveEvent, Error>
         do {
-            let text = try await partner.reply(
-                system: KaiwaPrompts.livePartner(scenario), history: lines,
-                onAudio: { audio?.enqueue($0, sampleRate: 24_000) }
-            )
-            append(.partner, text, speak: false)
-            if userTurnCount >= Self.maxFreeTurns {
-                isFinished = true
-                partner.close()
-            }
+            events = try await partner.connect(system: KaiwaPrompts.livePartner(scenario), history: lines)
         } catch {
             errorMessage = error.localizedDescription
+            canRetry = true
+            liveStatus = .idle
+            return
+        }
+        liveStatus = .listening
+        liveSession = Task {
+            do {
+                for try await event in events { self.handleLive(event) }
+                guard !Task.isCancelled else { return }
+                self.liveSessionEnded(nil)
+            } catch {
+                guard !Task.isCancelled else { return }
+                self.liveSessionEnded(error)
+            }
+        }
+        do {
+            try await audio.start { [weak partner] chunk in partner?.sendAudio(chunk) }
+            isMicrophoneOn = true
+        } catch {
+            isMicrophoneOn = false
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func handleLive(_ event: LiveEvent) {
+        guard case .live(_, _, let audio) = mode else { return }
+        switch event {
+        case .audio(let data):
+            audio.play(data)
+            liveStatus = .partnerSpeaking
+        case .transcript(let piece):
+            livePartnerDraft += piece
+            liveStatus = .partnerSpeaking
+        case .inputTranscript(let piece):
+            liveUserDraft += piece
+        case .interrupted:
+            audio.flushPlayback()
+            commitLiveTurn()
+            liveStatus = .listening
+        case .turnComplete:
+            commitLiveTurn()
+            liveStatus = .listening
+            if userTurnCount >= Self.maxFreeTurns {
+                isFinished = true
+                end()
+            }
+        case .setupComplete, .other:
+            break
+        }
+    }
+
+    /// Commits the drafts as lines once the partner actually spoke, so a pause never splits the learner's sentence.
+    private func commitLiveTurn() {
+        guard case .live(_, let reviewer, _) = mode else { return }
+        let partnerText = livePartnerDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !partnerText.isEmpty else { return }
+        let userText = liveUserDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !userText.isEmpty {
+            append(.user, userText)
+            reviewLiveLine(reviewer, input: userText)
+        }
+        append(.partner, partnerText, speak: false)
+        liveUserDraft = ""
+        livePartnerDraft = ""
+    }
+
+    private func liveSessionEnded(_ error: Error?) {
+        guard case .live(_, _, let audio) = mode else { return }
+        audio.stop()
+        isMicrophoneOn = false
+        liveStatus = .idle
+        liveSession = nil
+        if !isFinished {
+            errorMessage = error?.localizedDescription ?? "The live session ended."
             canRetry = true
         }
     }

@@ -11,14 +11,14 @@ final class AppEnvironment {
     let settings: SettingsStore
     let speech: SpeechPlaying
     let audioPlayer: AudioPlaying
-    let liveAudio: PCMAudioStreaming
+    let liveAudio: LiveAudioIO
     let voiceInput: VoiceInputModel
     let keys: APIKeyStore
     let aiResolver: KaiwaAIResolver
 
     init(
         seed: SeedData, repository: ProgressRepository, settings: SettingsStore,
-        speech: SpeechPlaying, audioPlayer: AudioPlaying, liveAudio: PCMAudioStreaming,
+        speech: SpeechPlaying, audioPlayer: AudioPlaying, liveAudio: LiveAudioIO,
         voiceInput: VoiceInputModel, keys: APIKeyStore
     ) {
         self.seed = seed
@@ -47,7 +47,7 @@ final class AppEnvironment {
             let repository = SwiftDataProgressRepository(container: container)
             let env = AppEnvironment(
                 seed: seed, repository: repository, settings: UserDefaultsSettingsStore(),
-                speech: SpeechService(), audioPlayer: AudioPlayerService(), liveAudio: LiveAudioPlayer(),
+                speech: SpeechService(), audioPlayer: AudioPlayerService(), liveAudio: LiveVoiceEngine(),
                 voiceInput: VoiceInputModel(recognizer: SpeechRecognitionService()), keys: KeychainAPIKeyStore()
             )
             #if DEBUG
@@ -66,7 +66,7 @@ final class AppEnvironment {
             repository: InMemoryProgressRepository(),
             settings: InMemorySettingsStore(),
             speech: SpeechService(),
-            audioPlayer: AudioPlayerService(), liveAudio: LiveAudioPlayer(),
+            audioPlayer: AudioPlayerService(), liveAudio: LiveVoiceEngine(),
             voiceInput: VoiceInputModel(recognizer: SpeechRecognitionService()), keys: InMemoryAPIKeyStore()
         )
     }

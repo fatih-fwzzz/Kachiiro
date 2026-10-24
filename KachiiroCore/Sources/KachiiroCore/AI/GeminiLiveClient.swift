@@ -3,21 +3,28 @@ import Foundation
 public enum LiveEvent: Equatable, Sendable {
     case setupComplete
     case audio(Data)
+    /// A piece of the learner's speech, transcribed by Gemini.
+    case inputTranscript(String)
+    /// A piece of the partner's speech.
     case transcript(String)
+    /// The learner talked over the partner: queued partner audio is stale.
+    case interrupted
     case turnComplete
     case other
 }
 
-/// Gemini Live over a WebSocket: speaks the partner's turns as audio and reports a transcript.
+/// Gemini Live over a WebSocket: a persistent voice call. Microphone audio streams up, the partner's voice and transcripts stream down.
 @MainActor
 public final class GeminiLiveClient: LiveRoleplayPartner {
-    public static let model = "gemini-3.1-flash-live-preview"
-    private static let timeout: Duration = .seconds(25)
+    public nonisolated static let model = "gemini-3.8-live"
+    /// Server-side silence before the learner's turn ends; tolerates a breath mid-sentence.
+    nonisolated static let silenceDurationMs = 1200
+    private static let setupTimeout: Duration = .seconds(25)
 
     private let apiKey: String
     private let session: URLSession
     private var task: URLSessionWebSocketTask?
-    private var sentLines = 0
+    private var receiver: Task<Void, Never>?
 
     public init(apiKey: String, session: URLSession = .shared) {
         self.apiKey = apiKey
@@ -39,28 +46,48 @@ public final class GeminiLiveClient: LiveRoleplayPartner {
         let body: [String: Any] = [
             "setup": [
                 "model": "models/\(model)",
-                "generationConfig": [
-                    "responseModalities": ["AUDIO"],
-                    "speechConfig": ["languageCode": "ja-JP"],
-                ],
+                "generationConfig": ["responseModalities": ["AUDIO"]],
                 "systemInstruction": ["parts": [["text": system]]],
+                "realtimeInputConfig": [
+                    "automaticActivityDetection": [
+                        "endOfSpeechSensitivity": "END_SENSITIVITY_LOW",
+                        "silenceDurationMs": silenceDurationMs,
+                    ],
+                ],
+                "inputAudioTranscription": ["languageCodes": ["ja-JP"]],
                 "outputAudioTranscription": [String: Any](),
             ],
         ]
         return (try? JSONSerialization.data(withJSONObject: body)) ?? Data()
     }
 
-    nonisolated static func turnMessage(_ turns: [(role: String, text: String)]) -> Data {
+    nonisolated static func turnMessage(_ turns: [(role: String, text: String)], turnComplete: Bool) -> Data {
         let body: [String: Any] = [
             "clientContent": [
                 "turns": turns.map { ["role": $0.role, "parts": [["text": $0.text]]] },
-                "turnComplete": true,
+                "turnComplete": turnComplete,
             ],
         ]
         return (try? JSONSerialization.data(withJSONObject: body)) ?? Data()
     }
 
-    /// Every event in one server frame: audio parts, then the transcript piece, then turn completion.
+    /// The opening request plus the conversation so far. The server waits for the learner when the partner spoke last.
+    nonisolated static func seedMessage(history: [RoleplayViewModel.Line]) -> Data {
+        var turns: [(role: String, text: String)] = [(role: "user", text: KaiwaPrompts.liveOpening)]
+        turns += history.map { (role: $0.speaker == .user ? "user" : "model", text: $0.text) }
+        return turnMessage(turns, turnComplete: history.last?.speaker != .partner)
+    }
+
+    nonisolated static func audioMessage(_ pcm16: Data) -> Data {
+        let body: [String: Any] = [
+            "realtimeInput": [
+                "audio": ["data": pcm16.base64EncodedString(), "mimeType": "audio/pcm;rate=16000"],
+            ],
+        ]
+        return (try? JSONSerialization.data(withJSONObject: body)) ?? Data()
+    }
+
+    /// Every event in one server frame: audio parts, learner transcript, partner transcript, interruption, turn completion.
     nonisolated static func parse(_ data: Data) -> [LiveEvent] {
         guard let root = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else { return [.other] }
         if root["setupComplete"] != nil { return [.setupComplete] }
@@ -73,79 +100,94 @@ public final class GeminiLiveClient: LiveRoleplayPartner {
                 events.append(.audio(audio))
             }
         }
+        if let text = (content["inputTranscription"] as? [String: Any])?["text"] as? String {
+            events.append(.inputTranscript(text))
+        }
         if let text = (content["outputTranscription"] as? [String: Any])?["text"] as? String {
             events.append(.transcript(text))
         }
+        if content["interrupted"] as? Bool == true { events.append(.interrupted) }
         if content["turnComplete"] as? Bool == true { events.append(.turnComplete) }
         return events.isEmpty ? [.other] : events
     }
 
     // MARK: Session
 
-    public func reply(
-        system: String, history: [RoleplayViewModel.Line], onAudio: @escaping @MainActor (Data) -> Void
-    ) async throws -> String {
+    public func connect(
+        system: String, history: [RoleplayViewModel.Line]
+    ) async throws -> AsyncThrowingStream<LiveEvent, Error> {
+        close()
+        let socket = session.webSocketTask(with: Self.url(apiKey: apiKey))
+        task = socket
+        socket.resume()
         do {
-            let text = try await withThrowingTaskGroup(of: String.self) { group in
+            try await withThrowingTaskGroup(of: Void.self) { group in
                 group.addTask { @MainActor in
-                    try await self.exchange(system: system, history: history, onAudio: onAudio)
+                    try await socket.send(.data(Self.setupMessage(system: system)))
+                    while !Self.parse(try await Self.receive(socket)).contains(.setupComplete) {}
                 }
                 group.addTask {
-                    try await Task.sleep(for: Self.timeout)
+                    try await Task.sleep(for: Self.setupTimeout)
                     await self.close()
                     throw URLError(.timedOut)
                 }
                 defer { group.cancelAll() }
-                return try await group.next() ?? ""
+                _ = try await group.next()
             }
-            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !trimmed.isEmpty else { throw KaiwaAIError.invalidResponse }
-            return trimmed
+            try await socket.send(.data(Self.seedMessage(history: history)))
         } catch {
+            let mapped = Self.closeError(socket) ?? error
             close()
-            throw error
+            throw mapped
         }
+
+        let (stream, continuation) = AsyncThrowingStream<LiveEvent, Error>.makeStream()
+        receiver = Task { @MainActor [weak self] in
+            do {
+                while true {
+                    for event in Self.parse(try await Self.receive(socket)) {
+                        switch event {
+                        case .other, .setupComplete: break
+                        default: continuation.yield(event)
+                        }
+                    }
+                }
+            } catch {
+                if Task.isCancelled || self?.task !== socket {
+                    continuation.finish()
+                } else {
+                    continuation.finish(throwing: Self.closeError(socket) ?? error)
+                }
+            }
+        }
+        return stream
+    }
+
+    public func sendAudio(_ pcm16: Data) {
+        task?.send(.data(Self.audioMessage(pcm16))) { _ in }
+    }
+
+    public func sendText(_ text: String) {
+        task?.send(.data(Self.turnMessage([(role: "user", text: text)], turnComplete: true))) { _ in }
     }
 
     public func close() {
+        receiver?.cancel()
+        receiver = nil
         task?.cancel(with: .normalClosure, reason: nil)
         task = nil
     }
 
-    private func exchange(
-        system: String, history: [RoleplayViewModel.Line], onAudio: @MainActor (Data) -> Void
-    ) async throws -> String {
-        let socket = try await connectedSocket(system: system)
-        var turns = history.dropFirst(sentLines).map { (role: $0.speaker == .user ? "user" : "model", text: $0.text) }
-        if turns.isEmpty || turns.last?.role == "model" { turns.append((role: "user", text: KaiwaPrompts.liveOpening)) }
-        try await socket.send(.data(Self.turnMessage(turns)))
-        sentLines = history.count
-
-        var transcript = ""
-        while true {
-            for event in Self.parse(try await Self.receive(socket)) {
-                switch event {
-                case .audio(let data): onAudio(data)
-                case .transcript(let piece): transcript += piece
-                case .turnComplete: return transcript
-                case .setupComplete, .other: break
-                }
-            }
-        }
+    /// The server's close code and reason, which are more useful than the POSIX error `receive` throws.
+    private nonisolated static func closeError(_ socket: URLSessionWebSocketTask) -> LiveSessionError? {
+        guard socket.closeCode != .invalid else { return nil }
+        return .closed(
+            code: socket.closeCode.rawValue,
+            reason: socket.closeReason.flatMap { String(data: $0, encoding: .utf8) } ?? ""
+        )
     }
 
-    private func connectedSocket(system: String) async throws -> URLSessionWebSocketTask {
-        if let task { return task }
-        let socket = session.webSocketTask(with: Self.url(apiKey: apiKey))
-        task = socket
-        socket.resume()
-        try await socket.send(.data(Self.setupMessage(system: system)))
-        while !Self.parse(try await Self.receive(socket)).contains(.setupComplete) {}
-        sentLines = 0
-        return socket
-    }
-
-    private static func receive(_ socket: URLSessionWebSocketTask) async throws -> Data {
+    private nonisolated static func receive(_ socket: URLSessionWebSocketTask) async throws -> Data {
         switch try await socket.receive() {
         case .data(let data): data
         case .string(let string): Data(string.utf8)
