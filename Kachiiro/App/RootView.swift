@@ -9,7 +9,7 @@ enum AppTab: Hashable {
         case .practice, .audio, .cando, .drill, .roleplay, .shadowing: self = .practice
         case .mock: self = .mock
         case .review: self = .review
-        case .dashboard, .settings, nil: self = .dashboard
+        case .dashboard, .settings, .setup, nil: self = .dashboard
         }
     }
 }
@@ -17,6 +17,9 @@ enum AppTab: Hashable {
 struct RootView: View {
     @Environment(AppEnvironment.self) private var environment
     @State private var selection: AppTab
+    @State private var showSetup = false
+    /// Bumped after setup so Today rebuilds with the new goal and exam date.
+    @State private var setupGeneration = 0
     private let route: LaunchRoute?
 
     init(route: LaunchRoute? = LaunchRoute.fromProcess()) {
@@ -44,6 +47,15 @@ struct RootView: View {
             }
         }
         .tabViewStyle(.sidebarAdaptable)
+        .id(setupGeneration)
+        .fullScreenCover(isPresented: $showSetup, onDismiss: { setupGeneration += 1 }) {
+            SetupView(model: SetupViewModel(settings: environment.settings))
+        }
+        .onAppear {
+            // Smoke routes skip first-run setup so screenshots land on the requested screen.
+            showSetup = route == .setup
+                || (route == nil && SetupViewModel.isNeeded(settings: environment.settings, repository: environment.repository))
+        }
     }
 }
 
