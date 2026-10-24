@@ -29,7 +29,7 @@ struct QuizView: View {
         }
         .background(AppTheme.canvas)
         .toolbar(.hidden, for: .tabBar)
-        .toolbar(model.isFinished ? .hidden : .automatic, for: .navigationBar)
+        .toolbar(model.isFinished ? .hidden : .visible, for: .navigationBar)
         .navigationTitle(model.isFinished ? "Summary" : "\(model.index + 1) / \(model.total)")
         .navigationBarTitleDisplayMode(.inline)
     }

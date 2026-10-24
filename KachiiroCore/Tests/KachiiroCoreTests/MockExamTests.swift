@@ -60,6 +60,14 @@ final class Clock: @unchecked Sendable {
         #expect(vm.note == nil)
     }
 
+    @Test func questionMapKnowsWhichQuestionsAreAnswered() {
+        let vm = makeVM(factories: Self.stubs())
+        vm.start()
+        guard let first = vm.currentQuestion else { Issue.record("no question"); return }
+        vm.answerChoice(first.choices[0])
+        #expect(vm.isAnswered(at: 0) && !vm.isAnswered(at: 1) && !vm.isAnswered(at: 99))
+    }
+
     @Test func pillarGapIsFilledFromOtherDrillsOfThePillar() {
         // verbForms has nothing; inflectionMatrix covers its three slots too.
         let vm = makeVM(factories: Self.stubs([.verbForms: 0]))

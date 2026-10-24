@@ -25,6 +25,8 @@ struct MockExamView: View {
         .background(AppTheme.canvas)
         .navigationTitle(viewModel.phase == .notStarted ? "Exam" : "Mock exam")
         .navigationBarTitleDisplayMode(viewModel.phase == .notStarted ? .large : .inline)
+        .toolbar(viewModel.phase == .notStarted ? .automatic : .hidden, for: .navigationBar)
+        .toolbar(viewModel.phase == .running ? .hidden : .automatic, for: .tabBar)
         .navigationDestination(isPresented: $isRetrying) {
             if let retry { QuizView(model: retry) }
         }
@@ -216,6 +218,7 @@ private struct MockExamStartView: View {
     }
 }
 
+/// Exam mode looks different on purpose: a navy header with the clock tells you this counts.
 private struct MockExamSessionView: View {
     let viewModel: MockExamViewModel
     @State private var typed = ""
@@ -226,31 +229,27 @@ private struct MockExamSessionView: View {
 
     var body: some View {
         if let q = viewModel.currentQuestion {
-            GeometryReader { geo in
-                VStack(spacing: 12) {
-                    header
-                    Picker("Mode", selection: Binding(get: { viewModel.activeMode }, set: { viewModel.setMode($0) })) {
-                        Text("4-Choice").tag(InputMode.choice)
-                        Text("Typing").tag(InputMode.typing)
+            VStack(spacing: 0) {
+                header
+                ScrollView {
+                    VStack(spacing: 12) {
+                        QuestionCard(
+                            question: q, hasSpeech: viewModel.hasSpeech, speechUnavailable: viewModel.speechUnavailable,
+                            onPlay: { viewModel.playPrompt(slow: $0) }
+                        )
+                        .frame(minHeight: 220)
+                        answerArea(q)
+                        modeSwitch
                     }
-                    .pickerStyle(.segmented)
-                    .disabled(!(viewModel.canType && viewModel.canChoose))
-                    QuestionCard(
-                        question: q, hasSpeech: viewModel.hasSpeech, speechUnavailable: viewModel.speechUnavailable,
-                        onPlay: { viewModel.playPrompt(slow: $0) }
-                    )
-                    .frame(height: geo.size.height * 0.34)
-                    ScrollView { answerArea(q) }
-                    HStack {
-                        Button("Submit exam", role: .destructive) { confirmSubmit = true }
-                        Spacer()
-                        Button(viewModel.isLastQuestion ? "Finish" : "Next") { viewModel.next() }
-                            .buttonStyle(.borderedProminent)
-                    }
-                    .padding(.bottom, 8)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
+                    .frame(maxWidth: 720)
+                    .frame(maxWidth: .infinity)
                 }
-                .padding(.horizontal, 16)
+                .scrollDismissesKeyboard(.never)
+                bottomBar
             }
+            .background(AppTheme.canvas)
             .onReceive(ticker) { _ in viewModel.tick() }
             .onChange(of: viewModel.index) {
                 typed = ""
@@ -261,23 +260,72 @@ private struct MockExamSessionView: View {
                 selected = viewModel.currentAnswer
                 typingFocused = viewModel.activeMode == .typing
             }
-            .confirmationDialog("Submit the exam now?", isPresented: $confirmSubmit, titleVisibility: .visible) {
-                Button("Submit", role: .destructive) { viewModel.submit() }
+            .confirmationDialog(unansweredTitle, isPresented: $confirmSubmit, titleVisibility: .visible) {
+                Button("Submit anyway", role: .destructive) { viewModel.submit() }
+                Button("Keep going", role: .cancel) {}
             } message: {
-                Text("\(viewModel.questions.count - viewModel.answeredCount) unanswered questions will count as wrong.")
+                Text("You still have \(timeString(viewModel.remaining)). Unanswered questions count as wrong.")
             }
         }
     }
 
+    private var unansweredTitle: String {
+        let left = viewModel.questions.count - viewModel.answeredCount
+        return left == 0 ? "Submit the exam?" : (left == 1 ? "Submit with 1 unanswered?" : "Submit with \(left) unanswered?")
+    }
+
     private var header: some View {
-        HStack {
-            Text("\(viewModel.index + 1) / \(viewModel.questions.count)").font(.headline.monospacedDigit())
-            Spacer()
-            Label(timeString(viewModel.remaining), systemImage: "timer")
-                .font(.headline.monospacedDigit())
-                .foregroundStyle(viewModel.remaining < 120 ? .red : AppTheme.accent)
+        let fraction = viewModel.remaining / MockExamViewModel.timeLimit
+        let lowTime = viewModel.remaining < 120
+        return VStack(spacing: 14) {
+            HStack(spacing: 12) {
+                ProgressRing(value: fraction, lineWidth: 6, tint: lowTime ? AppTheme.ember : Color(hex: 0x0A84FF),
+                             track: .white.opacity(0.14)) { EmptyView() }
+                    .frame(width: 48, height: 48)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(timeString(viewModel.remaining))
+                        .font(.system(size: 24, weight: .heavy, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(lowTime ? Color(hex: 0xFFB547) : .white)
+                    Text("left · question \(viewModel.index + 1) of \(viewModel.questions.count)")
+                        .font(AppTheme.Fonts.ui(.caption, weight: .semibold))
+                        .foregroundStyle(AppTheme.onKachiiroSecondary)
+                }
+                .accessibilityElement(children: .combine)
+                Spacer()
+                Text("\(viewModel.answeredCount) answered")
+                    .font(AppTheme.Fonts.ui(.caption, weight: .bold))
+                    .foregroundStyle(AppTheme.onKachiiroSecondary)
+                    .monospacedDigit()
+            }
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 5), count: 10), spacing: 5) {
+                ForEach(viewModel.questions.indices, id: \.self) { i in
+                    Text("\(i + 1)")
+                        .font(.system(size: 10, weight: .heavy, design: .rounded))
+                        .foregroundStyle(mapInk(i))
+                        .frame(maxWidth: .infinity, minHeight: 22)
+                        .background(mapFill(i), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                }
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("\(viewModel.answeredCount) of \(viewModel.questions.count) answered")
         }
-        .padding(.top, 8)
+        .foregroundStyle(.white)
+        .padding(.horizontal, 20)
+        .padding(.top, 12)
+        .padding(.bottom, 16)
+        .background(AppTheme.kachiiro.ignoresSafeArea(edges: .top))
+    }
+
+    private func mapFill(_ i: Int) -> Color {
+        if i == viewModel.index { return .white }
+        return viewModel.isAnswered(at: i) ? Color(hex: 0x0A84FF) : .white.opacity(0.1)
+    }
+
+    private func mapInk(_ i: Int) -> Color {
+        if i == viewModel.index { return AppTheme.kachiiro }
+        return viewModel.isAnswered(at: i) ? .white : Color(hex: 0x8A90B5)
     }
 
     private func timeString(_ t: TimeInterval) -> String {
@@ -289,18 +337,38 @@ private struct MockExamSessionView: View {
     private func answerArea(_ q: QuizQuestion) -> some View {
         if viewModel.activeMode == .choice {
             VStack(spacing: 10) {
-                ForEach(q.choices, id: \.self) { choice in
+                ForEach(Array(q.choices.enumerated()), id: \.element) { index, choice in
+                    let isSelected = selected == choice
                     Button {
                         selected = choice
                         viewModel.answerChoice(choice)
                     } label: {
-                        Text(choice)
-                            .font(AppTheme.Fonts.ui(.title3, weight: .medium))
-                            .foregroundStyle(AppTheme.primaryInk)
-                            .frame(maxWidth: .infinity, minHeight: 24)
-                            .quizCard(tint: selected == choice ? AppTheme.accentMediumFill : nil, padding: 12)
+                        HStack(spacing: 14) {
+                            Text("\(index + 1)")
+                                .font(AppTheme.Fonts.ui(.footnote, weight: .heavy))
+                                .foregroundStyle(isSelected ? Color.white : AppTheme.secondaryInk)
+                                .frame(width: 28, height: 28)
+                                .background(isSelected ? AppTheme.accent : AppTheme.elevatedField,
+                                            in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                                .accessibilityHidden(true)
+                            Text(choice)
+                                .font(AppTheme.Fonts.ui(.title3, weight: .semibold))
+                                .foregroundStyle(AppTheme.primaryInk)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .padding(.horizontal, 16)
+                        .frame(minHeight: 58)
+                        .background(isSelected ? AppTheme.accentSoftFill : AppTheme.cardSurface,
+                                    in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                .strokeBorder(isSelected ? AppTheme.accent : AppTheme.hairlineBorder, lineWidth: isSelected ? 2 : 1.5)
+                        }
+                        .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(PressableStyle())
+                    .keyboardShortcut(KeyEquivalent(Character(String(index + 1))), modifiers: [])
+                    .accessibilityAddTraits(isSelected ? .isSelected : [])
                 }
             }
         } else {
@@ -310,56 +378,179 @@ private struct MockExamSessionView: View {
                 .autocorrectionDisabled()
                 .font(AppTheme.Fonts.ui(.title3))
                 .onChange(of: typed) { viewModel.answerText(typed) }
-                .quizCard(tint: AppTheme.elevatedField)
+                .padding(.horizontal, 16)
+                .frame(minHeight: 58)
+                .background(AppTheme.cardSurface, in: RoundedRectangle(cornerRadius: AppTheme.Radius.control, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: AppTheme.Radius.control, style: .continuous).strokeBorder(AppTheme.accent, lineWidth: 2)
+                }
         }
+    }
+
+    @ViewBuilder
+    private var modeSwitch: some View {
+        if viewModel.canType && viewModel.canChoose {
+            let toTyping = viewModel.activeMode == .choice
+            Button { viewModel.setMode(toTyping ? .typing : .choice) } label: {
+                Label(toTyping ? "Type instead" : "Choose instead", systemImage: toTyping ? "keyboard" : "list.number")
+                    .font(AppTheme.Fonts.ui(.subheadline, weight: .bold))
+                    .foregroundStyle(AppTheme.accentText)
+                    .frame(minHeight: 44)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    private var bottomBar: some View {
+        HStack(spacing: 10) {
+            Button("Submit") { confirmSubmit = true }
+                .buttonStyle(SecondaryButtonStyle(height: 54))
+                .frame(width: 112)
+            Button(viewModel.isLastQuestion ? "Finish exam" : "Next question") { viewModel.next() }
+                .buttonStyle(PrimaryButtonStyle(height: 54))
+                .keyboardShortcut(.return, modifiers: [])
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
+        .frame(maxWidth: 720)
+        .frame(maxWidth: .infinity)
+        .background(AppTheme.canvas)
     }
 }
 
+/// Answers "how did I do, and where" before anything else, then makes the misses the next step.
 private struct MockExamResultView: View {
     let viewModel: MockExamViewModel
     let onRetry: (QuizSessionViewModel) -> Void
 
     var body: some View {
         if let r = viewModel.result {
-            List {
-                Section {
-                    VStack(spacing: 4) {
-                        Text("\(r.correct) / \(r.total)").font(AppTheme.Fonts.ui(.largeTitle, weight: .bold))
-                        Text("\(Int((Double(r.correct) / Double(max(r.total, 1)) * 100).rounded()))% · \(durationString(r.duration)) · \(r.unanswered) unanswered")
-                            .font(.footnote).foregroundStyle(AppTheme.secondaryInk)
-                    }
-                    .frame(maxWidth: .infinity)
-                }
-                Section("By pillar") {
-                    ForEach(r.byPillar) { score in
-                        VStack(alignment: .leading, spacing: 4) {
-                            HStack {
-                                Text(score.pillar.title)
-                                Spacer()
-                                Text("\(score.correct) / \(score.total)").monospacedDigit()
-                            }
-                            ProgressView(value: Double(score.correct), total: Double(max(score.total, 1)))
+            ScrollView {
+                VStack(spacing: 16) {
+                    hero(r)
+                    VStack(spacing: 12) {
+                        pillarCard(r)
+                        if let lowest = r.byPillar.filter({ $0.total > 0 }).min(by: { fraction($0) < fraction($1) }),
+                           fraction(lowest) < 1 {
+                            Banner(kind: .info, title: "\(lowest.pillar.shortName) cost you the most",
+                                   message: "\(lowest.correct) of \(lowest.total) right. A short \(lowest.pillar.planDrill.title.lowercased()) drill is the best next step.")
                         }
+                        if !r.wrongQuestions.isEmpty { missesCard(r) }
                     }
+                    .padding(.horizontal, 20)
                 }
-                if !r.wrongQuestions.isEmpty {
-                    Section("Wrong or unanswered (\(r.wrongQuestions.count))") {
-                        ForEach(r.wrongQuestions) { q in
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(q.promptBody).lineLimit(2)
-                                Text(q.correctChoice).font(.caption).foregroundStyle(AppTheme.secondaryInk)
-                            }
-                        }
-                        if let session = viewModel.makeRetrySession() {
-                            Button("Retry wrong") { onRetry(session) }
-                        }
-                    }
-                }
-                Section {
-                    Button("New exam") { viewModel.reset() }
-                }
+                .padding(.bottom, 16)
+                .frame(maxWidth: 720)
+                .frame(maxWidth: .infinity)
+            }
+            .ignoresSafeArea(edges: .top)
+            .background(AppTheme.canvas)
+            .safeAreaInset(edge: .bottom) { actions }
+        }
+    }
+
+    private func fraction(_ score: MockExamViewModel.PillarScore) -> Double {
+        Double(score.correct) / Double(max(score.total, 1))
+    }
+
+    private func hero(_ r: MockExamViewModel.Result) -> some View {
+        VStack(spacing: 10) {
+            Text("試")
+                .font(.system(size: 38, weight: .black, design: .serif))
+                .frame(width: 70, height: 70)
+                .overlay(Circle().strokeBorder(.white.opacity(0.55), lineWidth: 2))
+                .padding(7)
+                .background(AppTheme.accent, in: Circle())
+                .accessibilityHidden(true)
+            SectionCaps(text: "Mock exam result", color: AppTheme.onKachiiroLabel).fixedSize()
+            Text("\(r.correct) / \(r.total)")
+                .font(.system(size: 44, weight: .heavy, design: .rounded))
+                .monospacedDigit()
+                .accessibilityAddTraits(.isHeader)
+            HStack(spacing: 8) {
+                chip("\(Int((Double(r.correct) / Double(max(r.total, 1)) * 100).rounded()))%")
+                chip(durationString(r.duration))
+                chip(r.unanswered == 1 ? "1 unanswered" : "\(r.unanswered) unanswered")
             }
         }
+        .foregroundStyle(.white)
+        .padding(.top, 72)
+        .padding(.bottom, 24)
+        .frame(maxWidth: .infinity)
+        .background(AppTheme.kachiiro, in: UnevenRoundedRectangle(bottomLeadingRadius: 32, bottomTrailingRadius: 32, style: .continuous))
+    }
+
+    private func chip(_ text: String) -> some View {
+        Text(text)
+            .font(AppTheme.Fonts.ui(.footnote, weight: .bold))
+            .monospacedDigit()
+            .padding(.horizontal, 12)
+            .frame(minHeight: 28)
+            .background(AppTheme.onKachiiroFill, in: Capsule())
+    }
+
+    private func pillarCard(_ r: MockExamViewModel.Result) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("By pillar").font(AppTheme.Fonts.ui(.callout, weight: .heavy))
+            ForEach(r.byPillar) { score in
+                HStack(spacing: 10) {
+                    Text(score.pillar.glyph).font(.system(size: 15, weight: .bold)).frame(width: 22)
+                    Text(score.pillar.shortName)
+                        .font(AppTheme.Fonts.ui(.footnote, weight: .semibold))
+                        .foregroundStyle(AppTheme.secondaryInk)
+                        .frame(width: 72, alignment: .leading)
+                    LinearProgress(value: fraction(score), tint: fraction(score) < 0.5 ? AppTheme.ember : AppTheme.accent)
+                    Text("\(score.correct)/\(score.total)")
+                        .font(AppTheme.Fonts.ui(.footnote, weight: .heavy))
+                        .monospacedDigit()
+                        .frame(width: 40, alignment: .trailing)
+                }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("\(score.pillar.shortName): \(score.correct) of \(score.total)")
+            }
+        }
+        .foregroundStyle(AppTheme.primaryInk)
+        .padding(16)
+        .background(AppTheme.cardSurface, in: RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous))
+    }
+
+    private func missesCard(_ r: MockExamViewModel.Result) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            SectionCaps(text: "\(r.wrongQuestions.count) wrong or unanswered", color: AppTheme.emberText).padding(.vertical, 10)
+            ForEach(Array(r.wrongQuestions.enumerated()), id: \.element.id) { index, q in
+                HStack(alignment: .firstTextBaseline, spacing: 12) {
+                    Circle().fill(AppTheme.ember).frame(width: 8, height: 8).accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(q.promptBody).font(AppTheme.Fonts.ui(.callout, weight: .bold)).lineLimit(2)
+                        Text("Answer: \(q.correctChoice)").font(AppTheme.Fonts.ui(.footnote)).foregroundStyle(AppTheme.secondaryInk)
+                    }
+                }
+                .padding(.vertical, 10)
+                .accessibilityElement(children: .combine)
+                if index < r.wrongQuestions.count - 1 { Divider().overlay(AppTheme.hairlineBorder) }
+            }
+        }
+        .foregroundStyle(AppTheme.primaryInk)
+        .padding(.horizontal, 16)
+        .padding(.bottom, 6)
+        .background(AppTheme.cardSurface, in: RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous))
+    }
+
+    private var actions: some View {
+        VStack(spacing: 4) {
+            if let session = viewModel.makeRetrySession() {
+                Button(session.total == 1 ? "Retry the 1 you missed" : "Retry the \(session.total) you missed") { onRetry(session) }
+                    .buttonStyle(.primary)
+                Button("New exam") { viewModel.reset() }.buttonStyle(.quiet)
+            } else {
+                Button("New exam") { viewModel.reset() }.buttonStyle(.primary)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 8)
+        .frame(maxWidth: 720)
+        .frame(maxWidth: .infinity)
+        .background(AppTheme.canvas)
     }
 
     private func durationString(_ t: TimeInterval) -> String {
