@@ -32,6 +32,9 @@ public final class QuizSessionViewModel {
     private let speech: SpeechPlaying?
     private let judge: AnswerJudging?
     private let now: () -> Date
+    private let startedAt: Date
+    /// When the last question was left; `nil` until the session finishes.
+    public private(set) var finishedAt: Date?
 
     public init(
         questions: [QuizQuestion],
@@ -47,6 +50,7 @@ public final class QuizSessionViewModel {
         self.speech = speech
         self.judge = judge
         self.now = now
+        self.startedAt = now()
         self.isFinished = questions.isEmpty
         bookmarkedKeys = Set(questions.map(\.id).filter { repository.reviewState($0)?.isBookmarked == true })
     }
@@ -70,6 +74,20 @@ public final class QuizSessionViewModel {
     public var isCurrentBookmarked: Bool { currentQuestion.map { bookmarkedKeys.contains($0.id) } ?? false }
     public var total: Int { questions.count }
     public var score: Int { answers.filter(\.correct).count }
+
+    /// Correct answers in a row, ending with the latest answer.
+    public var combo: Int { answers.reversed().prefix { $0.correct }.count }
+
+    /// The longest run of correct answers in this session.
+    public var bestCombo: Int {
+        answers.reduce(into: (best: 0, run: 0)) { acc, answer in
+            acc.run = answer.correct ? acc.run + 1 : 0
+            acc.best = max(acc.best, acc.run)
+        }.best
+    }
+
+    /// Seconds from start to finish; `nil` until the session finishes.
+    public var duration: TimeInterval? { finishedAt.map { $0.timeIntervalSince(startedAt) } }
 
     public var wrongQuestions: [QuizQuestion] {
         let wrong = Set(answers.filter { !$0.correct }.map(\.key))
@@ -124,6 +142,7 @@ public final class QuizSessionViewModel {
         judgeError = nil
         if index + 1 >= questions.count {
             isFinished = true
+            finishedAt = now()
         } else {
             index += 1
         }

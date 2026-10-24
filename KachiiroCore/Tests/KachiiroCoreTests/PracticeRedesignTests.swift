@@ -35,4 +35,21 @@ import Testing
         #expect(fresh.percent(for: .goi) == 50)
         #expect(fresh.recommendation == .init(drill: .vocab, reason: .weakest(percent: 50)))
     }
+
+    @Test func sessionTracksCombosAndDuration() {
+        var clock = date(2026, 10, 24)
+        let questions = (1...5).map { n in
+            QuizQuestion(id: ItemKey("vocab:\(n):m2w"), drill: .vocab, promptTitle: "", promptBody: "\(n)",
+                         choices: ["a", "b"], correctChoice: "a")
+        }
+        let session = QuizSessionViewModel(questions: questions, initialMode: .choice,
+                                           repository: InMemoryProgressRepository(), now: { clock })
+        for choice in ["a", "a", "b", "a", "a"] {
+            session.submitChoice(choice)
+            clock += 30
+            session.next()
+        }
+        #expect(session.bestCombo == 2 && session.combo == 2)
+        #expect(session.isFinished && session.duration == 150)
+    }
 }
