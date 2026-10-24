@@ -1,7 +1,7 @@
 import SwiftUI
 import KachiiroCore
 
-/// The stimulus card shared by quiz sessions and the mock exam.
+/// The stimulus card shared by quiz sessions and the mock exam: Japanese is always the largest thing on screen.
 struct QuestionCard: View {
     let question: QuizQuestion
     var hasSpeech = false
@@ -10,27 +10,46 @@ struct QuestionCard: View {
 
     var body: some View {
         VStack(spacing: 10) {
-            HStack {
+            HStack(alignment: .top) {
                 AppleBadge(text: question.promptTitle, icon: nil, style: .tintedBlue)
-                Spacer()
+                Spacer(minLength: 8)
                 if hasSpeech {
-                    Button { onPlay(false) } label: { Image(systemName: "speaker.wave.2.fill") }
+                    HStack(spacing: 8) {
+                        Button { onPlay(false) } label: {
+                            Image(systemName: "speaker.wave.2.fill")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(.white)
+                                .frame(width: 44, height: 44)
+                                .background(AppTheme.accent, in: Circle())
+                        }
                         .accessibilityLabel("Play")
-                    Button { onPlay(true) } label: { Image(systemName: "tortoise.fill") }
+                        Button { onPlay(true) } label: {
+                            Text("Slow")
+                                .font(AppTheme.Fonts.ui(.footnote, weight: .heavy))
+                                .foregroundStyle(AppTheme.accentText)
+                                .frame(width: 44, height: 44)
+                                .background(AppTheme.accentSoftFill, in: Circle())
+                        }
                         .accessibilityLabel("Play slowly")
+                    }
+                    .buttonStyle(.plain)
                 }
             }
             if speechUnavailable {
-                Label(QuizSessionViewModel.missingVoiceMessage, systemImage: "speaker.slash")
-                    .font(.footnote).foregroundStyle(.orange)
+                Label("No Japanese voice yet. Add one in Settings › Accessibility › Spoken Content › Voices.",
+                      systemImage: "speaker.slash")
+                    .font(AppTheme.Fonts.ui(.caption, weight: .semibold))
+                    .foregroundStyle(AppTheme.emberText)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
             Spacer(minLength: 0)
             Text(question.promptBody)
-                .font(AppTheme.Fonts.ui(.largeTitle, weight: .bold))
+                .font(.system(size: 52, weight: .bold))
+                .foregroundStyle(AppTheme.primaryInk)
                 .multilineTextAlignment(.center)
-                .minimumScaleFactor(0.5)
+                .minimumScaleFactor(0.4)
             if let reading = question.promptReading, !reading.isEmpty {
-                // The pitch drill hides the accent until the answer is shown in the feedback banner.
+                // The pitch drill hides the accent until the answer is shown in the feedback sheet.
                 if question.pitch != nil, question.drill != .pitch {
                     PitchAccentView(pitch: question.pitch, reading: reading)
                 } else {
@@ -39,6 +58,8 @@ struct QuestionCard: View {
             }
             Spacer(minLength: 0)
         }
-        .quizCard()
+        .padding(18)
+        .frame(maxWidth: .infinity)
+        .background(AppTheme.cardSurface, in: RoundedRectangle(cornerRadius: AppTheme.Radius.hero, style: .continuous))
     }
 }

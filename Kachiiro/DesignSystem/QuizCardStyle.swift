@@ -7,9 +7,9 @@ struct QuizCardStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
             .padding(padding)
-            .background(tint ?? AppTheme.cardSurface, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .background(tint ?? AppTheme.cardSurface, in: RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous))
             .overlay {
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous)
                     .strokeBorder(AppTheme.hairlineBorder, lineWidth: 1)
             }
     }
