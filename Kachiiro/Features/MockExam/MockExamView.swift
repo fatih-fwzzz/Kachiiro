@@ -23,7 +23,7 @@ struct MockExamView: View {
             }
         }
         .background(AppTheme.canvas)
-        .navigationTitle("Mock Exam")
+        .navigationTitle(viewModel.phase == .notStarted ? "Exam" : "Mock exam")
         .navigationBarTitleDisplayMode(viewModel.phase == .notStarted ? .large : .inline)
         .navigationDestination(isPresented: $isRetrying) {
             if let retry { QuizView(model: retry) }
@@ -46,43 +46,172 @@ struct MockExamView: View {
     #endif
 }
 
+/// The Exam tab at rest: how ready you are per pillar, the weakest one to fix, and the mock exam itself.
 private struct MockExamStartView: View {
     let viewModel: MockExamViewModel
+    @Environment(AppEnvironment.self) private var environment
+    @State private var dashboard: DashboardViewModel?
+    @State private var session: QuizSessionViewModel?
+
+    private var examPillars: [Pillar] {
+        Pillar.allCases.filter { p in MockExamViewModel.allocation.contains { $0.drill.pillar == p } }
+    }
 
     var body: some View {
-        List {
-            Section("Rules") {
-                Label("\(MockExamViewModel.questionCount) questions, \(Int(MockExamViewModel.timeLimit / 60)) minutes", systemImage: "timer")
-                Label("No feedback while you answer", systemImage: "eye.slash")
-                Label("You cannot go back to a question", systemImage: "arrow.forward")
-                Label("Unanswered questions count as wrong", systemImage: "xmark.circle")
-            }
-            Section("Questions") {
-                ForEach(Pillar.allCases.filter { p in MockExamViewModel.allocation.contains { $0.drill.pillar == p } }, id: \.self) { pillar in
-                    HStack {
-                        Text(pillar.title)
-                        Spacer()
-                        Text("\(MockExamViewModel.allocation.filter { $0.drill.pillar == pillar }.reduce(0) { $0 + $1.count })")
-                            .foregroundStyle(AppTheme.secondaryInk)
-                    }
+        ScrollView {
+            VStack(spacing: 14) {
+                if let dashboard {
+                    readinessCard(dashboard)
+                    if let weakest = weakest(dashboard) { weakestCard(weakest) }
+                }
+                mockCard
+                if let note = viewModel.note {
+                    Banner(kind: .warning, title: "A shorter exam this time", message: note)
                 }
             }
-            Section {
-                Label("The exam uses your current study scope (Settings). A narrow scope can shrink the exam.", systemImage: "scope")
-                    .font(.footnote).foregroundStyle(AppTheme.secondaryInk)
-                if let note = viewModel.note {
-                    Label(note, systemImage: "exclamationmark.triangle").font(.footnote).foregroundStyle(.orange)
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+            .padding(.bottom, 24)
+            .frame(maxWidth: 720)
+            .frame(maxWidth: .infinity)
+        }
+        .background(AppTheme.canvas)
+        .safeAreaInset(edge: .bottom) {
+            Button("Start the clock") { viewModel.start() }
+                .buttonStyle(.primary)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
+                .frame(maxWidth: 720)
+                .frame(maxWidth: .infinity)
+                .background(AppTheme.canvas)
+        }
+        .drillSession($session)
+        .onAppear { dashboard = environment.makeDashboardViewModel() }
+    }
+
+    private func readinessCard(_ dashboard: DashboardViewModel) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 18) {
+                ProgressRing(value: Double(dashboard.weekAccuracy ?? 0) / 100, lineWidth: 12,
+                             tint: Color(hex: 0x0A84FF), track: .white.opacity(0.14)) {
+                    VStack(spacing: 0) {
+                        Text(dashboard.weekAccuracy.map { "\($0)%" } ?? "—")
+                            .font(.system(size: 28, weight: .heavy, design: .rounded))
+                            .monospacedDigit()
+                        Text("CORRECT").font(AppTheme.Fonts.ui(.caption2, weight: .heavy)).foregroundStyle(AppTheme.onKachiiroSecondary)
+                    }
+                }
+                .frame(width: 108, height: 108)
+                VStack(alignment: .leading, spacing: 4) {
+                    SectionCaps(text: dashboard.daysLeft.map { $0 > 0 ? "Exam in \($0) days" : "Exam" } ?? "Your readiness",
+                                color: AppTheme.onKachiiroLabel)
+                    Text(dashboard.weekAccuracy == nil ? "Practise a little to see how ready you are" : "Accuracy over the last 7 days")
+                        .font(AppTheme.Fonts.ui(.headline, weight: .heavy))
+                }
+            }
+            VStack(spacing: 9) {
+                ForEach(dashboard.accuracy) { row in
+                    HStack(spacing: 10) {
+                        Text(row.pillar.glyph).font(.system(size: 15, weight: .bold)).frame(width: 22)
+                        Text(row.pillar.shortName)
+                            .font(AppTheme.Fonts.ui(.footnote, weight: .semibold))
+                            .foregroundStyle(AppTheme.onKachiiroSecondary)
+                            .frame(width: 72, alignment: .leading)
+                        LinearProgress(value: Double(row.percent ?? 0) / 100,
+                                       tint: (row.percent ?? 100) < 50 ? AppTheme.ember : Color(hex: 0x0A84FF),
+                                       track: .white.opacity(0.14))
+                        Text(row.percent.map { "\($0)%" } ?? "—")
+                            .font(AppTheme.Fonts.ui(.footnote, weight: .heavy))
+                            .monospacedDigit()
+                            .frame(width: 40, alignment: .trailing)
+                    }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("\(row.pillar.shortName): \(row.percent.map { "\($0) percent" } ?? "no answers yet")")
                 }
             }
         }
-        .safeAreaInset(edge: .bottom) {
-            Button { viewModel.start() } label: {
-                Text("Start exam").frame(maxWidth: .infinity).font(.headline)
+        .foregroundStyle(.white)
+        .padding(18)
+        .background(AppTheme.kachiiro, in: RoundedRectangle(cornerRadius: AppTheme.Radius.hero, style: .continuous))
+    }
+
+    private func weakest(_ dashboard: DashboardViewModel) -> (pillar: Pillar, percent: Int)? {
+        dashboard.accuracy.compactMap { row in row.percent.map { (row.pillar, $0) } }
+            .filter { $0.1 < 100 }
+            .min { $0.1 < $1.1 }
+            .map { (pillar: $0.0, percent: $0.1) }
+    }
+
+    private func weakestCard(_ weakest: (pillar: Pillar, percent: Int)) -> some View {
+        HStack(spacing: 12) {
+            Text(weakest.pillar.glyph)
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(.white)
+                .frame(width: 44, height: 44)
+                .background(AppTheme.ember, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 1) {
+                Text("\(weakest.pillar.shortName) needs you most").font(AppTheme.Fonts.ui(.callout, weight: .heavy))
+                Text("\(weakest.percent)% this week · a short drill helps")
+                    .font(AppTheme.Fonts.ui(.footnote))
+                    .foregroundStyle(AppTheme.emberText)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
-            .padding()
-            .background(.regularMaterial)
+            Spacer(minLength: 8)
+            Button("Fix") {
+                Task { session = await environment.makePracticeViewModel().makeAnySession(for: weakest.pillar.planDrill) }
+            }
+            .font(AppTheme.Fonts.ui(.subheadline, weight: .heavy))
+            .foregroundStyle(.white)
+            .padding(.horizontal, 16)
+            .frame(minHeight: 44)
+            .background(AppTheme.accent, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .buttonStyle(PressableStyle())
+        }
+        .foregroundStyle(AppTheme.emberDeepText)
+        .padding(14)
+        .background(AppTheme.emberSoftFill, in: RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous).strokeBorder(AppTheme.ember, lineWidth: 2)
+        }
+    }
+
+    private var mockCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Mock exam").font(AppTheme.Fonts.ui(.title3, weight: .heavy))
+                Text("\(MockExamViewModel.questionCount) questions · \(Int(MockExamViewModel.timeLimit / 60)) min · real exam timing")
+                    .font(AppTheme.Fonts.ui(.footnote))
+                    .foregroundStyle(AppTheme.secondaryInk)
+            }
+            HStack(spacing: 8) {
+                ForEach(examPillars, id: \.self) { pillar in
+                    let count = MockExamViewModel.allocation.filter { $0.drill.pillar == pillar }.reduce(0) { $0 + $1.count }
+                    VStack(spacing: 2) {
+                        Text(pillar.glyph).font(.system(size: 16, weight: .bold))
+                        Text("\(count)").font(AppTheme.Fonts.ui(.caption, weight: .heavy)).monospacedDigit()
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 52)
+                    .background(AppTheme.elevatedField, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("\(pillar.shortName): \(count) questions")
+                }
+            }
+            VStack(alignment: .leading, spacing: 8) {
+                rule("No feedback until you submit, like the real test")
+                rule("You can’t go back to a question")
+                rule("Unanswered questions count as wrong")
+                rule("Questions come from your study scope")
+            }
+        }
+        .foregroundStyle(AppTheme.primaryInk)
+        .padding(16)
+        .background(AppTheme.cardSurface, in: RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous))
+    }
+
+    private func rule(_ text: String) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            Circle().fill(AppTheme.accent).frame(width: 6, height: 6).accessibilityHidden(true)
+            Text(text).font(AppTheme.Fonts.ui(.subheadline))
         }
     }
 }

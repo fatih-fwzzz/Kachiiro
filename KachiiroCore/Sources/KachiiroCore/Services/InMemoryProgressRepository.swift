@@ -40,6 +40,11 @@ public final class InMemoryProgressRepository: ProgressRepository {
             .prefix(limit).map(\.key)
     }
 
+    public func boxCounts() -> [Int: Int] {
+        states.values.filter { $0.correctCount + $0.wrongCount > 0 }
+            .reduce(into: [:]) { $0[$1.box, default: 0] += 1 }
+    }
+
     public func setBookmark(_ key: ItemKey, _ on: Bool) {
         var s = states[key] ?? ReviewState(key: key, lastAnswered: .now, dueDate: .now)
         s.isBookmarked = on

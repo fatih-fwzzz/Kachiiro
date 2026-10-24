@@ -6,6 +6,8 @@ public protocol ProgressRepository: AnyObject {
     func reviewState(_ key: ItemKey) -> ReviewState?
     func dueKeys(now: Date, limit: Int) -> [ItemKey]
     func weakKeys(limit: Int) -> [ItemKey]
+    /// Answered items per Leitner box (0…5); bookmark-only items are not counted.
+    func boxCounts() -> [Int: Int]
     func setBookmark(_ key: ItemKey, _ on: Bool)
     func accuracy(pillar: Pillar, since: Date) -> (correct: Int, total: Int)
     func answeredCount(since: Date) -> Int
