@@ -10,4 +10,15 @@ public enum Pillar: String, CaseIterable, Codable, Sendable {
         case .kaiwa: "Kaiwa 会話"
         }
     }
+
+    /// The drill Today's plan suggests for this pillar.
+    public var planDrill: DrillKind {
+        switch self {
+        case .katsuyou: .verbForms
+        case .goi: .vocab
+        case .bunpou: .patternRecognition
+        case .choukai: .sentenceListening
+        case .kaiwa: .keigo
+        }
+    }
 }

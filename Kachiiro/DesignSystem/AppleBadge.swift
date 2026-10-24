@@ -31,7 +31,7 @@ struct AppleBadge: View {
         switch style {
         case .solidBlue: .white
         case .neutral: AppTheme.secondaryInk
-        default: AppTheme.accent
+        default: AppTheme.accentText
         }
     }
 }

@@ -2,7 +2,7 @@ import Foundation
 import KachiiroCore
 
 /// Debug/smoke launch arguments: `-ui-route <route>` and `-ui-mode <choice|typing>`.
-/// Routes: dashboard, practice, mock, review, drill.<DrillKind>, audio, cando, settings,
+/// Routes: dashboard (or today), practice, mock, review, drill.<DrillKind>, audio, cando, settings,
 /// kaiwa.roleplay, kaiwa.roleplay.<scenarioId>, kaiwa.shadowing.
 enum LaunchRoute: Equatable {
     case dashboard, practice, mock, review, audio, cando, settings
@@ -12,7 +12,7 @@ enum LaunchRoute: Equatable {
 
     init?(argument: String) {
         switch argument {
-        case "dashboard": self = .dashboard
+        case "dashboard", "today": self = .dashboard
         case "practice": self = .practice
         case "mock": self = .mock
         case "review": self = .review

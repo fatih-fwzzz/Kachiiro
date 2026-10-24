@@ -12,12 +12,57 @@ public final class DashboardViewModel {
         public let answered: Int
     }
 
+    /// One day on the Today screen's track: the days before the exam, or the last week when no exam is near.
+    public struct TrackDay: Identifiable, Equatable, Sendable {
+        public enum Status: Equatable, Sendable { case studied, missed, today, upcoming }
+        public var id: Date { date }
+        public let date: Date
+        public let status: Status
+        public let isExamDay: Bool
+    }
+
+    /// One step of today's suggested session.
+    public struct PlanStep: Identifiable, Equatable, Sendable {
+        public enum Kind: Equatable, Sendable {
+            /// Due review cards, capped at `reviewBatch`.
+            case review(count: Int)
+            case drill(DrillKind, reason: Reason)
+        }
+
+        public enum Reason: Equatable, Sendable {
+            /// Lowest 7-day accuracy, in percent.
+            case weakest(percent: Int)
+            /// No answers in the last 7 days.
+            case notPractised
+            /// Second-lowest accuracy, when every pillar was practised.
+            case keepSharp(percent: Int)
+        }
+
+        public var id: String {
+            switch kind {
+            case .review: "review"
+            case .drill(let drill, _): "drill.\(drill.rawValue)"
+            }
+        }
+
+        public let kind: Kind
+        public let minutes: Int
+    }
+
+    public static let reviewBatch = 20
+    /// Rough pace used for time estimates.
+    static let secondsPerQuestion = 18.0
+
     public private(set) var daysLeft: Int?
     public private(set) var answeredToday = 0
     public private(set) var dailyGoal = 30
     public private(set) var dueCount = 0
     public private(set) var streak = 0
     public private(set) var accuracy: [PillarAccuracy] = []
+    /// Percent correct over the last 7 days across all pillars; `nil` without answers.
+    public private(set) var weekAccuracy: Int?
+    public private(set) var track: [TrackDay] = []
+    public private(set) var plan: [PlanStep] = []
 
     private let settings: SettingsStore
     private let repository: ProgressRepository
@@ -42,18 +87,79 @@ public final class DashboardViewModel {
         dailyGoal = settings.dailyGoal
         answeredToday = repository.answeredCount(since: startOfToday)
         dueCount = repository.dueKeys(now: current, limit: 10_000).count
-        streak = Self.streak(studyDays: repository.studyDays(), today: current, calendar: calendar)
+        let studyDays = repository.studyDays()
+        streak = Self.streak(studyDays: studyDays, today: current, calendar: calendar)
         let weekAgo = calendar.date(byAdding: .day, value: -7, to: current) ?? current
         let quizzed = Set(DrillKind.allCases.map(\.pillar))
+        var correct = 0, total = 0
         accuracy = Pillar.allCases.filter(quizzed.contains).map { pillar in
             let a = repository.accuracy(pillar: pillar, since: weekAgo)
+            correct += a.correct
+            total += a.total
             return PillarAccuracy(
                 pillar: pillar,
                 percent: a.total == 0 ? nil : Int((Double(a.correct) / Double(a.total) * 100).rounded()),
                 answered: a.total
             )
         }
+        weekAccuracy = total == 0 ? nil : Int((Double(correct) / Double(total) * 100).rounded())
+        track = Self.track(studyDays: studyDays, daysLeft: daysLeft, today: current, calendar: calendar)
+        plan = Self.plan(dueCount: dueCount, accuracy: accuracy)
     }
+
+    /// Seven days ending on the exam day when it is at most six days away, else the last seven days ending today.
+    public static func track(
+        studyDays: Set<DateComponents>, daysLeft: Int?, today: Date, calendar: Calendar = .current
+    ) -> [TrackDay] {
+        let start = calendar.startOfDay(for: today)
+        let examOffset = daysLeft.flatMap { (0...6).contains($0) ? $0 : nil }
+        let lastOffset = examOffset ?? 0
+        return ((lastOffset - 6)...lastOffset).compactMap { offset in
+            guard let date = calendar.date(byAdding: .day, value: offset, to: start) else { return nil }
+            let studied = studyDays.contains(calendar.dateComponents([.year, .month, .day], from: date))
+            let status: TrackDay.Status
+            switch offset {
+            case ..<0: status = studied ? .studied : .missed
+            case 0: status = studied ? .studied : .today
+            default: status = .upcoming
+            }
+            return TrackDay(date: date, status: status, isExamDay: examOffset == offset)
+        }
+    }
+
+    /// Up to three steps: due review first, then the weakest pillar, then one not practised this week.
+    public static func plan(dueCount: Int, accuracy: [PillarAccuracy]) -> [PlanStep] {
+        var steps: [PlanStep] = []
+        if dueCount > 0 {
+            let count = min(dueCount, reviewBatch)
+            steps.append(PlanStep(kind: .review(count: count), minutes: minutes(questions: count)))
+        }
+        let drillMinutes = minutes(questions: PracticeViewModel.sessionLength)
+        let ranked = accuracy.compactMap { a in a.percent.map { (pillar: a.pillar, percent: $0) } }
+            .sorted { $0.percent < $1.percent }
+        var used = Set<Pillar>()
+        if let weakest = ranked.first {
+            used.insert(weakest.pillar)
+            steps.append(PlanStep(kind: .drill(weakest.pillar.planDrill, reason: .weakest(percent: weakest.percent)),
+                                  minutes: drillMinutes))
+        }
+        for a in accuracy where a.answered == 0 && !used.contains(a.pillar) && steps.count < 3 {
+            used.insert(a.pillar)
+            steps.append(PlanStep(kind: .drill(a.pillar.planDrill, reason: .notPractised), minutes: drillMinutes))
+        }
+        if steps.count < 3, let next = ranked.first(where: { !used.contains($0.pillar) }) {
+            steps.append(PlanStep(kind: .drill(next.pillar.planDrill, reason: .keepSharp(percent: next.percent)),
+                                  minutes: drillMinutes))
+        }
+        return Array(steps.prefix(3))
+    }
+
+    static func minutes(questions: Int) -> Int {
+        max(1, Int((Double(questions) * secondsPerQuestion / 60).rounded(.up)))
+    }
+
+    /// Total minutes of today's plan.
+    public var planMinutes: Int { plan.reduce(0) { $0 + $1.minutes } }
 
     /// 0…1 progress towards the daily goal.
     public var goalProgress: Double {
