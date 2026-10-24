@@ -28,6 +28,7 @@ struct QuizView: View {
             }
         }
         .background(AppTheme.canvas)
+        .toolbar(.hidden, for: .tabBar)
         .navigationTitle(model.isFinished ? "Summary" : "\(model.index + 1) / \(model.total)")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -73,14 +74,6 @@ struct QuizView: View {
                     .accessibilityLabel(showScratchpad ? "Hide scratchpad" : "Show scratchpad")
                 }
             }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    model.toggleBookmark()
-                } label: {
-                    Image(systemName: model.isCurrentBookmarked ? "star.fill" : "star")
-                }
-                .accessibilityLabel("Bookmark")
-            }
         }
         .onChange(of: model.index) {
             typed = ""
@@ -108,29 +101,31 @@ struct QuizView: View {
     }
 
     private func quizColumn(_ q: QuizQuestion) -> some View {
-        GeometryReader { geo in
-            VStack(spacing: 12) {
-                modePicker
-                stimulus(q)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: geo.size.height * (showScratchpad ? 0.42 : 0.34))
-                ScrollView {
-                    VStack(spacing: 10) {
-                        answerArea(q)
-                        if model.isJudging {
-                            ProgressView("Checking your keigo…").padding(.vertical, 8)
-                        } else if let result = model.result {
-                            feedback(result, q)
-                        }
+        VStack(spacing: 0) {
+            GeometryReader { geo in
+                VStack(spacing: 12) {
+                    modePicker
+                    stimulus(q)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: geo.size.height * (showScratchpad ? 0.42 : 0.4))
+                    ScrollView {
+                        answerArea(q).padding(.bottom, 8)
                     }
-                    .padding(.bottom, 8)
+                    .scrollDismissesKeyboard(.never)
                 }
-                .scrollDismissesKeyboard(.never)
-                bottomBar
+                .padding(.horizontal, isRegular ? 0 : 16)
+                .padding(.top, isRegular ? 0 : 8)
             }
-            .padding(.horizontal, isRegular ? 0 : 16)
-            .padding(.top, isRegular ? 0 : 8)
+            if model.isJudging {
+                CheckingSheet(title: "Checking your keigo")
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            } else if let result = model.result {
+                feedback(result, q)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
         }
+        .animation(.spring(response: 0.35, dampingFraction: 0.85), value: model.result != nil)
+        .animation(.spring(response: 0.35, dampingFraction: 0.85), value: model.isJudging)
     }
 
     #if DEBUG
@@ -190,17 +185,33 @@ struct QuizView: View {
     private func answerArea(_ q: QuizQuestion) -> some View {
         if model.activeMode == .choice {
             ForEach(Array(q.choices.enumerated()), id: \.element) { index, choice in
+                let look = choiceLook(choice, q)
                 Button {
                     selectedChoice = choice
                     model.submitChoice(choice)
                 } label: {
-                    Text(choice)
-                        .font(AppTheme.Fonts.ui(.title3, weight: .medium))
-                        .foregroundStyle(AppTheme.primaryInk)
-                        .frame(maxWidth: .infinity, minHeight: 24)
-                        .quizCard(tint: choiceTint(choice, q), padding: 12)
+                    HStack(spacing: 14) {
+                        Text("\(index + 1)")
+                            .font(AppTheme.Fonts.ui(.footnote, weight: .heavy))
+                            .foregroundStyle(look.keyInk)
+                            .frame(width: 28, height: 28)
+                            .background(look.keyFill, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            .accessibilityHidden(true)
+                        Text(choice)
+                            .font(AppTheme.Fonts.ui(.title3, weight: .semibold))
+                            .foregroundStyle(look.ink)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(.horizontal, 16)
+                    .frame(minHeight: 60)
+                    .background(look.fill, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 18, style: .continuous).strokeBorder(look.border, lineWidth: 1.5)
+                    }
+                    .opacity(look.dimmed ? 0.45 : 1)
+                    .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(PressableStyle())
                 .disabled(model.result != nil)
                 .keyboardShortcut(KeyEquivalent(Character(String(index + 1))), modifiers: [])
             }
@@ -244,57 +255,69 @@ struct QuizView: View {
         model.submitText(typed)
     }
 
-    private func choiceTint(_ choice: String, _ q: QuizQuestion) -> Color? {
-        guard model.result != nil else { return nil }
-        if choice == q.correctChoice { return Color.green.opacity(0.22) }
-        if choice == selectedChoice { return Color.red.opacity(0.2) }
-        return nil
+    private struct ChoiceLook {
+        var fill = AppTheme.cardSurface
+        var ink = AppTheme.primaryInk
+        var border = AppTheme.hairlineBorder
+        var keyFill = AppTheme.elevatedField
+        var keyInk = AppTheme.secondaryInk
+        var dimmed = false
+    }
+
+    /// Blue for the right answer, ember for a wrong pick, the rest faded: never green and red.
+    private func choiceLook(_ choice: String, _ q: QuizQuestion) -> ChoiceLook {
+        guard model.result != nil else { return ChoiceLook() }
+        if choice == q.correctChoice {
+            return ChoiceLook(fill: AppTheme.accent, ink: .white, border: .clear,
+                              keyFill: .white.opacity(0.22), keyInk: .white)
+        }
+        if choice == selectedChoice {
+            return ChoiceLook(fill: AppTheme.emberSoftFill, ink: AppTheme.emberDeepText, border: AppTheme.ember,
+                              keyFill: AppTheme.ember, keyInk: .white)
+        }
+        return ChoiceLook(dimmed: true)
     }
 
     private func feedback(_ result: QuizSessionViewModel.AnswerResult, _ q: QuizQuestion) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            switch result {
-            case .correct:
-                Label("Correct", systemImage: "checkmark.circle.fill").foregroundStyle(.green)
-            case .wrong(let answer):
-                Label("Answer: \(answer)", systemImage: "xmark.circle.fill").foregroundStyle(.red)
+        let isCorrect: Bool
+        let detail: String?
+        switch result {
+        case .correct:
+            isCorrect = true
+            detail = nil
+        case .wrong(let answer):
+            isCorrect = false
+            detail = "Answer: \(answer)"
+        }
+        var notes: [String] = []
+        if let judgement = model.judgement {
+            notes.append(judgement.explanation)
+            if !judgement.corrected.isEmpty { notes.append("Better: \(judgement.corrected)") }
+        }
+        if let judgeError = model.judgeError { notes.append(judgeError) }
+        notes.append(q.explanation)
+        let isLast = model.index + 1 == model.total
+        return FeedbackSheet(
+            verdict: isCorrect ? .correct : .wrong,
+            headline: isCorrect ? "正解！" : "Not quite",
+            detail: detail,
+            notes: notes,
+            continueTitle: isLast ? "Finish" : (isCorrect ? "Continue" : "Got it"),
+            isBookmarked: model.isCurrentBookmarked,
+            onBookmark: { model.toggleBookmark() },
+            onContinue: {
+                voice.cancel()
+                model.next()
             }
-            if let judgement = model.judgement {
-                if !judgement.explanation.isEmpty {
-                    Text(judgement.explanation).font(.callout).foregroundStyle(AppTheme.secondaryInk)
-                }
-                if !judgement.corrected.isEmpty {
-                    Text("Better: \(judgement.corrected)").font(.callout)
-                }
-            }
-            if let judgeError = model.judgeError {
-                Text(judgeError).font(.callout).foregroundStyle(AppTheme.secondaryInk)
-            }
-            if !q.explanation.isEmpty {
-                Text(q.explanation).font(.callout).foregroundStyle(AppTheme.secondaryInk)
-            }
+        ) {
             if q.drill == .pitch, let pitch = q.pitch, let reading = q.promptReading {
+                // The pitch lines are blue, so they sit on a card rather than on the blue sheet.
                 PitchAccentView(pitch: pitch, reading: reading)
+                    .foregroundStyle(AppTheme.primaryInk)
+                    .padding(10)
+                    .background(AppTheme.cardSurface, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
         }
-        .font(AppTheme.Fonts.ui(.headline))
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .quizCard(tint: AppTheme.accentSoftFill)
-    }
-
-    private var bottomBar: some View {
-        Button {
-            voice.cancel()
-            model.next()
-        } label: {
-            Text(model.index + 1 == model.total ? "Finish" : "Next")
-                .frame(maxWidth: .infinity)
-        }
-        .keyboardShortcut(.return, modifiers: [])
-        .buttonStyle(.borderedProminent)
-        .controlSize(.large)
-        .disabled(model.result == nil)
-        .padding(.bottom, 8)
     }
 }
 
