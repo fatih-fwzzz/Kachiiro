@@ -14,6 +14,14 @@ final class SpeechRecognitionService: SpeechRecognizing {
 
     private static let maxDuration: Duration = .seconds(20)
 
+    var accessStatus: SpeechAccessStatus {
+        let speech = SFSpeechRecognizer.authorizationStatus()
+        let mic = AVAudioApplication.shared.recordPermission
+        if speech == .denied || speech == .restricted || mic == .denied { return .denied }
+        if speech == .authorized && mic == .granted { return .granted }
+        return .notDetermined
+    }
+
     func requestAccess() async -> Bool {
         let speech = await withCheckedContinuation { (c: CheckedContinuation<Bool, Never>) in
             SFSpeechRecognizer.requestAuthorization { c.resume(returning: $0 == .authorized) }
