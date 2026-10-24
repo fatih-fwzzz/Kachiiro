@@ -14,8 +14,29 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Section {
+                Toggle("Exam date", isOn: Binding(
+                    get: { viewModel.examDate != nil },
+                    set: { viewModel.setExamDate($0 ? Calendar.current.date(byAdding: .day, value: 7, to: .now) : nil) }
+                ))
+                if let date = viewModel.examDate {
+                    DatePicker("Date", selection: Binding(
+                        get: { date }, set: { viewModel.setExamDate($0) }
+                    ), displayedComponents: .date)
+                }
+                Stepper(value: Binding(
+                    get: { viewModel.dailyGoal }, set: { viewModel.setDailyGoal($0) }
+                ), in: SettingsViewModel.goalBounds, step: SettingsViewModel.goalStep) {
+                    LabeledContent("Daily goal", value: "\(viewModel.dailyGoal) answers")
+                }
+            } header: {
+                sectionHeader("My goal", icon: "flag.checkered")
+            } footer: {
+                Text("Today builds its plan and the exam track from these.")
+            }
+
+            Section {
                 ForEach(Level.allCases, id: \.self) { level in
-                    Toggle("\(level.rawValue) · \(level.bookName)", isOn: Binding(
+                    Toggle("\(level.bookName) · \(level.rawValue)", isOn: Binding(
                         get: { viewModel.isLevelSelected(level) },
                         set: { viewModel.setLevel(level, selected: $0) }
                     ))
@@ -33,43 +54,35 @@ struct SettingsView: View {
                     ), in: SettingsViewModel.lessonBounds)
                 }
             } header: {
-                Text("Study scope")
+                sectionHeader("What I study", icon: "books.vertical")
             } footer: {
                 Text("Drills and the mock exam draw only from this scope. A change applies to the next session you start.")
             }
 
-            Section("Practice") {
-                Picker("Default input", selection: Binding(
+            Section {
+                Picker("Answer with", selection: Binding(
                     get: { viewModel.inputMode }, set: { viewModel.setInputMode($0) }
                 )) {
-                    Text("4-Choice").tag(InputMode.choice)
+                    Text("4 choices").tag(InputMode.choice)
                     Text("Typing").tag(InputMode.typing)
                 }
-                Stepper("Daily goal: \(viewModel.dailyGoal) answers", value: Binding(
-                    get: { viewModel.dailyGoal }, set: { viewModel.setDailyGoal($0) }
-                ), in: SettingsViewModel.goalBounds, step: SettingsViewModel.goalStep)
+            } header: {
+                sectionHeader("How I practise", icon: "hand.tap")
+            } footer: {
+                Text("You can still switch per question with “Type instead”.")
             }
 
             kaiwaSection
-            Section("Exam") {
-                Toggle("Exam date", isOn: Binding(
-                    get: { viewModel.examDate != nil },
-                    set: { viewModel.setExamDate($0 ? Calendar.current.date(byAdding: .day, value: 7, to: .now) : nil) }
-                ))
-                if let date = viewModel.examDate {
-                    DatePicker("Date", selection: Binding(
-                        get: { date }, set: { viewModel.setExamDate($0) }
-                    ), displayedComponents: .date)
-                }
-            }
 
             Section {
-                Button("Reset progress", role: .destructive) { confirmReset = true }
+                Button("Reset all progress…", role: .destructive) { confirmReset = true }
             } footer: {
                 Text("Deletes all answers, review state and Can-do checks on this device.")
             }
         }
         .tint(AppTheme.accent)
+        .scrollContentBackground(.hidden)
+        .background(AppTheme.canvas)
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -80,6 +93,12 @@ struct SettingsView: View {
         } message: {
             Text("This cannot be undone.")
         }
+    }
+
+    private func sectionHeader(_ title: String, icon: String) -> some View {
+        Label(title, systemImage: icon)
+            .font(AppTheme.Fonts.ui(.footnote, weight: .heavy))
+            .foregroundStyle(AppTheme.secondaryInk)
     }
 
     private var engineFooter: String {
@@ -117,11 +136,13 @@ struct SettingsView: View {
             }
             .disabled(!viewModel.isContentPickerEnabled)
         } header: {
-            Text("Kaiwa (speaking)")
+            sectionHeader("AI partner", icon: "sparkles")
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
                 Text(engineFooter)
-                if viewModel.kaiwaEngine == .gemini { Text("Stored in the Keychain on this device.") }
+                if viewModel.kaiwaEngine == .gemini {
+                    Text("The key is stored in the Keychain on this device. Live voice roleplay needs Content set to AI-generated.")
+                }
             }
         }
     }
