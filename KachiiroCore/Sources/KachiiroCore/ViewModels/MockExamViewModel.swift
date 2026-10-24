@@ -83,6 +83,11 @@ public final class MockExamViewModel {
     public var hasSpeech: Bool { speech != nil && currentQuestion?.speech != nil }
     public var speechUnavailable: Bool { hasSpeech && speech?.hasVoice == false }
     public var answeredCount: Int { answers.count }
+
+    /// Whether question `i` has an answer, for the question map.
+    public func isAnswered(at i: Int) -> Bool {
+        questions.indices.contains(i) && answers[questions[i].id] != nil
+    }
     public var isLastQuestion: Bool { index + 1 >= questions.count }
 
     /// The recorded answer text for the current question (to re-display the selection).
