@@ -61,6 +61,11 @@ final class SwiftDataProgressRepository: ProgressRepository {
         return ((try? context.fetch(d)) ?? []).map { ItemKey($0.key) }
     }
 
+    func boxCounts() -> [Int: Int] {
+        let d = FetchDescriptor<ReviewRecord>(predicate: #Predicate { $0.correctCount > 0 || $0.wrongCount > 0 })
+        return ((try? context.fetch(d)) ?? []).reduce(into: [:]) { $0[$1.box, default: 0] += 1 }
+    }
+
     func setBookmark(_ key: ItemKey, _ on: Bool) {
         if let existing = record(for: key) {
             existing.isBookmarked = on
