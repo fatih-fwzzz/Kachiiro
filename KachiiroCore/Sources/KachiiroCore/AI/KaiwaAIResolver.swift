@@ -1,6 +1,21 @@
 import Foundation
 
-/// Decides which engine serves Kaiwa features, falling back to offline rules with a notice.
+/// What the AI is asked to do. The on-device model is trusted only for low-stakes text: it writes keigo
+/// exercises poorly and has accepted wrong keigo as correct, so questions and grading stay on Gemini.
+public enum AITask: Sendable, CaseIterable {
+    /// Short phrases for shadowing.
+    case shadowing
+    /// Open conversation where the AI plays a part and nothing is graded.
+    case conversation
+    /// Keigo and uchi/soto exercises.
+    case questions
+    /// Judging answers and reviewing roleplay lines.
+    case checking
+
+    public var allowsAppleIntelligence: Bool { self == .shadowing || self == .conversation }
+}
+
+/// Decides which engine serves each AI task, falling back to offline rules with a notice.
 @MainActor
 public final class KaiwaAIResolver {
     private let settings: SettingsStore
@@ -55,15 +70,22 @@ public final class KaiwaAIResolver {
         return .rules
     }
 
+    /// The engine for `task`: `activeEngine` when the task may use Apple Intelligence, else Gemini or offline rules.
+    public func engine(for task: AITask) -> KaiwaEngine {
+        if task.allowsAppleIntelligence { return activeEngine }
+        if settings.kaiwaEngine == .rules { return .rules }
+        return availability(of: .gemini) == .available ? .gemini : .rules
+    }
+
     /// AI engines the learner can pick: Apple Intelligence only when this device has it.
     public var engineChoices: [KaiwaEngine] {
         [.appleIntelligence, .gemini].filter { availability(of: $0) == .available }
     }
 
-    /// `nil` when no AI engine is available (offline rules).
-    public func service() -> KaiwaAIService? {
+    /// `nil` when no AI engine can serve `task` (offline rules).
+    public func service(for task: AITask) -> KaiwaAIService? {
         let client: LanguageModelClient?
-        switch activeEngine {
+        switch engine(for: task) {
         case .rules, .automatic: client = nil
         case .appleIntelligence: client = makeAppleClient()
         case .gemini: client = trimmedGeminiKey.map(makeGeminiClient)
@@ -79,12 +101,20 @@ public final class KaiwaAIResolver {
         return makeGeminiLive(key)
     }
 
-    public var usesGeneratedContent: Bool {
-        settings.kaiwaContent == .generated && service() != nil
+    /// AI-generated content is on and an engine can serve `task`.
+    public func usesGeneratedContent(for task: AITask) -> Bool {
+        settings.kaiwaContent == .generated && service(for: task) != nil
     }
 
-    public var engineLabel: String { activeEngine.label }
+    /// Why `task` runs offline or on a different engine than chosen, if it does.
+    public func notice(for task: AITask) -> String? {
+        if task.allowsAppleIntelligence || settings.kaiwaEngine == .rules { return notice }
+        return engine(for: task) == .rules
+            ? "AI isn’t available right now. Using offline checks and bundled content."
+            : nil
+    }
 
+    /// The notice for the engine choice in Settings (shadowing and conversation).
     public var notice: String? {
         let chosen = settings.kaiwaEngine
         let active = activeEngine

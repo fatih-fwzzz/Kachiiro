@@ -27,7 +27,7 @@ One branch per feature: `git checkout main && git checkout -b feature/<name>`; k
 - `gemini-2.5-flash` retires 2026-10-20; docs currently list `gemini-3.8-flash`.
 - REST structured output: `generationConfig.responseFormat.text{mimeType,schema}`.
 - Engine choice is automatic: Apple Intelligence when the device has it, else Gemini, else offline rules (`KaiwaAIResolver.activeEngine`). The Gemini key ships in the git-ignored `Kachiiro/Secrets.plist` (`GeminiAPIKey`); Settings no longer asks for one. iPhone 15 (A16) has no Apple Intelligence, so it uses Gemini.
-- The on-device model writes and grades keigo poorly; readings never come from a model (`JapaneseReading`: tokenizer + course words + overrides).
+- Engines are chosen per task (`AITask`): Apple Intelligence may serve only `.shadowing` and `.conversation` (free talk); `.questions` (keigo, uchi/soto) and `.checking` (judging, roleplay review, all roleplay modes) always use Gemini, else offline rules. The on-device model writes and grades keigo poorly. Readings never come from a model (`JapaneseReading`: tokenizer + course words + overrides).
 
 ## LaunchRoute smoke technique
 Simulator taps cannot be scripted, so screens are reached with launch arguments: `-ui-route <route>` (dashboard, setup, practice, mock, review, `drill.<DrillKind raw>`, audio, cando, settings, `kaiwa.roleplay`, `kaiwa.roleplay.<scenarioId>`, `kaiwa.shadowing`) and `-ui-mode <choice|typing>`. Launch with RUN, wait ~3 s, screenshot, then read the PNG. New screens register their route in `LaunchRoute` and `RootView`.

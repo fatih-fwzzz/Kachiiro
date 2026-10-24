@@ -110,12 +110,13 @@ final class AppEnvironment {
     @MainActor
     func makeRoleplayViewModel(_ scenario: RoleplayScenario) -> RoleplayViewModel {
         let mode: RoleplayViewModel.Mode
-        if let partner = aiResolver.liveRoleplayPartner(), let reviewer = aiResolver.service() {
+        // Every roleplay mode grades the learner's lines, so it uses the checking engine (Gemini).
+        if let partner = aiResolver.liveRoleplayPartner(), let reviewer = aiResolver.service(for: .checking) {
             mode = .live(partner: partner, reviewer: reviewer, audio: liveAudio)
-        } else if aiResolver.usesGeneratedContent, let service = aiResolver.service() {
+        } else if aiResolver.usesGeneratedContent(for: .checking), let service = aiResolver.service(for: .checking) {
             mode = .free(service)
         } else {
-            mode = .scripted(judge: aiResolver.service())
+            mode = .scripted(judge: aiResolver.service(for: .checking))
         }
         return RoleplayViewModel(scenario: scenario, mode: mode, speech: speech)
     }
@@ -124,7 +125,7 @@ final class AppEnvironment {
     func makeShadowingViewModel() -> ShadowingViewModel {
         ShadowingViewModel(
             lines: ShadowingLine.bundledLines(seed: seed), speech: speech,
-            generator: aiResolver.usesGeneratedContent ? aiResolver.service() : nil
+            generator: aiResolver.usesGeneratedContent(for: .shadowing) ? aiResolver.service(for: .shadowing) : nil
         )
     }
 

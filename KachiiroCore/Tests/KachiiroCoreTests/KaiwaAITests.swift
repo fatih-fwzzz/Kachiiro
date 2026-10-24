@@ -242,7 +242,7 @@ private let acceptJudgement = KeigoJudgement(acceptable: true, corrected: "bette
 
     @Test func rulesNeverUsesAI() {
         let r = make(engine: .rules, key: "K", apple: .available)
-        #expect(r.service() == nil && !r.usesGeneratedContent && r.notice == nil && r.activeEngine == .rules)
+        #expect(r.service(for: .conversation) == nil && !r.usesGeneratedContent(for: .conversation) && r.notice == nil && r.activeEngine == .rules)
         #expect(r.availability(of: .rules) == .available)
     }
 
@@ -253,7 +253,7 @@ private let acceptJudgement = KeigoJudgement(acceptable: true, corrected: "bette
     @Test func automaticPrefersAppleIntelligenceThenGemini() {
         let both = make(engine: .automatic, content: .generated, key: "K", apple: .available)
         #expect(both.activeEngine == .appleIntelligence && both.engineChoices == [.appleIntelligence, .gemini])
-        #expect(both.service() != nil && both.usesGeneratedContent && both.notice == nil)
+        #expect(both.service(for: .conversation) != nil && both.usesGeneratedContent(for: .conversation) && both.notice == nil)
         let geminiOnly = make(engine: .automatic, key: "K")
         #expect(geminiOnly.activeEngine == .gemini && geminiOnly.engineChoices == [.gemini] && geminiOnly.notice == nil)
     }
@@ -265,21 +265,42 @@ private let acceptJudgement = KeigoJudgement(acceptable: true, corrected: "bette
 
     @Test func anUnavailableChoiceFallsBackWithNotice() {
         let r = make(engine: .appleIntelligence, content: .generated, key: "K")
-        #expect(r.activeEngine == .gemini && r.service() != nil)
+        #expect(r.activeEngine == .gemini && r.service(for: .conversation) != nil)
         #expect(r.notice == "Apple Intelligence (on-device) isn’t available (requires iOS 26), so Gemini is used.")
     }
 
     @Test func geminiNeedsANonBlankKey() {
         #expect(make(engine: .gemini).availability(of: .gemini) == .unavailable("no Gemini API key in this build"))
-        #expect(make(engine: .gemini, key: "  ").service() == nil)
+        #expect(make(engine: .gemini, key: "  ").service(for: .conversation) == nil)
         let ready = make(engine: .gemini, content: .generated, key: " K ")
-        #expect(ready.service() != nil && ready.usesGeneratedContent && ready.notice == nil)
-        #expect(make(engine: .gemini, content: .bundled, key: "K").usesGeneratedContent == false)
+        #expect(ready.service(for: .conversation) != nil && ready.usesGeneratedContent(for: .conversation) && ready.notice == nil)
+        #expect(make(engine: .gemini, content: .bundled, key: "K").usesGeneratedContent(for: .conversation) == false)
+    }
+
+    @Test func onlyShadowingAndConversationMayUseAppleIntelligence() {
+        let r = make(engine: .automatic, content: .generated, key: "K", apple: .available)
+        #expect(r.engine(for: .shadowing) == .appleIntelligence && r.engine(for: .conversation) == .appleIntelligence)
+        #expect(r.engine(for: .questions) == .gemini && r.engine(for: .checking) == .gemini)
+        #expect(r.usesGeneratedContent(for: .questions) && r.service(for: .checking) != nil)
+    }
+
+    @Test func questionsAndCheckingGoOfflineWithoutGeminiEvenWithApple() {
+        let r = make(engine: .appleIntelligence, content: .generated, apple: .available)
+        #expect(r.engine(for: .shadowing) == .appleIntelligence && r.service(for: .shadowing) != nil)
+        #expect(r.engine(for: .checking) == .rules && r.service(for: .checking) == nil)
+        #expect(!r.usesGeneratedContent(for: .questions))
+        #expect(r.notice(for: .checking) == "AI isn’t available right now. Using offline checks and bundled content.")
+        #expect(r.notice(for: .shadowing) == nil)
+    }
+
+    @Test func forcedRulesKeepsEveryTaskOffline() {
+        let r = make(engine: .rules, key: "K", apple: .available)
+        #expect(AITask.allCases.allSatisfy { r.engine(for: $0) == .rules })
     }
 
     @Test func noEngineAtAllFallsBackOffline() {
         let r = make(engine: .automatic, content: .generated)
-        #expect(r.activeEngine == .rules && r.service() == nil && !r.usesGeneratedContent)
+        #expect(r.activeEngine == .rules && r.service(for: .conversation) == nil && !r.usesGeneratedContent(for: .conversation))
         #expect(r.notice == "AI isn’t available right now. Using offline checks and bundled content.")
     }
 }

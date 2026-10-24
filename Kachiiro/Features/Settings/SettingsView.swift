@@ -102,8 +102,9 @@ struct SettingsView: View {
 
     private var engineFooter: String {
         if let notice = viewModel.engineNotice { return notice }
+        let checks = "Keigo questions and answer checks always use Gemini, the more accurate engine."
         switch viewModel.activeEngine {
-        case .appleIntelligence: return "Runs on this device: private and works offline."
+        case .appleIntelligence: return "Shadowing phrases and free conversation run on this device. " + checks
         case .gemini: return "Runs online with Google’s Gemini. Live voice roleplay needs Content set to AI-generated."
         case .rules, .automatic: return "AI isn’t available right now; offline checks and bundled content are used."
         }
@@ -112,7 +113,7 @@ struct SettingsView: View {
     private var kaiwaSection: some View {
         Section {
             if viewModel.engineChoices.count > 1 {
-                Picker("Engine", selection: Binding(
+                Picker("Conversation engine", selection: Binding(
                     get: { viewModel.activeEngine }, set: { viewModel.setKaiwaEngine($0) }
                 )) {
                     ForEach(viewModel.engineChoices, id: \.self) { Text($0.label).tag($0) }

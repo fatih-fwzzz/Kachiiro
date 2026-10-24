@@ -100,7 +100,7 @@ struct RoleplayView: View {
                     .font(AppTheme.Fonts.ui(.footnote, weight: .bold))
                     .foregroundStyle(AppTheme.accentText)
             }
-            if let notice = environment.aiResolver.notice {
+            if let notice = environment.aiResolver.notice(for: .checking) {
                 Banner(kind: .info, title: "Using offline checks", message: notice)
             }
         }

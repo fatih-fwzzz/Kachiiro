@@ -78,12 +78,11 @@ public final class PracticeViewModel {
     }
 
     /// Why AI features fell back to offline rules, if they did.
-    public var kaiwaNotice: String? { aiResolver?.notice }
+    public var kaiwaNotice: String? { aiResolver?.notice(for: .checking) }
 
-    public var kaiwaEngineLabel: String { aiResolver?.engineLabel ?? KaiwaEngine.rules.label }
 
     public func usesGeneratedContent(for drill: DrillKind) -> Bool {
-        drill.pillar == .kaiwa && aiResolver?.usesGeneratedContent == true
+        drill.pillar == .kaiwa && aiResolver?.usesGeneratedContent(for: .questions) == true
     }
 
     private func initialMode(for drill: DrillKind) -> InputMode {
@@ -104,14 +103,14 @@ public final class PracticeViewModel {
         message = nil
         return QuizSessionViewModel(
             questions: questions, initialMode: initialMode(for: drill),
-            repository: repository, speech: speech, judge: drill.pillar == .kaiwa ? aiResolver?.service() : nil
+            repository: repository, speech: speech, judge: drill.pillar == .kaiwa ? aiResolver?.service(for: .checking) : nil
         )
     }
 
     /// Asks the selected AI engine for a fresh set; `nil` (and `message`) on failure.
     public func makeGeneratedSession(for drill: DrillKind) async -> QuizSessionViewModel? {
-        guard let service = aiResolver?.service() else {
-            message = aiResolver?.notice ?? "AI generation is not available"
+        guard let service = aiResolver?.service(for: .questions) else {
+            message = aiResolver?.notice(for: .questions) ?? "AI generation is not available"
             return nil
         }
         isGenerating = true
@@ -128,7 +127,7 @@ public final class PracticeViewModel {
             message = nil
             return QuizSessionViewModel(
                 questions: questions, initialMode: initialMode(for: drill),
-                repository: repository, speech: speech, judge: service
+                repository: repository, speech: speech, judge: aiResolver?.service(for: .checking)
             )
         } catch {
             message = "Couldn't generate questions: \(error.localizedDescription)"
