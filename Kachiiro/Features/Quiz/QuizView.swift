@@ -105,12 +105,16 @@ struct QuizView: View {
         VStack(spacing: 0) {
             GeometryReader { geo in
                 VStack(spacing: 12) {
-                    modePicker
+                    progressHeader
                     stimulus(q)
                         .frame(maxWidth: .infinity)
                         .frame(height: geo.size.height * (showScratchpad ? 0.42 : 0.4))
                     ScrollView {
-                        answerArea(q).padding(.bottom, 8)
+                        VStack(spacing: 4) {
+                            answerArea(q)
+                            modeSwitch
+                        }
+                        .padding(.bottom, 8)
                     }
                     .scrollDismissesKeyboard(.never)
                 }
@@ -175,13 +179,42 @@ struct QuizView: View {
         typingFocused = model.activeMode == .typing && model.result == nil && !voiceEngaged
     }
 
-    private var modePicker: some View {
-        Picker("Mode", selection: Binding(get: { model.activeMode }, set: { model.setMode($0) })) {
-            Text("4-Choice").tag(InputMode.choice)
-            Text("Typing").tag(InputMode.typing)
+    /// One segment per question plus the current run of correct answers.
+    private var progressHeader: some View {
+        HStack(spacing: 12) {
+            SegmentedProgressBar(segments: model.questions.indices.map { i in
+                if i < model.answers.count { return model.answers[i].correct ? .correct : .wrong }
+                return i == model.index ? .current : .upcoming
+            })
+            Text("×\(model.combo)")
+                .font(AppTheme.Fonts.ui(.subheadline, weight: .heavy))
+                .monospacedDigit()
+                .foregroundStyle(model.combo >= 3 ? Color.white : AppTheme.accentText)
+                .padding(.horizontal, 10)
+                .frame(minHeight: 32)
+                .background(model.combo >= 3 ? AppTheme.accent : AppTheme.accentSoftFill, in: Capsule())
+                .animation(.snappy, value: model.combo)
+                .accessibilityLabel("\(model.combo) correct in a row")
         }
-        .pickerStyle(.segmented)
-        .disabled(!(model.canType && model.canChoose))
+    }
+
+    /// The other answer mode, as a quiet link instead of a picker above every question.
+    @ViewBuilder
+    private var modeSwitch: some View {
+        if model.canType && model.canChoose && model.result == nil {
+            let toTyping = model.activeMode == .choice
+            Button {
+                model.setMode(toTyping ? .typing : .choice)
+            } label: {
+                Label(toTyping ? "Type instead" : "Choose instead", systemImage: toTyping ? "keyboard" : "list.number")
+                    .font(AppTheme.Fonts.ui(.subheadline, weight: .bold))
+                    .foregroundStyle(AppTheme.accentText)
+                    .frame(minHeight: 44)
+                    .padding(.horizontal, 12)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        }
     }
 
     private func stimulus(_ q: QuizQuestion) -> some View {
