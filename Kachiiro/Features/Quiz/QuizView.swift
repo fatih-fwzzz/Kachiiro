@@ -7,6 +7,7 @@ struct QuizView: View {
     @State private var selectedChoice: String?
     @State private var showScratchpad = QuizView.scratchpadOpenAtLaunch
     @State private var showReference = true
+    @State private var deskWidth: CGFloat = 0
     @FocusState private var typingFocused: Bool
     @State private var voiceEngaged = false
     @Environment(\.horizontalSizeClass) private var sizeClass
@@ -50,12 +51,9 @@ struct QuizView: View {
         Group {
             if isRegular {
                 // The study desk: reference on the left, the drill in the middle, the scratchpad on the right.
-                GeometryReader { geo in
-                // Three columns need a landscape-wide desk; narrower, the scratchpad takes the reference's place.
-                let roomForAll = geo.size.width >= 1150
                 VStack(spacing: 10) {
                     HStack(alignment: .top, spacing: 20) {
-                        if let reference = referenceContent, showReference, roomForAll || !showScratchpad {
+                        if let reference = referenceContent, referenceVisible {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("Reference").font(AppTheme.Fonts.ui(.headline, weight: .heavy))
                                 ConjugationReferenceView(content: reference, compact: true, focusForm: q.id.verbForm)
@@ -76,7 +74,9 @@ struct QuizView: View {
                 }
                 .padding(.horizontal, 24)
                 .padding(.top, 12)
-                }
+                // The Pencil tool picker floats over the bottom while the scratchpad is open.
+                .padding(.bottom, showScratchpad ? Self.toolPickerClearance : 0)
+                .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { deskWidth = $0 }
             } else {
                 quizColumn(q)
             }
@@ -85,11 +85,11 @@ struct QuizView: View {
             if isRegular {
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     if referenceContent != nil {
-                        Button { withAnimation(.snappy) { showReference.toggle() } } label: {
-                            Image(systemName: showReference ? "book.fill" : "book")
+                        Button { withAnimation(.snappy) { toggleReference() } } label: {
+                            Image(systemName: referenceVisible ? "book.fill" : "book")
                         }
                         .keyboardShortcut("r", modifiers: .command)
-                        .accessibilityLabel(showReference ? "Hide reference" : "Show reference")
+                        .accessibilityLabel(referenceVisible ? "Hide reference" : "Show reference")
                     }
                     Button { withAnimation(.snappy) { showScratchpad.toggle() } } label: {
                         Image(systemName: showScratchpad ? "pencil.and.scribble" : "pencil.tip.crop.circle")
@@ -200,6 +200,24 @@ struct QuizView: View {
 
     private func focusIfTyping() {
         typingFocused = model.activeMode == .typing && model.result == nil && !voiceEngaged
+    }
+
+    static let toolPickerClearance: CGFloat = 112
+
+    /// Three columns need a landscape-wide desk. Narrower, only one side column fits: the last one opened.
+    private var roomForBothColumns: Bool { deskWidth >= 1150 }
+
+    private var referenceVisible: Bool {
+        referenceContent != nil && showReference && (roomForBothColumns || !showScratchpad)
+    }
+
+    private func toggleReference() {
+        if referenceVisible {
+            showReference = false
+        } else {
+            showReference = true
+            if !roomForBothColumns { showScratchpad = false }
+        }
     }
 
     /// Keyboard shortcuts on iPad, shown so they are discoverable.
