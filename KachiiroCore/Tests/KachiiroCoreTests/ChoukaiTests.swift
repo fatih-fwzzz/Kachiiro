@@ -87,6 +87,15 @@ final class FakeAudioPlayer: AudioPlaying {
         #expect(player.rate == 1.25)
     }
 
+    @Test func stopRewindsAndClosesThePlayer() throws {
+        let player = FakeAudioPlayer()
+        let vm = AudioLibraryViewModel(fileNames: names, player: player)
+        vm.select(try #require(vm.tracks(inLesson: 1).first))
+        player.currentTime = 30
+        vm.stop()
+        #expect(!player.isPlaying && player.currentTime == 0 && vm.currentTrack == nil && !vm.isPlaying)
+    }
+
     @Test func skipClampsToTrackBounds() throws {
         let player = FakeAudioPlayer()
         let vm = AudioLibraryViewModel(fileNames: names, player: player)

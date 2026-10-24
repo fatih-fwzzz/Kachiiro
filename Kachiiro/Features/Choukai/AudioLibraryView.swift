@@ -126,11 +126,24 @@ struct AudioLibraryView: View {
     private var playerSheet: some View {
         VStack(spacing: 12) {
             if let track = viewModel.currentTrack {
-                VStack(alignment: .leading, spacing: 2) {
-                    SectionCaps(text: "Lesson \(track.lesson) · track \(track.sequence)", color: AppTheme.onKachiiroLabel)
-                    Text(track.label).font(AppTheme.Fonts.ui(.title3, weight: .heavy))
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        SectionCaps(text: "Lesson \(track.lesson) · track \(track.sequence)", color: AppTheme.onKachiiroLabel)
+                        Text(track.label).font(AppTheme.Fonts.ui(.title3, weight: .heavy))
+                    }
+                    Spacer()
+                    Button { viewModel.stop() } label: {
+                        Label("Stop", systemImage: "stop.fill")
+                            .font(AppTheme.Fonts.ui(.subheadline, weight: .heavy))
+                            .padding(.horizontal, 14)
+                            .frame(minHeight: 36)
+                            .background(.white.opacity(0.12), in: Capsule())
+                            .frame(minHeight: 44)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityHint("Stops playback and closes the player")
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
             VStack(spacing: 2) {
                 Slider(

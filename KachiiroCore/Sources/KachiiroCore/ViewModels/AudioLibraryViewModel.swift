@@ -49,6 +49,15 @@ public final class AudioLibraryViewModel {
         refresh()
     }
 
+    /// Stops playback, rewinds and closes the player.
+    public func stop() {
+        guard currentTrack != nil else { return }
+        player.pause()
+        player.seek(to: 0)
+        currentTrack = nil
+        refresh()
+    }
+
     public func skip(by seconds: TimeInterval) {
         guard currentTrack != nil else { return }
         player.seek(to: min(max(0, player.currentTime + seconds), player.duration))
