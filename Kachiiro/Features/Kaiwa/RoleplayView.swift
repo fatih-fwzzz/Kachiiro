@@ -92,11 +92,11 @@ struct RoleplayView: View {
                 Text(model.scenario.goal).font(AppTheme.Fonts.ui(.subheadline, weight: .bold))
             }
             if live {
-                Label("Live voice call · Gemini", systemImage: "waveform")
+                Label("Live voice call · AI partner", systemImage: "waveform")
                     .font(AppTheme.Fonts.ui(.footnote, weight: .bold))
                     .foregroundStyle(AppTheme.onKachiiroLabel)
             } else if model.isFreeMode {
-                Label("AI conversation · \(environment.aiResolver.engineLabel)", systemImage: "sparkles")
+                Label("AI conversation", systemImage: "sparkles")
                     .font(AppTheme.Fonts.ui(.footnote, weight: .bold))
                     .foregroundStyle(AppTheme.accentText)
             }

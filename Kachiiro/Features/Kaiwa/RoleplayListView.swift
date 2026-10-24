@@ -42,7 +42,7 @@ struct RoleplayListView: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text(isLive ? "Hands-free voice calls" : "Turn-by-turn chat")
                     .font(AppTheme.Fonts.ui(.callout, weight: .heavy))
-                Text(isLive ? "Just speak. Gemini plays your partner."
+                Text(isLive ? "Just speak. AI plays your partner."
                      : "Speak or type each reply, one turn at a time.")
                     .font(AppTheme.Fonts.ui(.footnote))
                     .foregroundStyle(AppTheme.secondaryInk)

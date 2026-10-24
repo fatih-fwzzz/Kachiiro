@@ -35,7 +35,7 @@ public enum LiveSessionError: Error, LocalizedError, Equatable {
     public var errorDescription: String? {
         switch self {
         case .closed(let code, let reason):
-            reason.isEmpty ? "Gemini Live closed the session (\(code))." : "Gemini Live closed the session (\(code)): \(reason)"
+            reason.isEmpty ? "The voice call closed (\(code))." : "The voice call closed (\(code)): \(reason)"
         }
     }
 }

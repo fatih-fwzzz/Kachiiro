@@ -48,7 +48,7 @@ struct PracticeView: View {
         }
         .background(AppTheme.canvas)
         .navigationTitle("Practice")
-        .overlay { if viewModel.isGenerating { GeneratingCard(engine: viewModel.kaiwaEngineLabel) } }
+        .preparingOverlay(viewModel.isGenerating, title: "Building your drill", message: "AI is generating fresh questions…")
         .drillSession($session)
         .navigationDestination(item: $openPillar) { pillar in
             PillarView(pillar: pillar, viewModel: viewModel)
@@ -232,7 +232,7 @@ struct PillarView: View {
         .background(AppTheme.canvas)
         .navigationTitle(pillar.shortName)
         .navigationBarTitleDisplayMode(.inline)
-        .overlay { if viewModel.isGenerating { GeneratingCard(engine: viewModel.kaiwaEngineLabel) } }
+        .preparingOverlay(viewModel.isGenerating, title: "Building your drill", message: "AI is generating fresh questions…")
         .drillSession($session)
     }
 
@@ -402,24 +402,5 @@ private struct SpeakCard: View {
         .frame(maxWidth: .infinity, minHeight: 150, alignment: .topLeading)
         .background(hero ? AppTheme.kachiiro : AppTheme.cardSurface,
                     in: RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous))
-    }
-}
-
-/// Shown while the AI builds a drill: what is happening, on a calm card.
-private struct GeneratingCard: View {
-    let engine: String
-
-    var body: some View {
-        VStack(spacing: 10) {
-            ProgressView().tint(.white).controlSize(.large)
-            Text("Building your drill").font(AppTheme.Fonts.ui(.headline, weight: .heavy))
-            Text("\(engine) is writing fresh questions…")
-                .font(AppTheme.Fonts.ui(.footnote))
-                .foregroundStyle(AppTheme.onKachiiroSecondary)
-        }
-        .foregroundStyle(.white)
-        .padding(24)
-        .background(AppTheme.kachiiro, in: RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous))
-        .accessibilityElement(children: .combine)
     }
 }

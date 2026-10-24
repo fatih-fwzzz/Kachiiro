@@ -39,14 +39,7 @@ struct TodayView: View {
         }
         .background(AppTheme.canvas)
         .toolbar(.hidden, for: .navigationBar)
-        .overlay {
-            if isPreparing {
-                ProgressView("Preparing your drill…")
-                    .font(AppTheme.Fonts.ui(.subheadline, weight: .semibold))
-                    .padding(20)
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-            }
-        }
+        .preparingOverlay(isPreparing, title: "Building your drill", message: "AI is generating fresh questions…")
         .navigationDestination(isPresented: $isQuizActive) {
             if let session { QuizView(model: session) }
         }

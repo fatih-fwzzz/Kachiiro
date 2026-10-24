@@ -54,6 +54,8 @@ private struct MockExamStartView: View {
     @Environment(AppEnvironment.self) private var environment
     @State private var dashboard: DashboardViewModel?
     @State private var session: QuizSessionViewModel?
+    @State private var isPreparing = false
+    @State private var preparingMessage: String?
 
     private var examPillars: [Pillar] {
         Pillar.allCases.filter { p in MockExamViewModel.allocation.contains { $0.drill.pillar == p } }
@@ -88,6 +90,7 @@ private struct MockExamStartView: View {
                 .background(AppTheme.canvas)
         }
         .drillSession($session)
+        .preparingOverlay(isPreparing, title: "Building your drill", message: preparingMessage)
         .onAppear { dashboard = environment.makeDashboardViewModel() }
     }
 
@@ -160,8 +163,16 @@ private struct MockExamStartView: View {
             }
             Spacer(minLength: 8)
             Button("Fix") {
-                Task { session = await environment.makePracticeViewModel().makeAnySession(for: weakest.pillar.planDrill) }
+                let practice = environment.makePracticeViewModel()
+                let drill = weakest.pillar.planDrill
+                preparingMessage = practice.usesGeneratedContent(for: drill) ? "AI is generating fresh questions…" : nil
+                isPreparing = true
+                Task {
+                    session = await practice.makeAnySession(for: drill)
+                    isPreparing = false
+                }
             }
+            .disabled(isPreparing)
             .font(AppTheme.Fonts.ui(.subheadline, weight: .heavy))
             .foregroundStyle(.white)
             .padding(.horizontal, 16)

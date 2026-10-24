@@ -72,7 +72,7 @@ struct Banner: View {
     VStack(spacing: 12) {
         Banner(kind: .warning, title: "Couldn’t check this answer", message: "Your answer is saved.",
                action: .init(title: "Try again") {}, secondary: .init(title: "Skip") {})
-        Banner(kind: .info, title: "Using offline checks", message: "Gemini isn’t reachable.")
+        Banner(kind: .info, title: "Using offline checks", message: "AI isn’t reachable.")
     }
     .padding()
     .background(AppTheme.canvas)

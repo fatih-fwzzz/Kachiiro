@@ -14,7 +14,7 @@ public enum KaiwaAIError: Error, Equatable, LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .invalidResponse: "The AI returned an unexpected response."
-        case .http(let status, let message): "Gemini error \(status): \(message)"
+        case .http(let status, let message): "AI service error \(status): \(message)"
         case .noValidItems: "The AI did not return usable items."
         case .unavailable(let reason): reason
         }
