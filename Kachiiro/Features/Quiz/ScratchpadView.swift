@@ -41,25 +41,36 @@ struct ScratchpadView: UIViewRepresentable {
     }
 }
 
-/// Collapsible panel: title, Clear, and the canvas. A new canvas is created per question via `.id`.
+/// The desk's right-hand column: a title, Clear, and the canvas. A new canvas is created per question via `.id`.
 struct ScratchpadPanel: View {
     @State private var generation = 0
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: 10) {
             HStack {
-                Label("Scratchpad", systemImage: "pencil.and.scribble").font(.subheadline.weight(.semibold))
+                Text("Scratchpad").font(AppTheme.Fonts.ui(.headline, weight: .heavy))
                 Spacer()
                 Button("Clear") { generation += 1 }
+                    .font(AppTheme.Fonts.ui(.subheadline, weight: .bold))
+                    .foregroundStyle(AppTheme.accentText)
+                    .padding(.horizontal, 12)
+                    .frame(minHeight: 32)
+                    .background(AppTheme.cardSurface, in: Capsule())
+                    .buttonStyle(.plain)
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
-            Divider()
-            ScratchpadView().id(generation)
+            ScratchpadView()
+                .id(generation)
+                .background(AppTheme.cardSurface)
+                .clipShape(RoundedRectangle(cornerRadius: AppTheme.Radius.card, style: .continuous))
+                .overlay(alignment: .center) {
+                    Text("Write with Apple Pencil or a finger")
+                        .font(AppTheme.Fonts.ui(.footnote))
+                        .foregroundStyle(AppTheme.tertiaryInk)
+                        .allowsHitTesting(false)
+                        .opacity(0.8)
+                        .padding(.top, 120)
+                        .accessibilityHidden(true)
+                }
         }
-        .frame(height: 260)
-        .background(AppTheme.cardSurface, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-        .overlay { RoundedRectangle(cornerRadius: 20, style: .continuous).strokeBorder(AppTheme.hairlineBorder) }
-        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
 }

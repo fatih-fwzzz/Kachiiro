@@ -329,6 +329,7 @@ extension DashboardViewModel.PlanStep.Reason {
         switch self {
         case .weakest(let percent): "Your weakest this week · \(percent)%"
         case .notPractised: "Not practised this week"
+        case .keepSharp(let percent) where percent < 50: "Also weak this week · \(percent)%"
         case .keepSharp(let percent): "Keep it sharp · \(percent)%"
         }
     }

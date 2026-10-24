@@ -127,7 +127,7 @@ struct ShadowingView: View {
                 }
                 .buttonStyle(SecondaryButtonStyle(height: 44))
                 .fixedSize()
-                Button { model.play(slow: true) } label: { Text("0.7×").padding(.horizontal, 16) }
+                Button { model.play(slow: true) } label: { Label("Slow", systemImage: "tortoise.fill").padding(.horizontal, 16) }
                     .buttonStyle(SecondaryButtonStyle(height: 44))
                     .fixedSize()
                     .accessibilityLabel("Listen slowly")

@@ -65,6 +65,19 @@ import Testing
         ])
     }
 
+    @Test func aStrongPillarIsNeverCalledWeakest() {
+        let accuracy = [row(.katsuyou, nil), row(.goi, 100), row(.bunpou, nil), row(.choukai, nil), row(.kaiwa, nil)]
+        let plan = DashboardViewModel.plan(dueCount: 0, accuracy: accuracy)
+        #expect(plan.map(\.kind) == [
+            .drill(.verbForms, reason: .notPractised),
+            .drill(.patternRecognition, reason: .notPractised),
+            .drill(.sentenceListening, reason: .notPractised),
+        ])
+        let allStrong = Pillar.allCases.map { row($0, 90) }
+        #expect(DashboardViewModel.plan(dueCount: 0, accuracy: allStrong).first?.kind
+                == .drill(.verbForms, reason: .keepSharp(percent: 90)))
+    }
+
     @Test func planKeepsSharpWhenEveryPillarWasPractised() {
         let accuracy = [row(.katsuyou, 90), row(.goi, 61), row(.bunpou, 55), row(.choukai, 80), row(.kaiwa, 70)]
         let plan = DashboardViewModel.plan(dueCount: 2, accuracy: accuracy)

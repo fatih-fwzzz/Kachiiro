@@ -40,4 +40,9 @@ final class UserDefaultsSettingsStore: SettingsStore {
         get { defaults.string(forKey: "kaiwaContent").flatMap(KaiwaContentSource.init(rawValue:)) ?? .bundled }
         set { defaults.set(newValue.rawValue, forKey: "kaiwaContent") }
     }
+
+    var hasCompletedSetup: Bool {
+        get { defaults.bool(forKey: "hasCompletedSetup") }
+        set { defaults.set(newValue, forKey: "hasCompletedSetup") }
+    }
 }

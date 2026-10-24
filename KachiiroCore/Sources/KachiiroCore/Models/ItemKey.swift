@@ -21,6 +21,13 @@ public struct ItemKey: Hashable, Codable, Sendable {
     }
 
     public static func verb(_ wordId: Int, _ form: VerbForm) -> ItemKey { ItemKey("verb:\(wordId):\(form.rawValue)") }
+
+    /// The form asked by a `verb:{wordId}:{VerbForm}` key; `nil` for any other key.
+    public var verbForm: VerbForm? {
+        let parts = raw.split(separator: ":")
+        guard parts.count == 3, parts[0] == "verb" else { return nil }
+        return VerbForm(rawValue: String(parts[2]))
+    }
     public static func infl(_ wordId: Int, _ cell: InflectionCell) -> ItemKey { ItemKey("infl:\(wordId):\(cell.raw)") }
     public static func vocab(_ wordId: Int, reverse: Bool) -> ItemKey { ItemKey("vocab:\(wordId):\(reverse ? "w2m" : "m2w")") }
     public static func kanji(_ rowId: Int, writing: Bool) -> ItemKey { ItemKey("kanji:\(rowId):\(writing ? "w" : "r")") }

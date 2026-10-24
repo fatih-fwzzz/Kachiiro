@@ -50,6 +50,8 @@ public final class DashboardViewModel {
     }
 
     public static let reviewBatch = 20
+    /// A pillar at or above this 7-day accuracy is not called weak.
+    public static let weakThreshold = 80
     /// Rough pace used for time estimates.
     static let secondsPerQuestion = 18.0
 
@@ -136,7 +138,8 @@ public final class DashboardViewModel {
         }
     }
 
-    /// Up to three steps: due review first, then the weakest pillar, then one not practised this week.
+    /// Up to three steps: due review first, then the weakest pillar (under `weakThreshold`),
+    /// then pillars not practised this week, then the lowest of the rest to keep sharp.
     public static func plan(dueCount: Int, accuracy: [PillarAccuracy]) -> [PlanStep] {
         var steps: [PlanStep] = []
         if dueCount > 0 {
@@ -147,7 +150,7 @@ public final class DashboardViewModel {
         let ranked = accuracy.compactMap { a in a.percent.map { (pillar: a.pillar, percent: $0) } }
             .sorted { $0.percent < $1.percent }
         var used = Set<Pillar>()
-        if let weakest = ranked.first {
+        if let weakest = ranked.first, weakest.percent < weakThreshold {
             used.insert(weakest.pillar)
             steps.append(PlanStep(kind: .drill(weakest.pillar.planDrill, reason: .weakest(percent: weakest.percent)),
                                   minutes: drillMinutes))

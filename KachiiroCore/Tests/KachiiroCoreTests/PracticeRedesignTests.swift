@@ -14,6 +14,12 @@ import Testing
         calendar.date(from: DateComponents(year: y, month: m, day: d, hour: 12))!
     }
 
+    @Test func verbKeysExposeTheirForm() {
+        #expect(ItemKey.verb(12, .ta).verbForm == .ta)
+        #expect(ItemKey("vocab:1:m2w").verbForm == nil)
+        #expect(ItemKey("verb:1:unknown").verbForm == nil)
+    }
+
     @Test func scopeLabels() {
         #expect(StudyScope.all.label == "All books")
         #expect(StudyScope(levels: [.a21], lessonRange: 1...9).label == "初級1 · L1–9")

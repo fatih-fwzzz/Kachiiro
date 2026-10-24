@@ -20,6 +20,9 @@ public final class VoiceInputModel {
 
     public var isListening: Bool { state == .listening }
 
+    /// `true` before iOS has ever asked for microphone access, so the app can explain why first.
+    public var needsPermissionPrimer: Bool { accessGranted == nil && recognizer.accessStatus == .notDetermined }
+
     public func start() async {
         guard state != .listening, accessGranted != false else { return }
         if accessGranted == nil {

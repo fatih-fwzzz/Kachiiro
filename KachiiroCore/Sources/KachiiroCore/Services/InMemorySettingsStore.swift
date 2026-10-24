@@ -8,6 +8,7 @@ public final class InMemorySettingsStore: SettingsStore {
     public var dailyGoal: Int = 30
     public var kaiwaEngine: KaiwaEngine = .rules
     public var kaiwaContent: KaiwaContentSource = .bundled
+    public var hasCompletedSetup = false
 
     public init() {}
 }

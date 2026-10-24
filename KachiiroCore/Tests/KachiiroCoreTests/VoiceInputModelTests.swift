@@ -5,6 +5,7 @@ import Testing
 final class FakeRecognizer: SpeechRecognizing {
     var grantsAccess = true
     var startError: Error?
+    var accessStatus: SpeechAccessStatus = .notDetermined
     private(set) var accessRequests = 0
     private(set) var startCount = 0
     private(set) var stopCount = 0
@@ -28,6 +29,16 @@ final class FakeRecognizer: SpeechRecognizing {
 
 @MainActor
 @Suite struct VoiceInputModelTests {
+    @Test func primerOnlyBeforeIOSHasAsked() async {
+        let fake = FakeRecognizer()
+        let voice = VoiceInputModel(recognizer: fake)
+        #expect(voice.needsPermissionPrimer)
+        await voice.start()
+        #expect(!voice.needsPermissionPrimer)
+        fake.accessStatus = .denied
+        #expect(!VoiceInputModel(recognizer: fake).needsPermissionPrimer)
+    }
+
     @Test func deniedAccessNeverStartsAndIsNotAskedTwice() async {
         let fake = FakeRecognizer()
         fake.grantsAccess = false
