@@ -78,6 +78,8 @@ private struct SidebarBrand: View {
                 .accessibilityHidden(true)
             Text("Kachiiro").font(AppTheme.Fonts.ui(.title3, weight: .heavy))
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 12)
         .padding(.vertical, 6)
     }
 }
@@ -103,6 +105,8 @@ private struct SidebarExamCard: View {
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(AppTheme.kachiiro, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .padding(.horizontal, 12)
+        .padding(.bottom, 12)
         .onAppear {
             if dashboard == nil { dashboard = environment.makeDashboardViewModel() }
             dashboard?.refresh()
